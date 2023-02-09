@@ -1,0 +1,11 @@
+*
+
+!/philo/
+!.gitignore
+!/philo/libs
+!/philo/includes
+!/philo/srcs
+!/philo/Makefile
+!*.c
+!*.h
+/objs/
