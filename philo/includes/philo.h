@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 19:39:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 21:08:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,16 @@ struct s_args
 struct s_philo
 {
 	// philo
-	pthread_t	*idx;
+	pthread_t	*no;
 
 	// fork
-
+	pthread_mutex_t	*forks;
 
 	// waiter
+	pthread_mutex_t	waiter;
+
+	// print
+	pthread_mutex_t	print_console;
 
 };
 
@@ -81,6 +85,8 @@ enum s_input_type
 /* philo */
 t_args	*init_args(void);
 int		get_input_args(char **argv, t_args *args);
+t_philo	*init_philo(t_args *args);
+
 
 /* libs */
 int		ft_atoi(const char *str, bool *is_success);

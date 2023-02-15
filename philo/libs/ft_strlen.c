@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:39:12 by takira            #+#    #+#             */
-/*   Updated: 2022/11/07 14:00:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 20:01:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/philo.h"
+#include "philo.h"
 
 size_t	ft_strlen(const char *s)
 {

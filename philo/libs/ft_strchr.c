@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:37:26 by takira            #+#    #+#             */
-/*   Updated: 2022/10/17 10:37:27 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 20:01:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/philo.h"
+#include "philo.h"
 
 char	*ft_strchr(const char *s, int c)
 {

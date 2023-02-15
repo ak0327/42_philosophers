@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:31:53 by takira            #+#    #+#             */
-/*   Updated: 2022/10/17 10:31:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 20:01:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/philo.h"
+#include "philo.h"
 
 static int	ft_isspace(char c)
 {

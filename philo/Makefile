@@ -12,16 +12,18 @@
 
 NAME	= philo
 
-CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -MMD -MP
-#-g -fsanitize=address -fsanitize=undefined
-# -fsanitize=thread
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror
+DEPS_FLAG	= -MMD -MP
+#-g -fsanitize=address -fsanitize=undefined -fsanitize=thread
 
 VPATH	= $(SRC_DIR) $(LIB_DIR)
 
 SRC_DIR	= ./srcs
 SRC		= main.c \
-		  error.c
+		  init_argc.c \
+		  init_philo.c \
+		  error.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
@@ -43,7 +45,7 @@ IFLAGS		= $(addprefix -I, $(INCLUDE_DIR))
 
 
 $(NAME)	: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(DEPS_FLAG) $(OBJS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)

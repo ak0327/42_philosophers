@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:33:40 by takira            #+#    #+#             */
-/*   Updated: 2022/10/17 10:33:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 20:01:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/philo.h"
+#include "philo.h"
 
 int	ft_isdigit(int c)
 {
