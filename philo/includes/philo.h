@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/09 18:51:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/15 19:39:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,16 @@ struct s_philo
 
 enum s_input_type
 {
-	E_NUM_OF_PHILOS,
-	E_TIME_TO_DIE,
-	E_TIME_TO_EAT,
-	E_TIME_TO_SLEEP,
-	E_MUST_EAT_TIMES
+	TYPE_NUM_OF_PHILOS,
+	TYPE_TIME_TO_DIE,
+	TYPE_TIME_TO_EAT,
+	TYPE_TIME_TO_SLEEP,
+	TYPE_MUST_EAT_TIMES
 };
 
 /* philo */
+t_args	*init_args(void);
+int		get_input_args(char **argv, t_args *args);
 
 /* libs */
 int		ft_atoi(const char *str, bool *is_success);
