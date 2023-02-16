@@ -60,7 +60,7 @@ struct s_args
 struct s_philo
 {
 	// philo
-	pthread_t	*no;
+	pthread_t	*philo_no;
 
 	// fork
 	pthread_mutex_t	*forks;

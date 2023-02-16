@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 21:11:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/16 16:13:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ int	start_spaghetti_party(t_args *args, t_philo *philo)
 	idx = 0;
 	while (idx < args->num_of_philo)
 	{
-		if (pthread_create(&philo->no[idx], NULL, start_each_philo, philo) != SUCCESS)
+		if (pthread_create(&philo->philo_no[idx], NULL, start_each_philo, philo) != SUCCESS)
 			return (PROCESS_ERROR);
-		if (pthread_join(philo->no[idx], NULL) != SUCCESS)
+		if (pthread_join(philo->philo_no[idx], NULL) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx++;
 	}
@@ -67,7 +67,7 @@ void	free_allocs(t_args *args, t_philo *philo)
 	free(args);
 	if (!philo)
 		return ;
-	free(philo->no);
+	free(philo->philo_no);
 	free(philo->forks);
 	free(philo);
 }

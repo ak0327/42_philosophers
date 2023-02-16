@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 21:24:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/16 16:18:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static pthread_t *init_philo_no(int num_of_philo)
 	return (philo_no);
 }
 
+/* create mutex every fork */
 static pthread_mutex_t	*init_forks(int num_of_philo)
 {
 	pthread_mutex_t	*forks;
@@ -54,20 +55,27 @@ t_philo	*init_philo(t_args *args)
 	if (!philo)
 		return (NULL);
 
-	philo->no = init_philo_no(args->num_of_philo);
-	if (!philo->no)
+	// create pthread_t every philo
+	philo->philo_no = init_philo_no(args->num_of_philo);
+	if (!philo->philo_no)
 		is_failure = true;
+
+	// create mutex for fork
 	philo->forks = init_forks(args->num_of_philo);
 	if (!philo->forks)
 		is_failure = true;
+
+	// create mutex for waiter
 	if (pthread_mutex_init(&philo->waiter, NULL) != SUCCESS)
 		is_failure = true;
+
+	// create mutex for print
 	if (pthread_mutex_init(&philo->print_console, NULL) != SUCCESS)
 		is_failure = true;
 
 	if (!is_failure)
 		return (philo);
-	free(philo->no);
+	free(philo->philo_no);
 	free(philo->forks);
 	free(philo);
 	return (NULL);
