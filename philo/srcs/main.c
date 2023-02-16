@@ -47,9 +47,9 @@ int	start_spaghetti_party(t_args *args, t_philo *philo)
 	idx = 0;
 	while (idx < args->num_of_philo)
 	{
-		if (pthread_create(&philo->philo_no[idx], NULL, start_each_philo, philo) != SUCCESS)
+		if (pthread_create(&philo->no[idx], NULL, start_each_philo, philo) != SUCCESS)
 			return (PROCESS_ERROR);
-		if (pthread_join(philo->philo_no[idx], NULL) != SUCCESS)
+		if (pthread_join(philo->no[idx], NULL) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx++;
 	}
@@ -67,7 +67,7 @@ void	free_allocs(t_args *args, t_philo *philo)
 	free(args);
 	if (!philo)
 		return ;
-	free(philo->philo_no);
+	free(philo->no);
 	free(philo->forks);
 	free(philo);
 }

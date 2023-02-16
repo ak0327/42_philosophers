@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/16 16:18:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/16 16:49:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ t_philo	*init_philo(t_args *args)
 		return (NULL);
 
 	// create pthread_t every philo
-	philo->philo_no = init_philo_no(args->num_of_philo);
-	if (!philo->philo_no)
+	philo->no = init_philo_no(args->num_of_philo);
+	if (!philo->no)
 		is_failure = true;
 
 	// create mutex for fork
@@ -73,9 +73,10 @@ t_philo	*init_philo(t_args *args)
 	if (pthread_mutex_init(&philo->print_console, NULL) != SUCCESS)
 		is_failure = true;
 
+	// if process failure
 	if (!is_failure)
 		return (philo);
-	free(philo->philo_no);
+	free(philo->no);
 	free(philo->forks);
 	free(philo);
 	return (NULL);
