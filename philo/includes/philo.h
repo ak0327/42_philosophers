@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 21:08:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 10:44:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define SUCCESS		0
 # define FAILURE		1
 # define PROCESS_ERROR	2
+# define INVALID_ARG	3
+
 
 # define PHILO_DEAD		0
 # define PHILO_ALIVE	1
@@ -44,9 +46,32 @@
 # define ERROR_MSG_TIME_TO_SLEEP	"60 <= TimeToSleep"
 # define ERROR_MSG_MUST_EAT_TIMES	"0 <= MustEatTimes"
 
+typedef struct s_params		t_params;
 typedef struct s_args		t_args;
 typedef struct s_philo		t_philo;
 typedef enum s_input_type	t_input_type;
+
+struct s_params
+{
+	// args
+	size_t			num_of_philo;
+	time_t			time_to_die;
+	time_t			time_to_eat;
+	time_t			time_to_sleep;
+	ssize_t			must_eat_times;
+
+	// philo
+	pthread_t		*philo_no;
+
+	// fork
+	pthread_mutex_t	*forks;
+
+	// waiter
+	pthread_mutex_t	waiter;
+
+	// print
+	pthread_mutex_t	print_console;
+};
 
 struct s_args
 {
@@ -75,7 +100,7 @@ struct s_philo
 
 enum s_input_type
 {
-	TYPE_NUM_OF_PHILOS,
+	TYPE_NUM_OF_PHILO,
 	TYPE_TIME_TO_DIE,
 	TYPE_TIME_TO_EAT,
 	TYPE_TIME_TO_SLEEP,
@@ -83,15 +108,19 @@ enum s_input_type
 };
 
 /* philo */
-t_args	*init_args(void);
-int		get_input_args(char **argv, t_args *args);
-t_philo	*init_philo(t_args *args);
+int			init_params(int argc, char **argv, t_params *params);
+int			get_input_args(char **argv, t_params *params);
+
+
+void		print_error(int err);
 
 
 /* libs */
-int		ft_atoi(const char *str, bool *is_success);
-int		ft_isdigit(int c);
-size_t	ft_strlen_ns(const char *s);
-char	*ft_strchr(const char *s, int c);
+int			ft_atoi(const char *str, bool *is_success);
+int			ft_isdigit(int c);
+size_t		ft_strlen_ns(const char *s);
+char		*ft_strchr(const char *s, int c);
+int			ft_isspace(char c);
+long long	ft_strtoll(char *num, bool *is_success);
 
 #endif

@@ -12,11 +12,20 @@
 
 #include "philo.h"
 
-void	*start_each_philo(void *philo)
+void	*start_each_philo(void *v_param)
 {
-	// check for waiter
+	t_params	*params;
+
+	params = (t_params *)v_param;
+
+	// lock waiter and check
+	pthread_mutex_lock(&params->waiter);
 
 	// take fork & print
+
+
+	// unlock waiter
+	pthread_mutex_unlock(&params->waiter);
 
 	// eat & print
 
@@ -62,28 +71,28 @@ int	start_spaghetti_party(t_args *args, t_philo *philo)
 	return (SUCCESS);
 }
 
-void	free_allocs(t_args *args, t_philo *philo)
+void	free_allocs(t_params *params)
 {
-	free(args);
-	if (!philo)
+	if (!params)
 		return ;
-	free(philo->no);
-	free(philo->forks);
-	free(philo);
+	free(params->philo_no);
+	free(params->forks);
+	free(params);
 }
 
 int	main(int argc, char **argv)
 {
-	t_args	*args;
-	t_philo	*philo;
+	t_params	*params;
+	int			ret_value;
 
-	if (!(5 <= argc && argc <= 6))
+	ret_value = init_params(argc, argv, params);
+	if (ret_value != SUCCESS)
 	{
-		printf("[Error] Invalid argument. Input as following:\n" \
-		"$>./args NumOfPhilos[1,200] TimeToDie[60,INT_MAX] " \
-		"TimeToEat[60,INT_MAX] TimeToSleep[60,INT_MAX] (MustEatTimes[0,INT_MAX])\n");
+		print_error(ret_value);
 		return (EXIT_FAILURE);
 	}
+
+
 	args = init_args();
 	if (!args)
 	{

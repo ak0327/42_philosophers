@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 19:37:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 11:03:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ static int	print_msg_ret_int(const char *msg, int ret_num)
 	return (ret_num);
 }
 
-static int	check_num_valid(int num, t_input_type type)
+static int	check_num_validity(long long num, t_input_type type)
 {
-	if (type == TYPE_NUM_OF_PHILOS)
+	if (type == TYPE_NUM_OF_PHILO)
 		return (1 <= num && num <= 200);
 	if (type == TYPE_TIME_TO_DIE)
 		return (60 <= num);
@@ -29,47 +29,41 @@ static int	check_num_valid(int num, t_input_type type)
 		return (60 <= num);
 	if (type == TYPE_TIME_TO_SLEEP)
 		return (60 <= num);
-	if (type == TYPE_MUST_EAT_TIMES)
-		return (0 <= num);
-	return (0);
+	return (0 <= num);
 }
 
-int	get_input_args(char **argv, t_args *args)
+int	get_input_args(char **argv, t_params *params)
 {
-	bool	is_atoi_success;
+	bool		is_success;
+	long long	arg_num;
 
-	args->num_of_philo = ft_atoi(argv[NUM_OF_PHILOS_IDX], &is_atoi_success);
-	if (!is_atoi_success && check_num_valid(args->num_of_philo, TYPE_NUM_OF_PHILOS))
-		return (print_msg_ret_int(ERROR_MSG_NUM_OF_PHILOS, FAILURE));//TODO: num_of_philo = 1
-	args->time_to_die = ft_atoi(argv[TIME_TO_DIE_IDX], &is_atoi_success);
-	if (!is_atoi_success && check_num_valid(args->time_to_die, TYPE_TIME_TO_DIE))
+	arg_num = ft_strtoll(argv[NUM_OF_PHILOS_IDX], &is_success);
+	if (!is_success && check_num_validity(arg_num, TYPE_NUM_OF_PHILO))
+		return (print_msg_ret_int(ERROR_MSG_NUM_OF_PHILOS, FAILURE)); //TODO: if num_of_philo = 1
+	params->num_of_philo = (size_t)arg_num;
+
+	arg_num = ft_strtoll(argv[TIME_TO_DIE_IDX], &is_success);
+	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_DIE))
 		return (print_msg_ret_int(ERROR_MSG_TIME_TO_DIE, FAILURE));
-	args->time_to_eat = ft_atoi(argv[TIME_TO_EAT_IDX], &is_atoi_success);
-	if (!is_atoi_success && check_num_valid(args->time_to_eat, TYPE_TIME_TO_EAT))
+	params->time_to_die = (time_t)arg_num;
+
+	arg_num = ft_strtoll(argv[TIME_TO_EAT_IDX], &is_success);
+	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_EAT))
 		return (print_msg_ret_int(ERROR_MSG_TIME_TO_EAT, FAILURE));
-	args->time_to_sleep = ft_atoi(argv[TIME_TO_SLEEP_IDX], &is_atoi_success);
-	if (!is_atoi_success && check_num_valid(args->time_to_sleep, TYPE_TIME_TO_SLEEP))
+	params->time_to_eat = (time_t)arg_num;
+
+	arg_num = ft_strtoll(argv[TIME_TO_SLEEP_IDX], &is_success);
+	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
 		return (print_msg_ret_int(ERROR_MSG_TIME_TO_SLEEP, FAILURE));
+	params->time_to_sleep = (time_t)arg_num;
+
+	params->must_eat_times = -1;
 	if (argv[MUST_EAT_TIMES_IDX])
 	{
-		args->must_eat_times = ft_atoi(argv[MUST_EAT_TIMES_IDX], &is_atoi_success);
-		if (!is_atoi_success && check_num_valid(args->must_eat_times, TYPE_MUST_EAT_TIMES))
-			return (print_msg_ret_int(ERROR_MSG_MUST_EAT_TIMES, FAILURE));//TODO: must_eat_times = 0
+		arg_num = ft_strtoll(argv[MUST_EAT_TIMES_IDX], &is_success);
+		if (!is_success && check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
+			return (print_msg_ret_int(ERROR_MSG_MUST_EAT_TIMES, FAILURE)); //TODO: if must_eat_times = 0
+		params->must_eat_times = arg_num;
 	}
 	return (SUCCESS);
-}
-
-t_args	*init_args(void)
-{
-	t_args	*args;
-
-	args = (t_args *)malloc(sizeof(t_args));
-	if (!args)
-		return (NULL);
-	args->num_of_philo = 0;
-	args->time_to_die = 0;
-	args->time_to_eat = 0;
-	args->time_to_sleep = 0;
-	args->must_eat_times = -1;
-	return (args);
 }
