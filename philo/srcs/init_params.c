@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 22:08:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 23:01:52 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,7 @@ int	init_params(int argc, char **argv, t_params **params)
 		(*params)->wait_philo = -1;
 	else
 		(*params)->wait_philo = 0;
+	(*params)->is_died = false;
+	(*params)->died_philo = -1;
 	return (ret_value);
 }

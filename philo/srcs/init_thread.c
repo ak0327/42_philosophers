@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 21:28:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 22:56:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,12 @@ int	init_thread(t_params *params)
 	if (pthread_mutex_init(&params->lock_fork, NULL) != SUCCESS)
 		is_failure = true;
 
-	// create mutex for lock_waiter
 	if (pthread_mutex_init(&params->lock_waiter, NULL) != SUCCESS)
 		is_failure = true;
 
-	// create mutex for print
+	if (pthread_mutex_init(&params->lock_died, NULL) != SUCCESS)
+		is_failure = true;
+
 	if (pthread_mutex_init(&params->lock_print, NULL) != SUCCESS)
 		is_failure = true;
 

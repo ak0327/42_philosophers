@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 22:10:57 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 23:25:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,16 +63,17 @@ void	print_timestamp(void)
 	printf("%ld:%03d(ms)",unix_time, (int)msec);
 }
 
-void	print_msg(size_t idx, t_print_type type, time_t time, pthread_mutex_t *print_mutex)
+void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 {
 	const time_t	unix_time_sec = time / 1000;
 	const time_t	unix_time_msec = time % 1000;
 	const char		*msg = get_print_msg(type);
 
-	pthread_mutex_lock(print_mutex);
-//	printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
-	printf("%ld%03ld %zu %s\n", unix_time_sec, unix_time_msec, idx, msg);
-	pthread_mutex_unlock(print_mutex);
+	if (!params->is_died || params->died_philo == (ssize_t)idx)
+	{
+	//	printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
+		printf("%ld%03ld %zu %s\n", unix_time_sec, unix_time_msec, idx, msg);
+	}
 }
 
 // idx=0,	 -> 0, 1
@@ -161,45 +162,59 @@ void	*do_routine(void *v_philo)
 	t_params	*params;
 	size_t		philo_idx;
 	time_t		now_time;
-	time_t		wait_time_us;
 
 	philo = (t_philo *)v_philo;
 	params = philo->params;
 	philo_idx = philo->philo_idx;
-	while (true)
+	while (!params->is_died)
 	{
-		wait_time_us = 10000;
-		while (take_forks(params, philo_idx))
+		while (take_forks(params, philo_idx) == FAILURE)
 		{
-			usleep(wait_time_us);
-			wait_time_us /= 2;
-			if (params->is_died || is_finished(params))
-				return (NULL);
 			now_time = get_unix_time_ms();
 			if (is_died(philo->start_time, now_time, params->time_to_die))
 			{
+				pthread_mutex_lock(&params->lock_died);
 				params->is_died = true;
-				print_msg(philo_idx, TYPE_DIED, philo->start_time + params->time_to_die, &params->lock_print);
+				if (params->died_philo == -1)
+					params->died_philo = (ssize_t)philo_idx;
+				pthread_mutex_unlock(&params->lock_died);
+
+				pthread_mutex_lock(&params->lock_print);
+				print_msg(philo_idx, TYPE_DIED, philo->start_time + params->time_to_die, params);
+				pthread_mutex_unlock(&params->lock_print);
 				return (NULL);
 			}
+			if (params->is_died || is_finished(params))
+				return (NULL);
 		}
 		now_time = get_unix_time_ms();
 		if (is_died(philo->start_time, now_time, params->time_to_die))
 		{
+			pthread_mutex_lock(&params->lock_died);
 			params->is_died = true;
-			print_msg(philo_idx, TYPE_DIED, philo->start_time + params->time_to_die, &params->lock_print);
+			if (params->died_philo == -1)
+				params->died_philo = (ssize_t)philo_idx;
+			pthread_mutex_unlock(&params->lock_died);
+
+			pthread_mutex_lock(&params->lock_print);
+			print_msg(philo_idx, TYPE_DIED, philo->start_time + params->time_to_die, params);
+			pthread_mutex_unlock(&params->lock_print);
 			return (NULL);
 		}
-		if (is_finished(params))
+		if (params->is_died || is_finished(params))
 			return (NULL);
 
 		philo->start_time = now_time;
-		print_msg(philo_idx, TYPE_FORK, now_time, &params->lock_print);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo_idx, TYPE_FORK, now_time, params);
+		pthread_mutex_unlock(&params->lock_print);
 
 		// eat & print
 		if (params->is_died || is_finished(params))
 			return (NULL);
-		print_msg(philo_idx, TYPE_EATING, get_unix_time_ms(), &params->lock_print);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo_idx, TYPE_EATING, get_unix_time_ms(), params);
+		pthread_mutex_unlock(&params->lock_print);
 		usleep(params->time_to_eat * 1000);
 
 		// release lock_fork
@@ -209,15 +224,20 @@ void	*do_routine(void *v_philo)
 		// sleep & print
 		if (params->is_died || is_finished(params))
 			return (NULL);
-		print_msg(philo_idx, TYPE_SLEEPING, get_unix_time_ms(), &params->lock_print);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo_idx, TYPE_SLEEPING, get_unix_time_ms(), params);
+		pthread_mutex_unlock(&params->lock_print);
 		usleep(params->time_to_sleep * 1000);
 
 		// think & print
 
 		if (params->is_died || is_finished(params))
 			return (NULL);
-		print_msg(philo_idx, TYPE_THINKING, get_unix_time_ms(), &params->lock_print);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo_idx, TYPE_THINKING, get_unix_time_ms(), params);
+		pthread_mutex_unlock(&params->lock_print);
 	}
+	return (NULL);
 }
 
 int	create_threads(t_params *params, t_philo *philo)

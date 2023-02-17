@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 21:29:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 22:59:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,17 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int
 void	free_allocs(t_params *params, t_philo *philo)
 {
 	t_philo	*next;
+	size_t	idx;
 
 	if (!params)
 		return ;
-	while (philo)
+	idx = 0;
+	while (idx < params->num_of_philos)
 	{
 		next = philo->next;
 		free(philo);
 		philo = next;
+		idx++;
 	}
 	free(params->philo_no);
 	free(params->forks);
