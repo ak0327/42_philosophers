@@ -66,7 +66,7 @@ int	start_spaghetti_party(t_args *args, t_philo *philo)
 	{
 		if (check_philo_dead(args, philo) == PHILO_DEAD)
 			break ;
-		usleep(CHECK_TIME_SPAM_MS); // check time span
+		usleep(CHECK_TIME_SPAN_MS); // check time span
 	}
 	return (SUCCESS);
 }
@@ -102,7 +102,7 @@ int	main(int argc, char **argv)
 	if (get_input_args(argv, args) == FAILURE)
 		return (EXIT_FAILURE);
 
-	printf("[#DEBUG]NumOfPhilos:%d, TimeToDie:%d, TimeToEat:%d, TimeToSleep:%d, MustEatTimes:%d\n", args->num_of_philo, args->time_to_die, args->time_to_eat, args->time_to_sleep, args->must_eat_times);
+	printf("[#DEBUG]NumOfPhilos:%d, TimeToDie:%d, TimeToEat:%d, TimeToSleep:%d, MustEatTimes:%d\n", args->num_of_philos, args->time_to_die, args->time_to_eat, args->time_to_sleep, args->must_eat_times);
 
 	philo = init_philo(args);
 	if (!philo)

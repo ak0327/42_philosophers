@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/16 16:49:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 11:12:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static pthread_t *init_philo_no(int num_of_philo)
+static pthread_t *init_philo_no(size_t num_of_philo)
 {
 	pthread_t	*philo_no;
 
@@ -24,7 +24,7 @@ static pthread_t *init_philo_no(int num_of_philo)
 }
 
 /* create mutex every fork */
-static pthread_mutex_t	*init_forks(int num_of_philo)
+static pthread_mutex_t	*init_forks(size_t num_of_philo)
 {
 	pthread_mutex_t	*forks;
 	size_t			idx;
@@ -43,41 +43,34 @@ static pthread_mutex_t	*init_forks(int num_of_philo)
 	return (forks);
 }
 
-t_philo	*init_philo(t_args *args)
+int	init_thread(t_params *params)
 {
-	t_philo	*philo;
 	bool	is_failure;
 
-	if (!args)
-		return (NULL);
-	is_failure = false;
-	philo = (t_philo *)malloc(sizeof(t_philo));
-	if (!philo)
-		return (NULL);
-
 	// create pthread_t every philo
-	philo->no = init_philo_no(args->num_of_philo);
-	if (!philo->no)
+	params->philo_no = init_philo_no(params->num_of_philos);
+	if (!params->philo_no)
 		is_failure = true;
 
 	// create mutex for fork
-	philo->forks = init_forks(args->num_of_philo);
-	if (!philo->forks)
+	params->forks = init_forks(params->num_of_philos);
+	if (!params->forks)
 		is_failure = true;
 
 	// create mutex for waiter
-	if (pthread_mutex_init(&philo->waiter, NULL) != SUCCESS)
+	if (pthread_mutex_init(&params->waiter, NULL) != SUCCESS)
 		is_failure = true;
 
 	// create mutex for print
-	if (pthread_mutex_init(&philo->print_console, NULL) != SUCCESS)
+	if (pthread_mutex_init(&params->print_console, NULL) != SUCCESS)
 		is_failure = true;
 
 	// if process failure
 	if (!is_failure)
-		return (philo);
-	free(philo->no);
-	free(philo->forks);
-	free(philo);
-	return (NULL);
+		return (SUCCESS);
+	free(params->philo_no);
+	free(params->forks);
+	params->philo_no = NULL;
+	params->forks = NULL;
+	return (FAILURE);
 }

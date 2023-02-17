@@ -6,18 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 11:03:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 11:32:17 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static int	print_msg_ret_int(const char *msg, int ret_num)
-{
-	if (msg)
-		printf("%s\n", msg);
-	return (ret_num);
-}
 
 static int	check_num_validity(long long num, t_input_type type)
 {
@@ -39,22 +32,22 @@ int	get_input_args(char **argv, t_params *params)
 
 	arg_num = ft_strtoll(argv[NUM_OF_PHILOS_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_NUM_OF_PHILO))
-		return (print_msg_ret_int(ERROR_MSG_NUM_OF_PHILOS, FAILURE)); //TODO: if num_of_philo = 1
-	params->num_of_philo = (size_t)arg_num;
+		return (INVALID_NUM_OF_PHILOS); //TODO: if num_of_philos = 1
+	params->num_of_philos = (size_t)arg_num;
 
 	arg_num = ft_strtoll(argv[TIME_TO_DIE_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_DIE))
-		return (print_msg_ret_int(ERROR_MSG_TIME_TO_DIE, FAILURE));
+		return (INVALID_TIME_TO_DIE);
 	params->time_to_die = (time_t)arg_num;
 
 	arg_num = ft_strtoll(argv[TIME_TO_EAT_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_EAT))
-		return (print_msg_ret_int(ERROR_MSG_TIME_TO_EAT, FAILURE));
+		return (INVALID_TIME_TO_EAT);
 	params->time_to_eat = (time_t)arg_num;
 
 	arg_num = ft_strtoll(argv[TIME_TO_SLEEP_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
-		return (print_msg_ret_int(ERROR_MSG_TIME_TO_SLEEP, FAILURE));
+		return (INVALID_TIME_TO_SLEEP);
 	params->time_to_sleep = (time_t)arg_num;
 
 	params->must_eat_times = -1;
@@ -62,7 +55,7 @@ int	get_input_args(char **argv, t_params *params)
 	{
 		arg_num = ft_strtoll(argv[MUST_EAT_TIMES_IDX], &is_success);
 		if (!is_success && check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
-			return (print_msg_ret_int(ERROR_MSG_MUST_EAT_TIMES, FAILURE)); //TODO: if must_eat_times = 0
+			return (INVALID_MUST_EAT_TIMES); //TODO: if must_eat_times = 0
 		params->must_eat_times = arg_num;
 	}
 	return (SUCCESS);

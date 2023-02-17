@@ -22,7 +22,7 @@ VPATH	= $(SRC_DIR) $(LIB_DIR)
 SRC_DIR	= ./srcs
 SRC		= main.c \
 		  init_argc.c \
-		  init_philo.c \
+		  init_thread.c \
 		  error.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))

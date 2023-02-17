@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 10:44:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 11:33:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,12 @@
 # define SUCCESS		0
 # define FAILURE		1
 # define PROCESS_ERROR	2
-# define INVALID_ARG	3
-
+# define INVALID_ARGC	3
+# define INVALID_NUM_OF_PHILOS	4
+# define INVALID_TIME_TO_DIE	5
+# define INVALID_TIME_TO_EAT	6
+# define INVALID_TIME_TO_SLEEP	7
+# define INVALID_MUST_EAT_TIMES	8
 
 # define PHILO_DEAD		0
 # define PHILO_ALIVE	1
@@ -38,13 +42,7 @@
 # define TIME_TO_SLEEP_IDX		4
 # define MUST_EAT_TIMES_IDX		5
 
-# define CHECK_TIME_SPAM_MS		100
-
-# define ERROR_MSG_NUM_OF_PHILOS	"1 <= NumOfPhilos <= 200"
-# define ERROR_MSG_TIME_TO_DIE		"60 <= TimeToDie"
-# define ERROR_MSG_TIME_TO_EAT		"60 <= TimeToEat"
-# define ERROR_MSG_TIME_TO_SLEEP	"60 <= TimeToSleep"
-# define ERROR_MSG_MUST_EAT_TIMES	"0 <= MustEatTimes"
+# define CHECK_TIME_SPAN_MS		100
 
 typedef struct s_params		t_params;
 typedef struct s_args		t_args;
@@ -54,7 +52,7 @@ typedef enum s_input_type	t_input_type;
 struct s_params
 {
 	// args
-	size_t			num_of_philo;
+	size_t			num_of_philos;
 	time_t			time_to_die;
 	time_t			time_to_eat;
 	time_t			time_to_sleep;
@@ -110,6 +108,7 @@ enum s_input_type
 /* philo */
 int			init_params(int argc, char **argv, t_params *params);
 int			get_input_args(char **argv, t_params *params);
+int			init_thread(t_params *params);
 
 
 void		print_error(int err);
