@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 21:48:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 22:10:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,12 @@ int	take_forks(t_params *params, size_t	idx)
 		first_take = (idx + 1) % num_of_philos;
 		second_take = idx % num_of_philos;
 	}
+	if (params->wait_philo != -1 && (size_t)params->wait_philo == idx)
+	{
+		params->wait_philo++;
+		params->wait_philo %= (ssize_t)params->num_of_philos - 1;
+		return (FAILURE);
+	}
 	if (params->forks[first_take] == 0 && params->forks[second_take] == 0)
 	{
 		pthread_mutex_lock(&params->lock_fork);
@@ -155,18 +161,18 @@ void	*do_routine(void *v_philo)
 	t_params	*params;
 	size_t		philo_idx;
 	time_t		now_time;
-	time_t		wait_time;
+	time_t		wait_time_us;
 
 	philo = (t_philo *)v_philo;
 	params = philo->params;
 	philo_idx = philo->philo_idx;
 	while (true)
 	{
-		wait_time = 1000;
+		wait_time_us = 10000;
 		while (take_forks(params, philo_idx))
 		{
-			wait_time /= 2;
-			usleep(wait_time);
+			usleep(wait_time_us);
+			wait_time_us /= 2;
 			if (params->is_died || is_finished(params))
 				return (NULL);
 			now_time = get_unix_time_ms();
@@ -221,7 +227,6 @@ int	create_threads(t_params *params, t_philo *philo)
 
 	if (!params)
 		return (FAILURE);
-
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{

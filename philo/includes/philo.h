@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 21:00:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 22:02:09 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ struct s_params
 
 	ssize_t			*eat_times;
 	bool			is_died;
+	ssize_t			wait_philo;
 };
 
 enum s_print_type
