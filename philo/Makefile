@@ -13,25 +13,28 @@
 NAME	= philo
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
-DEPS_FLAG	= -MMD -MP
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP
 #-g -fsanitize=address -fsanitize=undefined -fsanitize=thread
 
 VPATH	= $(SRC_DIR) $(LIB_DIR)
 
 SRC_DIR	= ./srcs
 SRC		= main.c \
-		  init_argc.c \
+		  init_args.c \
+		  init_params.c \
 		  init_thread.c \
-		  error.c \
+		  routine.c \
+		  exit.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
 LIB_DIR	= ./libs
 LIB		= ft_atoi.c \
 		  ft_isdigit.c \
+		  ft_isspace.c \
 		  ft_strchr.c \
-		  ft_strlen.c
+		  ft_strlen.c \
+		  ft_strtoll.c \
 
 LIBS	= $(addprefix $(LIB_DIR)/, $(LIB))
 

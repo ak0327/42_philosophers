@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 11:33:22 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 21:00:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,22 @@
 
 # include <errno.h>
 # include <limits.h>
+# include <pthread.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <pthread.h>
-
 # include <unistd.h>
 
-# define SUCCESS		0
-# define FAILURE		1
-# define PROCESS_ERROR	2
-# define INVALID_ARGC	3
+# define SUCCESS				0
+# define FAILURE				1
+# define PROCESS_ERROR			2
+# define INVALID_ARG_COUNT		3
 # define INVALID_NUM_OF_PHILOS	4
 # define INVALID_TIME_TO_DIE	5
 # define INVALID_TIME_TO_EAT	6
 # define INVALID_TIME_TO_SLEEP	7
 # define INVALID_MUST_EAT_TIMES	8
-
-# define PHILO_DEAD		0
-# define PHILO_ALIVE	1
 
 # define NUM_OF_PHILOS_IDX		1
 # define TIME_TO_DIE_IDX		2
@@ -42,12 +38,34 @@
 # define TIME_TO_SLEEP_IDX		4
 # define MUST_EAT_TIMES_IDX		5
 
+# define JST					9
+
+# define PRINT_FORK		"has taken a fork"
+# define PRINT_EATING	"is eating"
+# define PRINT_SLEEPING	"is sleeping"
+# define PRINT_THINKING	"is thinking"
+# define PRINT_DIED		"died"
+
+# define PHILO_DEAD		0
+# define PHILO_ALIVE	1
+
 # define CHECK_TIME_SPAN_MS		100
 
 typedef struct s_params		t_params;
 typedef struct s_args		t_args;
 typedef struct s_philo		t_philo;
+typedef struct s_time		t_time;
+
 typedef enum s_input_type	t_input_type;
+typedef enum s_print_type	t_print_type;
+
+struct s_philo
+{
+	size_t		philo_idx;
+	t_params	*params;
+	time_t		start_time;
+	t_philo		*next;
+};
 
 struct s_params
 {
@@ -61,39 +79,30 @@ struct s_params
 	// philo
 	pthread_t		*philo_no;
 
-	// fork
-	pthread_mutex_t	*forks;
+	// lock_fork
+//	pthread_mutex_t	*forks;
 
-	// waiter
-	pthread_mutex_t	waiter;
+	int				*forks;
 
-	// print
-	pthread_mutex_t	print_console;
-};
+	pthread_mutex_t	lock_fork;
 
-struct s_args
-{
-	int	num_of_philo;
-	int	time_to_die;
-	int time_to_eat;
-	int time_to_sleep;
-	int must_eat_times;
-};
-
-struct s_philo
-{
-	// philo
-	pthread_t	*no;
-
-	// fork
-	pthread_mutex_t	*forks;
-
-	// waiter
-	pthread_mutex_t	waiter;
+	// lock_waiter
+	pthread_mutex_t	lock_waiter;
 
 	// print
-	pthread_mutex_t	print_console;
+	pthread_mutex_t	lock_print;
 
+	ssize_t			*eat_times;
+	bool			is_died;
+};
+
+enum s_print_type
+{
+	TYPE_FORK,
+	TYPE_EATING,
+	TYPE_SLEEPING,
+	TYPE_THINKING,
+	TYPE_DIED
 };
 
 enum s_input_type
@@ -106,12 +115,16 @@ enum s_input_type
 };
 
 /* philo */
-int			init_params(int argc, char **argv, t_params *params);
+int			init_params(int argc, char **argv, t_params **params);
 int			get_input_args(char **argv, t_params *params);
 int			init_thread(t_params *params);
 
+int			create_threads(t_params *params, t_philo *philo);
+int			monitor_philos(t_params *params);
+int			terminate_threads(t_params *params);
 
-void		print_error(int err);
+void		free_allocs(t_params *params, t_philo *philo);
+int			print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int ret);
 
 
 /* libs */

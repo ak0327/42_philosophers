@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 11:36:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 21:29:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	print_error(int err)
+int	print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int ret)
 {
-	if (err == INVALID_ARGC)
+	if (err == INVALID_ARG_COUNT)
 		printf("[Error] Invalid argument. Input as following:\n" \
 		"$>./philo NumOfPhilos[1,200] TimeToDie[60,LLMAX] " \
 		"TimeToEat[60,LLMAX] TimeToSleep[60,LLMAX] (MustEatTimes[0,LLMAX])\n");
@@ -30,4 +30,24 @@ void	print_error(int err)
 		printf("[Error] Invalid argument. 0 <= MustEatTimes\n");
 	else
 		printf("[Error] Process error occurred\n");
+	free_allocs(params, philo);
+	return (ret);
+}
+
+void	free_allocs(t_params *params, t_philo *philo)
+{
+	t_philo	*next;
+
+	if (!params)
+		return ;
+	while (philo)
+	{
+		next = philo->next;
+		free(philo);
+		philo = next;
+	}
+	free(params->philo_no);
+	free(params->forks);
+	free(params->eat_times);
+	free(params);
 }

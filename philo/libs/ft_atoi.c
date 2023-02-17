@@ -6,16 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:31:53 by takira            #+#    #+#             */
-/*   Updated: 2023/02/15 20:01:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 16:23:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static int	ft_isspace(char c)
-{
-	return (ft_strchr("\t\n\v\f\r ", c) != NULL);
-}
 
 static bool	is_under_long(long long before_x10_val, long long add_val, int sign)
 {

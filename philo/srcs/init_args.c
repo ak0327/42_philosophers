@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 11:32:17 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/17 12:37:49 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	get_input_args(char **argv, t_params *params)
 		arg_num = ft_strtoll(argv[MUST_EAT_TIMES_IDX], &is_success);
 		if (!is_success && check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
 			return (INVALID_MUST_EAT_TIMES); //TODO: if must_eat_times = 0
-		params->must_eat_times = arg_num;
+		params->must_eat_times = (ssize_t)arg_num;
 	}
 	return (SUCCESS);
 }
