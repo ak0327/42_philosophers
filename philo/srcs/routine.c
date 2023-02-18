@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 17:19:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 18:44:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void	*do_routine(void *v_philo)
 	{
 		// waiting
 		params->philo_info[philo->idx].is_allowed = false;
-
+		usleep(10);
 		pthread_mutex_lock(&params->lock_waiter);
 		add_right(philo->wait, &params->wait_queue);
 		pthread_mutex_unlock(&params->lock_waiter);
