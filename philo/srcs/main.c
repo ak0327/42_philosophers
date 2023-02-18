@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 14:38:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 15:27:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	check_forks_available(t_params *params, size_t idx)
 	return (params->forks[left_idx] == 0 && params->forks[right_idx] == 0);
 }
 
-int	decide_eatable_philo(t_params *params)
+void	decide_fork_using_philo(t_params *params)
 {
 	t_stack	*wait_stack;
 	t_stack	*popped;
@@ -86,20 +86,29 @@ int	decide_eatable_philo(t_params *params)
 	while (params->wait_queue)
 	{
 		popped = pop_left(&params->wait_queue);
-		if (check_forks_available(params, popped->idx) == SUCCESS)
+		printf("popped idx:%zu, size:%zu\n", popped->idx, get_stack_size(params->wait_queue));
+		if (check_forks_available(params, popped->idx))
 		{
+			printf("available idx:%zu\n", popped->idx);
 			take_forks(params, popped->idx);
+			(&params->philo_info[popped->idx])->is_allowed = true;
 			break ;
 		}
 		else
 			add_right(popped, &wait_stack);
 	}
-	while (wait_stack)
+	printf("\n");
+
+	size_t	idx = 0;
+	while (get_stack_size(wait_stack))
 	{
+		idx++;
 		popped = pop_right(&wait_stack);
 		add_left(popped, &params->wait_queue);
+		printf("idx:%zu, size : wait:%zu, queue:%zu\n", idx, get_stack_size(wait_stack),
+			   get_stack_size(params->wait_queue));
 	}
-	return (SUCCESS);
+	printf("\n");
 }
 
 int	main(int argc, char **argv)
@@ -128,7 +137,7 @@ int	main(int argc, char **argv)
 
 
 	while (!params->is_died)
-		decide_eatable_philo(params);
+		decide_fork_using_philo(params);
 
 //	ret_value = monitor_philos(params);
 //	if (ret_value != SUCCESS)

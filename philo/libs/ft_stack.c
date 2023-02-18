@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 09:19:29 by takira            #+#    #+#             */
-/*   Updated: 2022/12/20 09:19:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 09:43:03 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ t_stack	*pop_right(t_stack **stk)
 	last_elem = get_last_elem(*stk);
 	if (last_elem->prev)
 		last_elem->prev->next = NULL;
+	else
+		*stk = NULL;
 	last_elem->prev = NULL;
 	last_elem->next = NULL;
 	return (last_elem);

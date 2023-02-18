@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 11:51:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 15:09:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	*do_routine(void *v_philo)
 				return (NULL);
 			usleep(10);
 		}
-
+		printf("idx:%zu, allowed:%d\n", philo->idx, params->philo_info[philo->idx].is_allowed);
 		// print taken a fork x 2 & update nowtime
 		if (take_forks(params, philo->idx) == FAILURE)
 			continue ;

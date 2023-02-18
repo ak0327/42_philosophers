@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/27 18:28:00 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 09:37:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 14:45:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,6 @@ void	ft_stack_clear(t_stack **stk)
 		*stk = next;
 	}
 	*stk = NULL;
-}
-
-t_stack	*concat_stack(t_stack **stack_a, t_stack **stack_b)
-{
-
 }
 
 void	swap(t_stack **stack)
