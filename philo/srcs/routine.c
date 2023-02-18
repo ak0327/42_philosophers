@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 18:44:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 21:40:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,46 @@ bool	is_meet_mast_eat_time(t_params *params)
 	return (true);
 }
 
+//int	take_forks(t_params *params, size_t idx)
+//{
+//	const size_t	num_of_philos = params->num_of_philos;
+//	size_t			left_idx;
+//	size_t			right_idx;
+//	int				ret_value;
+//
+//	left_idx = idx % num_of_philos;
+//	right_idx = (idx + 1) % num_of_philos;
+//
+//	ret_value = FAILURE;
+////	pthread_mutex_lock(&params->lock_fork);
+//	if (params->forks[left_idx] == 0 && params->forks[right_idx] == 0)
+//	{
+//		params->forks[left_idx] = 1;
+//		params->forks[right_idx] = 1;
+//		ret_value = SUCCESS;
+//	}
+////	pthread_mutex_unlock(&params->lock_fork);
+//	return (ret_value);
+//}
+
 int	take_forks(t_params *params, size_t idx)
 {
 	const size_t	num_of_philos = params->num_of_philos;
 	size_t			left_idx;
 	size_t			right_idx;
-	int				ret_value;
 
 	left_idx = idx % num_of_philos;
 	right_idx = (idx + 1) % num_of_philos;
 
-	ret_value = FAILURE;
-//	pthread_mutex_lock(&params->lock_fork);
-	if (params->forks[left_idx] == 0 && params->forks[right_idx] == 0)
-	{
-		params->forks[left_idx] = 1;
-		params->forks[right_idx] = 1;
-		ret_value = SUCCESS;
-	}
-//	pthread_mutex_unlock(&params->lock_fork);
-	return (ret_value);
+	pthread_mutex_lock(&params->each_fork[left_idx]);
+	params->forks[left_idx] = 1;
+
+	pthread_mutex_lock(&params->each_fork[right_idx]);
+	params->forks[right_idx] = 1;
+	return (SUCCESS);
 }
 
-int	release_forks(t_params *params, size_t idx)
+int	put_forks(t_params *params, size_t idx)
 {
 	const size_t	num_of_philos = params->num_of_philos;
 	size_t			first_take;
@@ -109,6 +126,22 @@ int	check_philo_alieve(t_params *params, size_t idx, time_t std_time)
 	return (PHILO_ALIVE);
 }
 
+bool	is_both_side_eating(t_params *params, size_t idx)
+{
+	size_t	left_idx;
+	size_t	right_idx;
+
+	if (idx == 0)
+		left_idx = params->num_of_philos - 1;
+	else
+		left_idx = idx - 1;
+	right_idx = (idx + 1) % params->num_of_philos;
+	if (params->state[left_idx] == STATE_EATING \
+	&& params->state[right_idx == STATE_EATING])
+		return (true);
+	return (false);
+}
+
 void	*do_routine(void *v_philo)
 {
 	t_each_philo	*philo;
@@ -118,22 +151,19 @@ void	*do_routine(void *v_philo)
 	params = philo->params;
 	while (is_meet_mast_eat_time(params) == false)
 	{
-		// waiting
-		params->philo_info[philo->idx].is_allowed = false;
-		usleep(10);
-		pthread_mutex_lock(&params->lock_waiter);
-		add_right(philo->wait, &params->wait_queue);
-		pthread_mutex_unlock(&params->lock_waiter);
+		/* take_forks(); */
+		//  state[i] = thingking -> hungry
+		//  state[i-1] != eating && state[i+1] != eating -> eating
+		pthread_mutex_lock(&params->lock_state);
+		params->state[philo->idx] = STATE_HUNGRY;
+		if (!is_both_side_eating(params, philo->idx))
+			params->state[philo->idx] = STATE_EATING;
+		pthread_mutex_unlock(&params->lock_state);
 
-		while (params->philo_info[philo->idx].is_allowed == false)
-		{
-			if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
-				return (NULL);
-		}
-		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
-			return (NULL);
+		//  take fork, if can not take, wait
+		take_forks(params, philo->idx);
 
-		// eat
+		/* eat */
 		pthread_mutex_lock(&params->lock_print);
 		philo->std_time = get_unix_time_ms();
 		print_msg(philo->idx, TYPE_FORK, philo->std_time, params);
@@ -143,14 +173,19 @@ void	*do_routine(void *v_philo)
 
 		usleep(params->time_to_eat * 1000);
 
-		// release forks
-		release_forks(params, philo->idx);
+
+		put_forks(params, philo->idx);
+		/* put forks */
+		//  state[i] = eating -> thinking
+		//  philo[i-1] && philo[i+1] == hungry UU philo[i-2] == philo[i+2] != eating
+		//
 
 //		pthread_mutex_lock(&params->lock_eat_times);
 		params->eat_times[philo->idx]++;
 //		pthread_mutex_unlock(&params->lock_eat_times);
 
-		// sleep
+
+		/* sleep */
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 			return (NULL);
 
@@ -160,13 +195,22 @@ void	*do_routine(void *v_philo)
 
 		usleep(params->time_to_sleep * 1000);
 
-		// think
+
+		/* think */
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 			return (NULL);
 
 		pthread_mutex_lock(&params->lock_print);
 		print_msg(philo->idx, TYPE_THINKING, get_unix_time_ms(), params);
 		pthread_mutex_unlock(&params->lock_print);
+
+		/* think */
+		while (params->state[philo->idx] == STATE_THINKING)
+		{
+			if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
+				return (NULL);
+		}
+
 	}
 	return (NULL);
 }
@@ -366,7 +410,7 @@ void	*do_routine(void *v_philo)
 		usleep(params->time_to_eat * 1000);
 
 		// release lock_fork
-		release_forks(params, idx);
+		put_forks(params, idx);
 		params->eat_times[idx]++;
 
 		// sleep & print

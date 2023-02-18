@@ -91,32 +91,18 @@ void	print_waiting(t_stack *stack)
 	}
 }
 
+// 元のコードでforkを獲得する前に、左右のphiloの状態を確認すれば良さそう？
+// いろいろ試してみる？
+
 void	decide_fork_using_philo(t_params *params)
 {
-	t_stack	*wait_stack;
-	t_stack	*popped;
+	size_t	idx;
 
-	wait_stack = NULL;
+	idx = 0;
+	while (idx < params->num_of_philos)
+	{
 
-	pthread_mutex_lock(&params->lock_fork);
-	while (params->wait_queue)
-	{
-		popped = pop_left(&params->wait_queue);
-		if (check_forks_available(params, popped->idx))
-		{
-//			printf("available idx:%zu\n", popped->idx);
-			take_forks(params, popped->idx);
-			(&params->philo_info[popped->idx])->is_allowed = true;
-			break ;
-		}
-		else
-			add_right(popped, &wait_stack);
-	}
-	pthread_mutex_unlock(&params->lock_fork);
-	while (wait_stack)
-	{
-		popped = pop_right(&wait_stack);
-		add_left(popped, &params->wait_queue);
+		idx++;
 	}
 }
 
@@ -151,7 +137,6 @@ int	main(int argc, char **argv)
 		pthread_mutex_unlock(&params->lock_waiter);
 //		usleep(100);
 	}
-
 //	ret_value = monitor_philos(params);
 //	if (ret_value != SUCCESS)
 //		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));

@@ -54,6 +54,11 @@
 # define PHILO_DIED		0
 # define PHILO_ALIVE	1
 
+/* philo state */
+# define STATE_THINKING 	0
+# define STATE_HUNGRY		1
+# define STATE_EATING		2 // 両隣がeatingでなければeatingに遷移可能
+
 /* parameter */
 # define CHECK_TIME_SPAN_MS		100
 
@@ -95,12 +100,18 @@ struct s_params
 //	pthread_mutex_t	*forks;
 
 	int				*forks;
+	int				*state;
+
+	pthread_mutex_t	*each_fork;
+
 
 	pthread_mutex_t	lock_fork;
 	pthread_mutex_t	lock_waiter;
 	pthread_mutex_t	lock_print;
 	pthread_mutex_t	lock_died;
 	pthread_mutex_t	lock_eat_times;
+	pthread_mutex_t	lock_state;
+
 
 	ssize_t			*eat_times;
 	time_t			died_time;
@@ -110,6 +121,7 @@ struct s_params
 	ssize_t			died_philo;
 	t_stack			*wait_queue;
 	t_each_philo	*philo_info;
+
 
 };
 
