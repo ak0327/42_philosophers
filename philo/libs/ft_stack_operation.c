@@ -48,3 +48,27 @@ void	ft_stack_clear(t_stack **stk)
 	}
 	*stk = NULL;
 }
+
+t_stack	*concat_stack(t_stack **stack_a, t_stack **stack_b)
+{
+
+}
+
+void	swap(t_stack **stack)
+{
+	t_stack	*first_elem;
+	t_stack	*second_elem;
+
+	if (!stack || get_stack_size(*stack) < 2)
+		return ;
+	first_elem = *stack;
+	second_elem = first_elem->next;
+	first_elem->prev = second_elem;
+	first_elem->next = second_elem->next;
+	if (second_elem->next)
+		second_elem->next->prev = first_elem;
+	second_elem->prev = NULL;
+	second_elem->next = first_elem;
+	*stack = second_elem;
+}
+

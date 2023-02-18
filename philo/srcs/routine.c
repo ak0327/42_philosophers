@@ -6,44 +6,145 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 09:59:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 11:51:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	waiting(t_each_philo *philo, t_params *params)
+//          can not eat
+//          v  v
+// waiting [0, 1, 2, 3, ...]
+//                ^ can eat
+
+// waiting		[3, ...]
+// take forks	[2]
+// popped 		[0, 1]
+// new waiting	[0, 1, 3, ...]
+
+int	check_died(t_params *params, size_t idx)
 {
+	const time_t	now_time = get_unix_time_ms();
+	const time_t	std_time = params->philo_info[idx].std_time;
+	const time_t	time_to_die = params->time_to_die;
 
+	return (now_time - std_time >= time_to_die);
+}
 
+int	take_forks(t_params *params, size_t idx)
+{
+	const size_t	num_of_philos = params->num_of_philos;
+	size_t			left_idx;
+	size_t			right_idx;
+	int				ret_value;
+
+	left_idx = idx % num_of_philos;
+	right_idx = (idx + 1) % num_of_philos;
+
+	ret_value = FAILURE;
+	pthread_mutex_lock(&params->lock_fork);
+	if (params->forks[left_idx] == 0 && params->forks[right_idx] == 0)
+	{
+		params->forks[left_idx] = 1;
+		params->forks[right_idx] = 1;
+		ret_value = SUCCESS;
+	}
+	pthread_mutex_unlock(&params->lock_fork);
+	return (ret_value);
+}
+
+int	release_forks(t_params *params, size_t idx)
+{
+	const size_t	num_of_philos = params->num_of_philos;
+	size_t			first_take;
+	size_t			second_take;
+
+	first_take = idx % num_of_philos;
+	second_take = (idx + 1) % num_of_philos;
+	if (idx % 2 == 1)
+	{
+		first_take = (idx + 1) % num_of_philos;
+		second_take = idx % num_of_philos;
+	}
+	pthread_mutex_lock(&params->lock_fork);
+	params->forks[first_take] = 0;
+	params->forks[second_take] = 0;
+	pthread_mutex_unlock(&params->lock_fork);
+	return (SUCCESS);
+}
+
+int	check_philo_alieve(t_params *params, size_t idx, time_t std_time)
+{
+	if (check_died(params, idx))
+	{
+		pthread_mutex_lock(&params->lock_died);
+		params->is_died = true;
+		params->died_philo = (ssize_t)idx;
+		pthread_mutex_unlock(&params->lock_died);
+
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(idx, TYPE_DIED, std_time + params->time_to_die, params);
+		pthread_mutex_unlock(&params->lock_print);
+		return (PHILO_DIED);
+	}
+	if (params->is_died)
+		return (PHILO_DIED);
+	return (PHILO_ALIVE);
 }
 
 void	*do_routine(void *v_philo)
 {
 	t_each_philo	*philo;
 	t_params		*params;
-	time_t			now_time;
 
 	philo = (t_each_philo *)v_philo;
 	params = philo->params;
 	while (true)
 	{
 		// waiting
-		if (waiting(philo, params) == INTERRUPT)
-			return (NULL);
+		params->philo_info[philo->idx].is_allowed = false;
 
-		// print taken a fork x 2
+		add_right(philo->wait, &params->wait_queue);
+		while (params->philo_info[philo->idx].is_allowed == false)
+		{
+			if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
+				return (NULL);
+			usleep(10);
+		}
+
+		// print taken a fork x 2 & update nowtime
+		if (take_forks(params, philo->idx) == FAILURE)
+			continue ;
+		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
+			return (NULL);
+		pthread_mutex_lock(&params->lock_print);
+		philo->std_time = get_unix_time_ms();
+		print_msg(philo->idx, TYPE_FORK, philo->std_time, params);
+		print_msg(philo->idx, TYPE_FORK, philo->std_time, params);
+		pthread_mutex_unlock(&params->lock_print);
 
 		// eat
+		usleep(params->time_to_eat * 1000);
 
 		// release forks
+		release_forks(params, philo->idx);
 
 		// sleep
+		usleep(params->time_to_sleep * 1000);
+		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
+			return (NULL);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo->idx, TYPE_SLEEPING, philo->std_time, params);
+		pthread_mutex_unlock(&params->lock_print);
 
 		// think
+		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
+			return (NULL);
+		pthread_mutex_lock(&params->lock_print);
+		print_msg(philo->idx, TYPE_THINKING, philo->std_time, params);
+		pthread_mutex_unlock(&params->lock_print);
 	}
 	return (NULL);
-
 }
 
 /*
@@ -210,7 +311,7 @@ void	*do_routine(void *v_philo)
 		while (take_forks(params, idx) == FAILURE)
 		{
 			now_time = get_unix_time_ms();
-			if (is_died(philo->start_time, now_time, params->time_to_die))
+			if (is_died(philo->std_time, now_time, params->time_to_die))
 			{
 				pthread_mutex_lock(&params->lock_died);
 				params->is_died = true;
@@ -219,7 +320,7 @@ void	*do_routine(void *v_philo)
 				pthread_mutex_unlock(&params->lock_died);
 
 				pthread_mutex_lock(&params->lock_print);
-				print_msg(idx, TYPE_DIED, philo->start_time + params->time_to_die, params);
+				print_msg(idx, TYPE_DIED, philo->std_time + params->time_to_die, params);
 				pthread_mutex_unlock(&params->lock_print);
 				return (NULL);
 			}
@@ -227,7 +328,7 @@ void	*do_routine(void *v_philo)
 				return (NULL);
 		}
 		now_time = get_unix_time_ms();
-		if (is_died(philo->start_time, now_time, params->time_to_die))
+		if (is_died(philo->std_time, now_time, params->time_to_die))
 		{
 			pthread_mutex_lock(&params->lock_died);
 			params->is_died = true;
@@ -236,14 +337,14 @@ void	*do_routine(void *v_philo)
 			pthread_mutex_unlock(&params->lock_died);
 
 			pthread_mutex_lock(&params->lock_print);
-			print_msg(idx, TYPE_DIED, philo->start_time + params->time_to_die, params);
+			print_msg(idx, TYPE_DIED, philo->std_time + params->time_to_die, params);
 			pthread_mutex_unlock(&params->lock_print);
 			return (NULL);
 		}
 		if (params->is_died || is_finished(params))
 			return (NULL);
 
-		philo->start_time = now_time;
+		philo->std_time = now_time;
 		pthread_mutex_lock(&params->lock_print);
 		print_msg(idx, TYPE_FORK, now_time, params);
 		pthread_mutex_unlock(&params->lock_print);

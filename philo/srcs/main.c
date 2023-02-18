@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 10:43:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 14:38:21 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	init_philo(t_params **params, t_each_philo **philo)
 			return (PROCESS_ERROR);
 		new->idx = idx;
 		new->params = *params;
-		new->start_time = 0;
+		new->std_time = 0;
 		new->wait = create_stack_elem(idx);
 		if (!new->wait)
 		{
@@ -66,6 +66,42 @@ t_each_philo	*create_each_philo_info(t_params **params)
 	return (philo_info);
 }
 
+int	check_forks_available(t_params *params, size_t idx)
+{
+	const size_t	num_of_philos = params->num_of_philos;
+	size_t			left_idx;
+	size_t			right_idx;
+
+	left_idx = idx % num_of_philos;
+	right_idx = (idx + 1) % num_of_philos;
+	return (params->forks[left_idx] == 0 && params->forks[right_idx] == 0);
+}
+
+int	decide_eatable_philo(t_params *params)
+{
+	t_stack	*wait_stack;
+	t_stack	*popped;
+
+	wait_stack = NULL;
+	while (params->wait_queue)
+	{
+		popped = pop_left(&params->wait_queue);
+		if (check_forks_available(params, popped->idx) == SUCCESS)
+		{
+			take_forks(params, popped->idx);
+			break ;
+		}
+		else
+			add_right(popped, &wait_stack);
+	}
+	while (wait_stack)
+	{
+		popped = pop_right(&wait_stack);
+		add_left(popped, &params->wait_queue);
+	}
+	return (SUCCESS);
+}
+
 int	main(int argc, char **argv)
 {
 	t_params		*params;
@@ -92,9 +128,8 @@ int	main(int argc, char **argv)
 
 
 	while (!params->is_died)
-	{
-		waiter();
-	}
+		decide_eatable_philo(params);
+
 //	ret_value = monitor_philos(params);
 //	if (ret_value != SUCCESS)
 //		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));

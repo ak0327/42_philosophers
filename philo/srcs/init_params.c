@@ -118,7 +118,7 @@ int	init_thread(t_params *params)
 	if (init_mutex(&params) != SUCCESS)
 		is_process_failure = true;
 
-	params->queue = NULL;
+	params->wait_queue = NULL;
 
 	if (!is_process_failure)
 		return (SUCCESS);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 10:45:17 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 10:58:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <string.h>
 # include <unistd.h>
 
+/* return value */
 # define SUCCESS				0
 # define FAILURE				1
 # define PROCESS_ERROR			2
@@ -32,7 +33,9 @@
 # define INVALID_TIME_TO_SLEEP	7
 # define INVALID_MUST_EAT_TIMES	8
 # define INTERRUPT				9
+# define CONTINUE				10
 
+/* index */
 # define NUM_OF_PHILOS_IDX		1
 # define TIME_TO_DIE_IDX		2
 # define TIME_TO_EAT_IDX		3
@@ -41,15 +44,17 @@
 
 # define JST					9
 
+/* message */
 # define PRINT_FORK		"has taken a fork"
 # define PRINT_EATING	"is eating"
 # define PRINT_SLEEPING	"is sleeping"
 # define PRINT_THINKING	"is thinking"
 # define PRINT_DIED		"died"
 
-# define PHILO_DEAD		0
+# define PHILO_DIED		0
 # define PHILO_ALIVE	1
 
+/* parameter */
 # define CHECK_TIME_SPAN_MS		100
 
 typedef struct s_params		t_params;
@@ -66,7 +71,7 @@ struct s_each_philo
 	t_params		*params;
 
 	size_t			idx;
-	time_t			start_time;
+	time_t			std_time;
 
 	t_stack			*wait;
 	bool			is_allowed;
@@ -110,7 +115,7 @@ struct s_params
 
 	ssize_t			wait_philo_idx;
 
-	t_stack			*queue;
+	t_stack			*wait_queue;
 
 	t_each_philo	*philo_info;
 
@@ -158,6 +163,7 @@ void	*do_routine(void *v_philo);
 
 void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
+int	take_forks(t_params *params, size_t idx);
 
 time_t	get_unix_time_ms(void);
 
@@ -178,5 +184,6 @@ size_t		get_stack_size(t_stack *stk);
 t_stack		*create_stack_elem(size_t idx);
 t_stack		*get_last_elem(t_stack *elem);
 void		ft_stack_clear(t_stack **stk);
+void		swap(t_stack **stack);
 
 #endif

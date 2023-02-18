@@ -19,8 +19,7 @@ time_t	get_unix_time_ms(void)
 	time_t			ret_time;
 
 	gettimeofday(&tv, NULL);
-	ret_time = tv.tv_sec * 1000
-			   + tv.tv_usec / 1000;
+	ret_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	return (ret_time);
 }
 
