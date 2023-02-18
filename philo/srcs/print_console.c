@@ -25,6 +25,7 @@ static char	*get_print_msg(t_print_type type)
 	return (PRINT_DIED);
 }
 
+//TODO: idx->+1
 void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 {
 	const time_t	unix_time_sec = time / 1000;

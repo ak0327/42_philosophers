@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 17:09:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 17:19:47 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,20 @@ int	check_died(t_params *params, size_t idx)
 	return (now_time - std_time >= time_to_die);
 }
 
-bool	is_finished(t_params *params)
+bool	is_meet_mast_eat_time(t_params *params)
 {
 	const ssize_t	must_eat_times = params->must_eat_times;
-	size_t	idx;
+	size_t			idx;
 
 	if (must_eat_times < 0)
 		return (false);
 	idx = 0;
-	pthread_mutex_lock(&params->lock_eat_times);
 	while (idx < params->num_of_philos)
 	{
 		if (params->eat_times[idx] < params->must_eat_times)
 			return (false);
 		idx++;
 	}
-	pthread_mutex_unlock(&params->lock_eat_times);
 	return (true);
 }
 
@@ -118,7 +116,7 @@ void	*do_routine(void *v_philo)
 
 	philo = (t_each_philo *)v_philo;
 	params = philo->params;
-	while (is_finished(params))
+	while (is_meet_mast_eat_time(params) == false)
 	{
 		// waiting
 		params->philo_info[philo->idx].is_allowed = false;
@@ -148,9 +146,9 @@ void	*do_routine(void *v_philo)
 		// release forks
 		release_forks(params, philo->idx);
 
-		pthread_mutex_lock(&params->lock_eat_times);
+//		pthread_mutex_lock(&params->lock_eat_times);
 		params->eat_times[philo->idx]++;
-		pthread_mutex_unlock(&params->lock_eat_times);
+//		pthread_mutex_unlock(&params->lock_eat_times);
 
 		// sleep
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
@@ -381,7 +379,7 @@ void	*do_routine(void *v_philo)
 
 		// think & print
 
-		if (params->is_died || is_finished(params))
+		if (params->is_died || is_meet_mast_eat_time(params))
 			return (NULL);
 		pthread_mutex_lock(&params->lock_print);
 		print_msg(idx, TYPE_THINKING, get_unix_time_ms(), params);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 17:06:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 17:17:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ int	init_mutex(t_params **params)
 	if (pthread_mutex_init(&(*params)->lock_print, NULL) != SUCCESS)
 		return (FAILURE);
 
-	if (pthread_mutex_init(&(*params)->lock_eat_times, NULL) != SUCCESS)
-		return (FAILURE);
+//	if (pthread_mutex_init(&(*params)->lock_eat_times, NULL) != SUCCESS)
+//		return (FAILURE);
 
 	return (SUCCESS);
 }

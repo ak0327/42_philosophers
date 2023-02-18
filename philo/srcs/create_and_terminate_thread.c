@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 17:12:06 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 17:21:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,17 @@ int	create_threads(t_params *params)
 
 	if (!params)
 		return (FAILURE);
-	printf("1\n");
-
-	idx = 0;
+	idx = 1;
 	while (idx < params->num_of_philos)
 	{
-		printf("2 idx:%zu\n", idx);
-
 		(&params->philo_info[idx])->std_time = start_time;
 		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
-	idx = 1;
+	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		printf("3 idx:%zu\n", idx);
-
 		(&params->philo_info[idx])->std_time = start_time;
 		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
