@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 14:58:46 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 15:45:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 
 	if (!params->is_died || params->died_philo == (ssize_t)idx)
 	{
-			printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
-//		printf("%ld%03ld %zu %s\n", unix_time_sec, unix_time_msec, idx, msg);
+//		printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
+		printf("%ld%03ld %zu %s\n", unix_time_sec, unix_time_msec, idx, msg);
 	}
 }

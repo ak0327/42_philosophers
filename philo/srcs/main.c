@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 15:27:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 17:10:34 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,19 +77,34 @@ int	check_forks_available(t_params *params, size_t idx)
 	return (params->forks[left_idx] == 0 && params->forks[right_idx] == 0);
 }
 
+void	print_waiting(t_stack *stack)
+{
+	printf("[#DEBUG]waiting:: ");
+	while (stack)
+	{
+		printf("%zu", stack->idx);
+		stack = stack->next;
+		if (stack)
+			printf(" -> ");
+		else
+			printf("\n");
+	}
+}
+
 void	decide_fork_using_philo(t_params *params)
 {
 	t_stack	*wait_stack;
 	t_stack	*popped;
 
 	wait_stack = NULL;
+
+	pthread_mutex_lock(&params->lock_fork);
 	while (params->wait_queue)
 	{
 		popped = pop_left(&params->wait_queue);
-		printf("popped idx:%zu, size:%zu\n", popped->idx, get_stack_size(params->wait_queue));
 		if (check_forks_available(params, popped->idx))
 		{
-			printf("available idx:%zu\n", popped->idx);
+//			printf("available idx:%zu\n", popped->idx);
 			take_forks(params, popped->idx);
 			(&params->philo_info[popped->idx])->is_allowed = true;
 			break ;
@@ -97,18 +112,12 @@ void	decide_fork_using_philo(t_params *params)
 		else
 			add_right(popped, &wait_stack);
 	}
-	printf("\n");
-
-	size_t	idx = 0;
-	while (get_stack_size(wait_stack))
+	pthread_mutex_unlock(&params->lock_fork);
+	while (wait_stack)
 	{
-		idx++;
 		popped = pop_right(&wait_stack);
 		add_left(popped, &params->wait_queue);
-		printf("idx:%zu, size : wait:%zu, queue:%zu\n", idx, get_stack_size(wait_stack),
-			   get_stack_size(params->wait_queue));
 	}
-	printf("\n");
 }
 
 int	main(int argc, char **argv)
@@ -131,13 +140,17 @@ int	main(int argc, char **argv)
 	if (!params->philo_info)
 		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
-	ret_value = create_threads(params, philo);
+	ret_value = create_threads(params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
-
 	while (!params->is_died)
+	{
+		pthread_mutex_lock(&params->lock_waiter);
 		decide_fork_using_philo(params);
+		pthread_mutex_unlock(&params->lock_waiter);
+//		usleep(100);
+	}
 
 //	ret_value = monitor_philos(params);
 //	if (ret_value != SUCCESS)
@@ -148,8 +161,6 @@ int	main(int argc, char **argv)
 		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
 	free_allocs(params, philo);
-	printf("\n");
-	printf("\n");
 
 //	system("leaks -q philo");
 	return (EXIT_SUCCESS);

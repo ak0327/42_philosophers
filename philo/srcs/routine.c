@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 15:09:29 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 17:09:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,25 @@ int	check_died(t_params *params, size_t idx)
 	return (now_time - std_time >= time_to_die);
 }
 
+bool	is_finished(t_params *params)
+{
+	const ssize_t	must_eat_times = params->must_eat_times;
+	size_t	idx;
+
+	if (must_eat_times < 0)
+		return (false);
+	idx = 0;
+	pthread_mutex_lock(&params->lock_eat_times);
+	while (idx < params->num_of_philos)
+	{
+		if (params->eat_times[idx] < params->must_eat_times)
+			return (false);
+		idx++;
+	}
+	pthread_mutex_unlock(&params->lock_eat_times);
+	return (true);
+}
+
 int	take_forks(t_params *params, size_t idx)
 {
 	const size_t	num_of_philos = params->num_of_philos;
@@ -42,14 +61,14 @@ int	take_forks(t_params *params, size_t idx)
 	right_idx = (idx + 1) % num_of_philos;
 
 	ret_value = FAILURE;
-	pthread_mutex_lock(&params->lock_fork);
+//	pthread_mutex_lock(&params->lock_fork);
 	if (params->forks[left_idx] == 0 && params->forks[right_idx] == 0)
 	{
 		params->forks[left_idx] = 1;
 		params->forks[right_idx] = 1;
 		ret_value = SUCCESS;
 	}
-	pthread_mutex_unlock(&params->lock_fork);
+//	pthread_mutex_unlock(&params->lock_fork);
 	return (ret_value);
 }
 
@@ -99,49 +118,56 @@ void	*do_routine(void *v_philo)
 
 	philo = (t_each_philo *)v_philo;
 	params = philo->params;
-	while (true)
+	while (is_finished(params))
 	{
 		// waiting
 		params->philo_info[philo->idx].is_allowed = false;
 
+		pthread_mutex_lock(&params->lock_waiter);
 		add_right(philo->wait, &params->wait_queue);
+		pthread_mutex_unlock(&params->lock_waiter);
+
 		while (params->philo_info[philo->idx].is_allowed == false)
 		{
 			if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 				return (NULL);
-			usleep(10);
 		}
-		printf("idx:%zu, allowed:%d\n", philo->idx, params->philo_info[philo->idx].is_allowed);
-		// print taken a fork x 2 & update nowtime
-		if (take_forks(params, philo->idx) == FAILURE)
-			continue ;
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 			return (NULL);
+
+		// eat
 		pthread_mutex_lock(&params->lock_print);
 		philo->std_time = get_unix_time_ms();
 		print_msg(philo->idx, TYPE_FORK, philo->std_time, params);
 		print_msg(philo->idx, TYPE_FORK, philo->std_time, params);
+		print_msg(philo->idx, TYPE_EATING, get_unix_time_ms(), params);
 		pthread_mutex_unlock(&params->lock_print);
 
-		// eat
 		usleep(params->time_to_eat * 1000);
 
 		// release forks
 		release_forks(params, philo->idx);
 
+		pthread_mutex_lock(&params->lock_eat_times);
+		params->eat_times[philo->idx]++;
+		pthread_mutex_unlock(&params->lock_eat_times);
+
 		// sleep
-		usleep(params->time_to_sleep * 1000);
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 			return (NULL);
+
 		pthread_mutex_lock(&params->lock_print);
-		print_msg(philo->idx, TYPE_SLEEPING, philo->std_time, params);
+		print_msg(philo->idx, TYPE_SLEEPING, get_unix_time_ms(), params);
 		pthread_mutex_unlock(&params->lock_print);
+
+		usleep(params->time_to_sleep * 1000);
 
 		// think
 		if (check_philo_alieve(params, philo->idx, philo->std_time) == PHILO_DIED)
 			return (NULL);
+
 		pthread_mutex_lock(&params->lock_print);
-		print_msg(philo->idx, TYPE_THINKING, philo->std_time, params);
+		print_msg(philo->idx, TYPE_THINKING, get_unix_time_ms(), params);
 		pthread_mutex_unlock(&params->lock_print);
 	}
 	return (NULL);
@@ -279,22 +305,6 @@ bool	is_died(time_t start, time_t now, time_t time_to_die)
 
 // 待っている間のdied判定
 
-bool	is_finished(t_params *params)
-{
-	const ssize_t	must_eat_times = params->must_eat_times;
-	size_t	idx;
-
-	if (must_eat_times < 0)
-		return (false);
-	idx = 0;
-	while (idx < params->num_of_philos)
-	{
-		if (params->eat_times[idx] < params->must_eat_times)
-			return (false);
-		idx++;
-	}
-	return (true);
-}
 
 void	*do_routine(void *v_philo)
 {

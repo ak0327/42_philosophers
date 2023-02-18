@@ -97,26 +97,18 @@ struct s_params
 	int				*forks;
 
 	pthread_mutex_t	lock_fork;
-
-	// lock_waiter
 	pthread_mutex_t	lock_waiter;
-
-	// print
 	pthread_mutex_t	lock_print;
-
-	// died
 	pthread_mutex_t	lock_died;
+	pthread_mutex_t	lock_eat_times;
 
 	ssize_t			*eat_times;
+	time_t			died_time;
+	ssize_t			wait_philo_idx;
 
 	bool			is_died;
 	ssize_t			died_philo;
-	time_t			died_time;
-
-	ssize_t			wait_philo_idx;
-
 	t_stack			*wait_queue;
-
 	t_each_philo	*philo_info;
 
 };
@@ -151,7 +143,7 @@ int			init_params(int argc, char **argv, t_params **params);
 int			get_input_args(char **argv, t_params *params);
 int			init_thread(t_params *params);
 
-int			create_threads(t_params *params, t_each_philo *philo);
+int			create_threads(t_params *params);
 int			monitor_philos(t_params *params);
 int			terminate_threads(t_params *params);
 
@@ -185,5 +177,8 @@ t_stack		*create_stack_elem(size_t idx);
 t_stack		*get_last_elem(t_stack *elem);
 void		ft_stack_clear(t_stack **stk);
 void		swap(t_stack **stack);
+
+void	print_waiting(t_stack *stack);
+
 
 #endif
