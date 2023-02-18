@@ -6,28 +6,34 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 19:55:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 10:43:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	init_philo(t_params **params, t_philo **philo)
+int	init_philo(t_params **params, t_each_philo **philo)
 {
 	size_t	idx;
-	t_philo	*last;
-	t_philo	*new;
+	t_each_philo	*last;
+	t_each_philo	*new;
 
 	last = NULL;
 	idx = 0;
 	while (idx < (*params)->num_of_philos)
 	{
-		new = (t_philo *)malloc(sizeof(t_philo));
+		new = (t_each_philo *)malloc(sizeof(t_each_philo));
 		if (!new)
 			return (PROCESS_ERROR);
-		new->philo_idx = idx;
+		new->idx = idx;
 		new->params = *params;
 		new->start_time = 0;
+		new->wait = create_stack_elem(idx);
+		if (!new->wait)
+		{
+			free(new);
+			return (PROCESS_ERROR);
+		}
 		new->next = NULL;
 		if (!last)
 			*philo = new;
@@ -39,11 +45,32 @@ int	init_philo(t_params **params, t_philo **philo)
 	return (SUCCESS);
 }
 
+t_each_philo	*create_each_philo_info(t_params **params)
+{
+	t_each_philo	*philo_info;
+	size_t			idx;
+
+	philo_info = (t_each_philo *)malloc(sizeof(t_each_philo) * ((*params)->num_of_philos + 1));
+	if (!philo_info)
+		return (NULL);
+	memset(philo_info, 0, sizeof(t_each_philo) * ((*params)->num_of_philos + 1));
+	idx = 0;
+	while (idx < (*params)->num_of_philos)
+	{
+		philo_info[idx].idx = idx;
+		philo_info[idx].params = *params;
+		philo_info[idx].wait = create_stack_elem(idx);
+		philo_info[idx].is_allowed = false;
+		idx++;
+	}
+	return (philo_info);
+}
+
 int	main(int argc, char **argv)
 {
-	t_params	*params;
-	t_philo		*philo;
-	int			ret_value;
+	t_params		*params;
+	t_each_philo	*philo;
+	int				ret_value;
 
 	params = NULL;
 	philo = NULL;
@@ -55,13 +82,22 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
+	params->philo_info = create_each_philo_info(&params);
+	if (!params->philo_info)
+		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
+
 	ret_value = create_threads(params, philo);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
-	ret_value = monitor_philos(params);
-	if (ret_value != SUCCESS)
-		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
+
+	while (!params->is_died)
+	{
+		waiter();
+	}
+//	ret_value = monitor_philos(params);
+//	if (ret_value != SUCCESS)
+//		return (print_err_msg_and_free_allocs(ret_value, params, philo, EXIT_FAILURE));
 
 	ret_value = terminate_threads(params);
 	if (ret_value != SUCCESS)

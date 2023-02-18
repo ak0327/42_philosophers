@@ -22,8 +22,10 @@ SRC_DIR	= ./srcs
 SRC		= main.c \
 		  init_args.c \
 		  init_params.c \
-		  init_thread.c \
+		  create_and_terminate_thread.c \
 		  routine.c \
+		  time.c \
+		  print_console.c \
 		  exit.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
@@ -35,6 +37,8 @@ LIB		= ft_atoi.c \
 		  ft_strchr.c \
 		  ft_strlen.c \
 		  ft_strtoll.c \
+		  ft_stack.c \
+		  ft_stack_operation.c \
 
 LIBS	= $(addprefix $(LIB_DIR)/, $(LIB))
 

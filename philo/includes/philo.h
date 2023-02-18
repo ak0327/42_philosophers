@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 23:04:09 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/18 10:45:17 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # define INVALID_TIME_TO_EAT	6
 # define INVALID_TIME_TO_SLEEP	7
 # define INVALID_MUST_EAT_TIMES	8
+# define INTERRUPT				9
 
 # define NUM_OF_PHILOS_IDX		1
 # define TIME_TO_DIE_IDX		2
@@ -53,18 +54,24 @@
 
 typedef struct s_params		t_params;
 typedef struct s_args		t_args;
-typedef struct s_philo		t_philo;
+typedef struct s_each_philo	t_each_philo;
 typedef struct s_time		t_time;
+typedef struct s_stack_elem	t_stack;
 
 typedef enum s_input_type	t_input_type;
 typedef enum s_print_type	t_print_type;
 
-struct s_philo
+struct s_each_philo
 {
-	size_t		philo_idx;
-	t_params	*params;
-	time_t		start_time;
-	t_philo		*next;
+	t_params		*params;
+
+	size_t			idx;
+	time_t			start_time;
+
+	t_stack			*wait;
+	bool			is_allowed;
+
+	t_each_philo	*next;
 };
 
 struct s_params
@@ -101,7 +108,19 @@ struct s_params
 	ssize_t			died_philo;
 	time_t			died_time;
 
-	ssize_t			wait_philo;
+	ssize_t			wait_philo_idx;
+
+	t_stack			*queue;
+
+	t_each_philo	*philo_info;
+
+};
+
+struct s_stack_elem
+{
+	size_t	idx;
+	t_stack	*prev;
+	t_stack	*next;
 };
 
 enum s_print_type
@@ -127,12 +146,20 @@ int			init_params(int argc, char **argv, t_params **params);
 int			get_input_args(char **argv, t_params *params);
 int			init_thread(t_params *params);
 
-int			create_threads(t_params *params, t_philo *philo);
+int			create_threads(t_params *params, t_each_philo *philo);
 int			monitor_philos(t_params *params);
 int			terminate_threads(t_params *params);
 
-void		free_allocs(t_params *params, t_philo *philo);
-int			print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int ret);
+void		free_allocs(t_params *params, t_each_philo *philo);
+int			print_err_msg_and_free_allocs(int err, t_params *params, t_each_philo *philo, int ret);
+
+time_t	get_unix_time_ms(void);
+void	*do_routine(void *v_philo);
+
+void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
+
+
+time_t	get_unix_time_ms(void);
 
 
 /* libs */
@@ -142,5 +169,14 @@ size_t		ft_strlen_ns(const char *s);
 char		*ft_strchr(const char *s, int c);
 int			ft_isspace(char c);
 long long	ft_strtoll(char *num, bool *is_success);
+
+void		add_left(t_stack *elem, t_stack **stk);
+void		add_right(t_stack *elem, t_stack **stk);
+t_stack		*pop_left(t_stack **stk);
+t_stack		*pop_right(t_stack **stk);
+size_t		get_stack_size(t_stack *stk);
+t_stack		*create_stack_elem(size_t idx);
+t_stack		*get_last_elem(t_stack *elem);
+void		ft_stack_clear(t_stack **stk);
 
 #endif

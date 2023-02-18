@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int ret)
+int	print_err_msg_and_free_allocs(int err, t_params *params, t_each_philo *philo, int ret)
 {
 	if (err == INVALID_ARG_COUNT)
 		printf("[Error] Invalid argument. Input as following:\n" \
@@ -34,9 +34,9 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, t_philo *philo, int
 	return (ret);
 }
 
-void	free_allocs(t_params *params, t_philo *philo)
+void	free_allocs(t_params *params, t_each_philo *philo)
 {
-	t_philo	*next;
+	t_each_philo	*next;
 	size_t	idx;
 
 	if (!params)
