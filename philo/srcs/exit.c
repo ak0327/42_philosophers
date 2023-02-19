@@ -40,8 +40,8 @@ void	free_allocs(t_params *params)
 
 	if (!params)
 		return ;
-	free(params->philo_no);
-	free(params->forks);
+	free(params->tid);
+	free(params->fork_arr);
 	free(params->eat_times);
 	free(params->lock_each_fork);
 	idx = 0;

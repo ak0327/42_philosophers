@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 20:57:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 22:28:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,19 @@
 # define STATE_EATING	2
 # define STATE_SLEEPING	3
 
+/* print color */
+# define PRINT_COLOR_WHITE	"\x1b[00m"
+# define PRINT_COLOR_RED	"\x1b[31m"
+# define PRINT_COLOR_GREEN	"\x1b[32m"
+# define PRINT_COLOR_YELLOW	"\x1b[33m"
+# define PRINT_COLOR_BLUE	"\x1b[34m"
+# define PRINT_COLOR_RESET	"\x1b[0m"
+
 /* parameter */
 # define CHECK_TIME_SPAN_MS		100
 
 typedef struct s_params		t_params;
-typedef struct s_args		t_args;
 typedef struct s_philo_info	t_philo_info;
-typedef struct s_time		t_time;
 typedef struct s_stack_elem	t_stack;
 
 typedef enum s_input_type	t_input_type;
@@ -86,6 +92,7 @@ struct s_philo_info
 	size_t			left_fork_idx;
 	size_t			right_fork_idx;
 
+	
 	time_t			start_time;
 
 	t_stack			*wait_info;
@@ -104,12 +111,12 @@ struct s_params
 	ssize_t			must_eat_times;
 
 	// philo
-	pthread_t		*philo_no;
+	pthread_t		*tid;
 
 	// lock_fork
-//	pthread_mutex_t	*forks;
+//	pthread_mutex_t	*fork_arr;
 
-	int				*forks;
+	int				*fork_arr;
 	pthread_mutex_t	*lock_each_fork;
 
 	int				*state;

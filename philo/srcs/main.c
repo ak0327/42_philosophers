@@ -69,7 +69,7 @@ int	check_forks_available(t_params *params, size_t idx)
 
 	left_idx = idx % num_of_philos;
 	right_idx = (idx + 1) % num_of_philos;
-	return (params->forks[left_idx] == 0 && params->forks[right_idx] == 0);
+	return (params->fork_arr[left_idx] == 0 && params->fork_arr[right_idx] == 0);
 }
 
 void	print_waiting(t_stack *stack)

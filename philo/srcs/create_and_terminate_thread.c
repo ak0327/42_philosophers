@@ -23,7 +23,7 @@ int	create_threads(t_params *params)
 	while (idx < params->num_of_philos)
 	{
 		(&params->philo_info[idx])->start_time = start_time;
-		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
+		if (pthread_create(&params->tid[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
@@ -31,7 +31,7 @@ int	create_threads(t_params *params)
 	while (idx < params->num_of_philos)
 	{
 		(&params->philo_info[idx])->start_time = start_time;
-		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
+		if (pthread_create(&params->tid[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
@@ -45,7 +45,7 @@ int	terminate_threads(t_params *params)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		if (pthread_join(params->philo_no[idx], NULL) != SUCCESS)
+		if (pthread_join(params->tid[idx], NULL) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx++;
 	}

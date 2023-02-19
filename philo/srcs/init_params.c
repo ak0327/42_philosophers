@@ -62,21 +62,21 @@ static pthread_t *init_philo_no(size_t num_of_philo)
 /*
 static pthread_mutex_t	*init_forks(size_t num_of_philo)
 {
-	pthread_mutex_t	*forks;
+	pthread_mutex_t	*fork_arr;
 	size_t			idx;
 
-	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (num_of_philo + 1));
-	if (!forks)
+	fork_arr = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (num_of_philo + 1));
+	if (!fork_arr)
 		return (NULL);
-	memset(forks, 0, sizeof(pthread_mutex_t) * num_of_philo);
+	memset(fork_arr, 0, sizeof(pthread_mutex_t) * num_of_philo);
 	idx = 0;
 	while (idx < num_of_philo)
 	{
-		if (pthread_mutex_init(&forks[idx], NULL) != SUCCESS)
+		if (pthread_mutex_init(&fork_arr[idx], NULL) != SUCCESS)
 			return (NULL);
 		idx++;
 	}
-	return (forks);
+	return (fork_arr);
 }
 */
 
@@ -120,17 +120,17 @@ int	init_thread(t_params *params)
 {
 	bool	is_process_failure;
 
-	params->philo_no = init_philo_no(params->num_of_philos);
-	if (!params->philo_no)
+	params->tid = init_philo_no(params->num_of_philos);
+	if (!params->tid)
 		is_process_failure = true;
 
-	params->forks = (int *)malloc(sizeof(int) * params->num_of_philos);
-	if (!params->forks)
+	params->fork_arr = (int *)malloc(sizeof(int) * params->num_of_philos);
+	if (!params->fork_arr)
 		is_process_failure = true;
-	memset(params->forks, 0, sizeof(int) * params->num_of_philos);
+	memset(params->fork_arr, 0, sizeof(int) * params->num_of_philos);
 
 	params->eat_times = (ssize_t *)malloc(sizeof(ssize_t) * params->num_of_philos);
-	if (!params->forks)
+	if (!params->fork_arr)
 		is_process_failure = true;
 	memset(params->eat_times, 0, sizeof(ssize_t) * params->num_of_philos);
 

@@ -115,14 +115,16 @@ int	take_forks(t_params *params, t_philo_info *philo)
 
 	ret_value = SUCCESS;
 
+	/*
 	pthread_mutex_lock(&params->lock_state);
 	if (params->state[philo->idx] != STATE_HUNGRY \
 	&& (params->state[philo->left_philo_idx] == STATE_HUNGRY \
- || params->state[philo->right_philo_idx] == STATE_HUNGRY))
+	|| params->state[philo->right_philo_idx] == STATE_HUNGRY))
 		ret_value = CONTINUE;
 	pthread_mutex_unlock(&params->lock_state);
 	if (ret_value == CONTINUE)
 		return (ret_value);
+	*/
 
 	first_take = philo->first_take;
 	second_take = philo->second_take;
@@ -157,12 +159,17 @@ int	put_forks(t_params *params, t_philo_info *philo)
 
 int	check_philo_alieve(t_params *params, size_t idx, time_t std_time)
 {
+	if (params->is_died && params->died_philo != (ssize_t)idx)
+		return (PHILO_DIED);
 	if (check_died(params, idx))
 	{
-		pthread_mutex_lock(&params->lock_died);
-		params->is_died = true;
-		params->died_philo = (ssize_t)idx;
-		pthread_mutex_unlock(&params->lock_died);
+		if (!params->is_died)
+		{
+			pthread_mutex_lock(&params->lock_died);
+			params->is_died = true;
+			params->died_philo = (ssize_t)idx;
+			pthread_mutex_unlock(&params->lock_died);
+		}
 
 		pthread_mutex_lock(&params->lock_print);
 		print_msg(idx, TYPE_DIED, std_time + params->time_to_die, params);
@@ -170,8 +177,6 @@ int	check_philo_alieve(t_params *params, size_t idx, time_t std_time)
 		printf("died waiting time:%ld\n", get_unix_time_ms() - std_time);
 		return (PHILO_DIED);
 	}
-	if (params->is_died)
-		return (PHILO_DIED);
 	return (PHILO_ALIVE);
 }
 
@@ -189,6 +194,7 @@ void	*do_routine(void *v_philo)
 	{
 
 		/* take a fork */
+		/*
 		if (take_forks(params, philo) == CONTINUE)
 		{
 			pthread_mutex_lock(&params->lock_state);
@@ -197,6 +203,8 @@ void	*do_routine(void *v_philo)
 			usleep(500);
 			continue ;
 		}
+		 */
+		take_forks(params, philo);
 		if (check_philo_alieve(params, philo->idx, philo->start_time) == PHILO_DIED)
 		{
 			put_forks(params, philo);
@@ -217,7 +225,7 @@ void	*do_routine(void *v_philo)
 
 		usleep(params->time_to_eat * 1000);
 
-		/* put forks */
+		/* put fork_arr */
 		put_forks(params, philo);
 
 //		pthread_mutex_lock(&params->lock_eat_times);
