@@ -6,12 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 21:05:30 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 00:29:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
 t_philo_info	*create_each_philo_info(t_params **params)
 {
 	t_philo_info	*philo_info;
@@ -38,11 +37,11 @@ t_philo_info	*create_each_philo_info(t_params **params)
 		philo_info[idx].first_take = philo_info[idx].left_fork_idx;
 		philo_info[idx].second_take = philo_info[idx].right_fork_idx;
 
-		if (idx == 0)
-		{
-			philo_info[idx].first_take = philo_info[idx].right_fork_idx;
-			philo_info[idx].second_take = philo_info[idx].left_fork_idx;
-		}
+//		if (idx == 0)
+//		{
+//			philo_info[idx].first_take = philo_info[idx].right_fork_idx;
+//			philo_info[idx].second_take = philo_info[idx].left_fork_idx;
+//		}
 //		if (idx % 2 == 1)
 //		{
 //			philo_info[idx].first_take = (idx + 1) % num_of_philos;
@@ -50,10 +49,8 @@ t_philo_info	*create_each_philo_info(t_params **params)
 //		}
 
 		/* left and right philo idx */
-		if (idx == 0)
-			philo_info[idx].left_philo_idx = num_of_philos - 1;
-		else
-			philo_info[idx].left_philo_idx = idx - 1;
+
+		philo_info[idx].left_philo_idx = (idx + num_of_philos - 1) % num_of_philos;
 		philo_info[idx].right_philo_idx = (idx + 1) % num_of_philos;
 
 		idx++;
@@ -131,6 +128,10 @@ int	monitor(t_params *params)
 			pthread_mutex_lock(&params->lock_died);
 			params->is_died = true;
 			params->died_philo = (ssize_t)idx;
+			pthread_mutex_lock(&params->lock_print);
+			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m\n", idx % 255, idx);
+			pthread_mutex_unlock(&params->lock_print);
+
 			pthread_mutex_unlock(&params->lock_died);
 			return (PHILO_DIED);
 		}
@@ -141,6 +142,7 @@ int	monitor(t_params *params)
 
 // fork     0   1   2   3   0
 // philo  3 ^ 0 ^ 1 ^ 2 ^ 3 ^
+
 int	main(int argc, char **argv)
 {
 	t_params		*params;
@@ -164,7 +166,7 @@ int	main(int argc, char **argv)
 	{
 		if (monitor(params) == PHILO_DIED)
 			break ;
-		usleep(1000);
+		usleep(500);
 //		pthread_mutex_lock(&params->lock_waiter);
 //		decide_fork_using_philo(params);
 //		pthread_mutex_unlock(&params->lock_waiter);

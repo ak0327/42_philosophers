@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 22:28:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 00:35:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,15 @@
 /* philo state */
 # define STATE_THINKING	0
 # define STATE_HUNGRY	1
-# define STATE_EATING	2
-# define STATE_SLEEPING	3
+# define STATE_WAITING	2
+# define STATE_EATING	3
+# define STATE_SLEEPING	4
+
+/* fork state */
+//# define STATE_EMPTY	0
+//# define STATE_WAITING	1
+//# define STATE_USING	2
+
 
 /* print color */
 # define PRINT_COLOR_WHITE	"\x1b[00m"
@@ -69,7 +76,7 @@
 # define PRINT_COLOR_RESET	"\x1b[0m"
 
 /* parameter */
-# define CHECK_TIME_SPAN_MS		100
+# define MONITOR_TIME_SPAN_US	5000
 
 typedef struct s_params		t_params;
 typedef struct s_philo_info	t_philo_info;

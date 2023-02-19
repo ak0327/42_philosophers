@@ -34,3 +34,4 @@ void	print_timestamp(void)
 	msec = tv.tv_usec/1000;
 	printf("%ld:%03d(ms)",unix_time, (int)msec);
 }
+
