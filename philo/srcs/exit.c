@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 10:59:05 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 13:14:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,12 @@ void	free_allocs(t_params *params)
 	free(params->eat_times);
 	free(params->lock_each_fork);
 	idx = 0;
-	while (idx < params->num_of_philos)
+	while (params->philo_info && idx < params->num_of_philos)
 	{
-		free(params->philo_info[idx].wait);
+		free(params->philo_info[idx].wait_info);
 		idx++;
 	}
 	free(params->philo_info);
+	free(params->state);
 	free(params);
 }

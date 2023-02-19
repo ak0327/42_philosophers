@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 11:41:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 13:14:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,11 +146,6 @@ int	init_thread(t_params *params)
 
 	if (!is_process_failure)
 		return (SUCCESS);
-	free(params->philo_no);
-	free(params->forks);
-	free(params->eat_times);
-	free(params->lock_each_fork);
-	params->philo_no = NULL;
-	params->forks = NULL;
+	free_allocs(params);
 	return (FAILURE);
 }

@@ -22,7 +22,7 @@ int	create_threads(t_params *params)
 	idx = 1;
 	while (idx < params->num_of_philos)
 	{
-		(&params->philo_info[idx])->std_time = start_time;
+		(&params->philo_info[idx])->start_time = start_time;
 		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;
@@ -30,7 +30,7 @@ int	create_threads(t_params *params)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		(&params->philo_info[idx])->std_time = start_time;
+		(&params->philo_info[idx])->start_time = start_time;
 		if (pthread_create(&params->philo_no[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;

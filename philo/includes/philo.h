@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 12:35:09 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 20:57:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,30 +65,33 @@
 
 typedef struct s_params		t_params;
 typedef struct s_args		t_args;
-typedef struct s_each_philo	t_each_philo;
+typedef struct s_philo_info	t_philo_info;
 typedef struct s_time		t_time;
 typedef struct s_stack_elem	t_stack;
 
 typedef enum s_input_type	t_input_type;
 typedef enum s_print_type	t_print_type;
 
-struct s_each_philo
+struct s_philo_info
 {
 	t_params		*params;
 
 	size_t			idx; //id
-	size_t			left_idx;
-	size_t			right_idx;
+	size_t			left_philo_idx;
+	size_t			right_philo_idx;
 
 	size_t			first_take;
 	size_t			second_take;
 
-	time_t			std_time;
+	size_t			left_fork_idx;
+	size_t			right_fork_idx;
 
-	t_stack			*wait;
+	time_t			start_time;
+
+	t_stack			*wait_info;
 	bool			is_allowed;
 
-	t_each_philo	*next;
+	t_philo_info	*next;
 };
 
 struct s_params
@@ -129,7 +132,7 @@ struct s_params
 
 	t_stack			*wait_queue;
 
-	t_each_philo	*philo_info;
+	t_philo_info	*philo_info;
 
 };
 
@@ -175,7 +178,7 @@ void		*do_routine(void *v_philo);
 
 void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
-int	take_forks(t_params *params, t_each_philo *philo);
+int	take_forks(t_params *params, t_philo_info *philo);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);

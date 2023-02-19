@@ -6,44 +6,55 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 12:36:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 21:05:30 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_each_philo	*create_each_philo_info(t_params **params)
+t_philo_info	*create_each_philo_info(t_params **params)
 {
-	t_each_philo	*philo_info;
+	t_philo_info	*philo_info;
 	size_t			idx;
 	size_t			num_of_philos;
 
 	num_of_philos = (*params)->num_of_philos;
-	philo_info = (t_each_philo *)malloc(sizeof(t_each_philo) * (num_of_philos + 1));
+	philo_info = (t_philo_info *)malloc(sizeof(t_philo_info) * (num_of_philos + 1));
 	if (!philo_info)
 		return (NULL);
-	memset(philo_info, 0, sizeof(t_each_philo) * (num_of_philos + 1));
+	memset(philo_info, 0, sizeof(t_philo_info) * (num_of_philos + 1));
 	idx = 0;
 	while (idx < num_of_philos)
 	{
 		philo_info[idx].idx = idx;
 		philo_info[idx].params = *params;
-		philo_info[idx].wait = create_stack_elem(idx);
+		philo_info[idx].wait_info = create_stack_elem(idx);
 		philo_info[idx].is_allowed = false;
 
-		philo_info[idx].first_take = idx;
-		philo_info[idx].second_take = (idx + 1) % num_of_philos;
-		if (idx % 2 == 1)
-		{
-			philo_info[idx].first_take = (idx + 1) % num_of_philos;
-			philo_info[idx].second_take = idx;
-		}
+		/* fork idx */
+		philo_info[idx].left_fork_idx = idx;
+		philo_info[idx].right_fork_idx = (idx + 1) % num_of_philos;
+
+		philo_info[idx].first_take = philo_info[idx].left_fork_idx;
+		philo_info[idx].second_take = philo_info[idx].right_fork_idx;
 
 		if (idx == 0)
-			philo_info[idx].left_idx = num_of_philos - 1;
+		{
+			philo_info[idx].first_take = philo_info[idx].right_fork_idx;
+			philo_info[idx].second_take = philo_info[idx].left_fork_idx;
+		}
+//		if (idx % 2 == 1)
+//		{
+//			philo_info[idx].first_take = (idx + 1) % num_of_philos;
+//			philo_info[idx].second_take = idx;
+//		}
+
+		/* left and right philo idx */
+		if (idx == 0)
+			philo_info[idx].left_philo_idx = num_of_philos - 1;
 		else
-			philo_info[idx].left_idx = idx - 1;
-		philo_info[idx].right_idx = (idx + 1) % num_of_philos;
+			philo_info[idx].left_philo_idx = idx - 1;
+		philo_info[idx].right_philo_idx = (idx + 1) % num_of_philos;
 
 		idx++;
 	}
@@ -104,6 +115,32 @@ void	decide_fork_using_philo(t_params *params)
 	}
 }
 
+int	monitor(t_params *params)
+{
+	const time_t	now_time = get_unix_time_ms();
+	const time_t	time_to_die = params->time_to_die;
+	time_t			start_time;
+	size_t			idx;
+
+	idx = 0;
+	while (idx < params->num_of_philos)
+	{
+		start_time = params->philo_info[idx].start_time;
+		if (now_time - start_time >= time_to_die)
+		{
+			pthread_mutex_lock(&params->lock_died);
+			params->is_died = true;
+			params->died_philo = (ssize_t)idx;
+			pthread_mutex_unlock(&params->lock_died);
+			return (PHILO_DIED);
+		}
+		idx++;
+	}
+	return (PHILO_ALIVE);
+}
+
+// fork     0   1   2   3   0
+// philo  3 ^ 0 ^ 1 ^ 2 ^ 3 ^
 int	main(int argc, char **argv)
 {
 	t_params		*params;
@@ -122,15 +159,16 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
-	/*
-	while (!params->is_died)
+
+	while (true)
 	{
-		pthread_mutex_lock(&params->lock_waiter);
-		decide_fork_using_philo(params);
-		pthread_mutex_unlock(&params->lock_waiter);
-//		usleep(100);
+		if (monitor(params) == PHILO_DIED)
+			break ;
+		usleep(1000);
+//		pthread_mutex_lock(&params->lock_waiter);
+//		decide_fork_using_philo(params);
+//		pthread_mutex_unlock(&params->lock_waiter);
 	}
-	*/
 
 	ret_value = terminate_threads(params);
 	if (ret_value != SUCCESS)
