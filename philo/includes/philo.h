@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 11:40:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 12:35:09 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@
 
 /* philo state */
 # define STATE_THINKING	0
-# define PHILO_HUNGRY	1
-# define PHILO_EATING	2
+# define STATE_HUNGRY	1
+# define STATE_EATING	2
+# define STATE_SLEEPING	3
 
 /* parameter */
 # define CHECK_TIME_SPAN_MS		100
@@ -75,7 +76,13 @@ struct s_each_philo
 {
 	t_params		*params;
 
-	size_t			idx;
+	size_t			idx; //id
+	size_t			left_idx;
+	size_t			right_idx;
+
+	size_t			first_take;
+	size_t			second_take;
+
 	time_t			std_time;
 
 	t_stack			*wait;
@@ -168,8 +175,7 @@ void		*do_routine(void *v_philo);
 
 void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
-int			take_forks(t_params *params, size_t idx);
-
+int	take_forks(t_params *params, t_each_philo *philo);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);

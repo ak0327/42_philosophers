@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 10:54:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 12:36:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,35 @@ t_each_philo	*create_each_philo_info(t_params **params)
 {
 	t_each_philo	*philo_info;
 	size_t			idx;
+	size_t			num_of_philos;
 
-	philo_info = (t_each_philo *)malloc(sizeof(t_each_philo) * ((*params)->num_of_philos + 1));
+	num_of_philos = (*params)->num_of_philos;
+	philo_info = (t_each_philo *)malloc(sizeof(t_each_philo) * (num_of_philos + 1));
 	if (!philo_info)
 		return (NULL);
-	memset(philo_info, 0, sizeof(t_each_philo) * ((*params)->num_of_philos + 1));
+	memset(philo_info, 0, sizeof(t_each_philo) * (num_of_philos + 1));
 	idx = 0;
-	while (idx < (*params)->num_of_philos)
+	while (idx < num_of_philos)
 	{
 		philo_info[idx].idx = idx;
 		philo_info[idx].params = *params;
 		philo_info[idx].wait = create_stack_elem(idx);
 		philo_info[idx].is_allowed = false;
+
+		philo_info[idx].first_take = idx;
+		philo_info[idx].second_take = (idx + 1) % num_of_philos;
+		if (idx % 2 == 1)
+		{
+			philo_info[idx].first_take = (idx + 1) % num_of_philos;
+			philo_info[idx].second_take = idx;
+		}
+
+		if (idx == 0)
+			philo_info[idx].left_idx = num_of_philos - 1;
+		else
+			philo_info[idx].left_idx = idx - 1;
+		philo_info[idx].right_idx = (idx + 1) % num_of_philos;
+
 		idx++;
 	}
 	return (philo_info);
@@ -72,7 +89,7 @@ void	decide_fork_using_philo(t_params *params)
 		if (check_forks_available(params, popped->idx))
 		{
 //			printf("available idx:%zu\n", popped->idx);
-			take_forks(params, popped->idx);
+			take_forks(params, &params->philo_info[popped->idx]);
 			(&params->philo_info[popped->idx])->is_allowed = true;
 			break ;
 		}
