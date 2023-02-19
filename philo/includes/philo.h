@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 11:38:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 11:40:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@
 # define PHILO_DIED		0
 # define PHILO_ALIVE	1
 
+/* philo state */
+# define STATE_THINKING	0
+# define PHILO_HUNGRY	1
+# define PHILO_EATING	2
+
 /* parameter */
 # define CHECK_TIME_SPAN_MS		100
 
@@ -97,11 +102,13 @@ struct s_params
 	int				*forks;
 	pthread_mutex_t	*lock_each_fork;
 
+	int				*state;
 
 	pthread_mutex_t	lock_fork;
 	pthread_mutex_t	lock_waiter;
 	pthread_mutex_t	lock_print;
 	pthread_mutex_t	lock_died;
+	pthread_mutex_t	lock_state;
 	pthread_mutex_t	lock_eat_times;
 
 	ssize_t			*eat_times;
@@ -117,7 +124,6 @@ struct s_params
 
 	t_each_philo	*philo_info;
 
-	int				*state;
 };
 
 struct s_stack_elem

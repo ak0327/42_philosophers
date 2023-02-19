@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 11:25:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 11:41:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,9 @@ static int	init_mutex(t_params **params)
 	if (pthread_mutex_init(&(*params)->lock_print, NULL) != SUCCESS)
 		return (FAILURE);
 
+	if (pthread_mutex_init(&(*params)->lock_state, NULL) != SUCCESS)
+		return (FAILURE);
+
 	(*params)->lock_each_fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (*params)->num_of_philos);
 	if (!(*params)->lock_each_fork)
 		return (FAILURE);
@@ -130,6 +133,11 @@ int	init_thread(t_params *params)
 	if (!params->forks)
 		is_process_failure = true;
 	memset(params->eat_times, 0, sizeof(ssize_t) * params->num_of_philos);
+
+	params->state = (int *)malloc(sizeof(int) * params->num_of_philos);
+	if (!params->state)
+		is_process_failure = true;
+	memset(params->state, STATE_THINKING, sizeof(int) * params->num_of_philos);
 
 	if (init_mutex(&params) != SUCCESS)
 		is_process_failure = true;
