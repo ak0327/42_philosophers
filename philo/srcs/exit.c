@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/17 22:59:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 10:59:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	print_err_msg_and_free_allocs(int err, t_params *params, t_each_philo *philo, int ret)
+int	print_err_msg_and_free_allocs(int err, t_params *params, int ret)
 {
 	if (err == INVALID_ARG_COUNT)
 		printf("[Error] Invalid argument. Input as following:\n" \
@@ -30,27 +30,26 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, t_each_philo *philo
 		printf("[Error] Invalid argument. 0 <= MustEatTimes\n");
 	else
 		printf("[Error] Process error occurred\n");
-	free_allocs(params, philo);
+	free_allocs(params);
 	return (ret);
 }
 
-void	free_allocs(t_params *params, t_each_philo *philo)
+void	free_allocs(t_params *params)
 {
-	t_each_philo	*next;
 	size_t	idx;
 
 	if (!params)
 		return ;
-	idx = 0;
-	while (idx < params->num_of_philos)
-	{
-		next = philo->next;
-		free(philo);
-		philo = next;
-		idx++;
-	}
 	free(params->philo_no);
 	free(params->forks);
 	free(params->eat_times);
+	free(params->lock_each_fork);
+	idx = 0;
+	while (idx < params->num_of_philos)
+	{
+		free(params->philo_info[idx].wait);
+		idx++;
+	}
+	free(params->philo_info);
 	free(params);
 }

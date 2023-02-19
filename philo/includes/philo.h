@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 10:58:29 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 11:38:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ struct s_params
 //	pthread_mutex_t	*forks;
 
 	int				*forks;
+	pthread_mutex_t	*lock_each_fork;
+
 
 	pthread_mutex_t	lock_fork;
 	pthread_mutex_t	lock_waiter;
@@ -104,13 +106,18 @@ struct s_params
 
 	ssize_t			*eat_times;
 	time_t			died_time;
-	ssize_t			wait_philo_idx;
+
+	size_t			rev_philo_idx;
+	bool			is_rev_exist;
 
 	bool			is_died;
 	ssize_t			died_philo;
+
 	t_stack			*wait_queue;
+
 	t_each_philo	*philo_info;
 
+	int				*state;
 };
 
 struct s_stack_elem
@@ -147,17 +154,15 @@ int			create_threads(t_params *params);
 int			monitor_philos(t_params *params);
 int			terminate_threads(t_params *params);
 
-void		free_allocs(t_params *params, t_each_philo *philo);
-int			print_err_msg_and_free_allocs(int err, t_params *params, t_each_philo *philo, int ret);
+void		free_allocs(t_params *params);
+int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
 
-time_t	get_unix_time_ms(void);
-void	*do_routine(void *v_philo);
+time_t		get_unix_time_ms(void);
+void		*do_routine(void *v_philo);
 
-void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
+void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
-int	take_forks(t_params *params, size_t idx);
-
-time_t	get_unix_time_ms(void);
+int			take_forks(t_params *params, size_t idx);
 
 
 /* libs */

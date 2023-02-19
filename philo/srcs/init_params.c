@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 17:17:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/19 11:25:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,12 @@ int	init_params(int argc, char **argv, t_params **params)
 		free(*params);
 		return (ret_value);
 	}
+	(*params)->rev_philo_idx = (*params)->num_of_philos - 1;
 	if ((*params)->num_of_philos % 2 == 0)
-		(*params)->wait_philo_idx = -1;
+		(*params)->is_rev_exist = false;
 	else
-		(*params)->wait_philo_idx = (ssize_t)(*params)->num_of_philos - 1;
+		(*params)->is_rev_exist = true;
+
 	(*params)->is_died = false;
 	(*params)->died_philo = -1;
 	return (ret_value);
@@ -78,8 +80,10 @@ static pthread_mutex_t	*init_forks(size_t num_of_philo)
 }
 */
 
-int	init_mutex(t_params **params)
+static int	init_mutex(t_params **params)
 {
+	size_t	idx;
+
 	if (pthread_mutex_init(&(*params)->lock_fork, NULL) != SUCCESS)
 		return (FAILURE);
 
@@ -92,8 +96,19 @@ int	init_mutex(t_params **params)
 	if (pthread_mutex_init(&(*params)->lock_print, NULL) != SUCCESS)
 		return (FAILURE);
 
-//	if (pthread_mutex_init(&(*params)->lock_eat_times, NULL) != SUCCESS)
-//		return (FAILURE);
+	(*params)->lock_each_fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (*params)->num_of_philos);
+	if (!(*params)->lock_each_fork)
+		return (FAILURE);
+	idx = 0;
+	while (idx < (*params)->num_of_philos)
+	{
+		if (pthread_mutex_init(&(*params)->lock_each_fork[idx], NULL) != SUCCESS)
+		{
+			free((*params)->lock_each_fork);
+			return (FAILURE);
+		}
+		idx++;
+	}
 
 	return (SUCCESS);
 }
@@ -102,13 +117,9 @@ int	init_thread(t_params *params)
 {
 	bool	is_process_failure;
 
-	// create pthread_t every philo
 	params->philo_no = init_philo_no(params->num_of_philos);
 	if (!params->philo_no)
 		is_process_failure = true;
-
-	// create mutex for lock_fork
-//	params->forks = init_forks(params->num_of_philos);
 
 	params->forks = (int *)malloc(sizeof(int) * params->num_of_philos);
 	if (!params->forks)
@@ -123,12 +134,14 @@ int	init_thread(t_params *params)
 	if (init_mutex(&params) != SUCCESS)
 		is_process_failure = true;
 
-	params->wait_queue = NULL;
+//	params->wait_queue = NULL;
 
 	if (!is_process_failure)
 		return (SUCCESS);
 	free(params->philo_no);
 	free(params->forks);
+	free(params->eat_times);
+	free(params->lock_each_fork);
 	params->philo_no = NULL;
 	params->forks = NULL;
 	return (FAILURE);
