@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 00:29:27 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 11:13:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	decide_fork_using_philo(t_params *params)
 		if (check_forks_available(params, popped->idx))
 		{
 //			printf("available idx:%zu\n", popped->idx);
-			take_forks(params, &params->philo_info[popped->idx]);
+			take_forks_wo_lock_state(params, &params->philo_info[popped->idx]);
 			(&params->philo_info[popped->idx])->is_allowed = true;
 			break ;
 		}
@@ -120,19 +120,25 @@ int	monitor(t_params *params)
 	size_t			idx;
 
 	idx = 0;
-	while (idx < params->num_of_philos)
+	while (idx < params->num_of_philos && !params->is_died)
 	{
 		start_time = params->philo_info[idx].start_time;
 		if (now_time - start_time >= time_to_die)
 		{
 			pthread_mutex_lock(&params->lock_died);
+
 			params->is_died = true;
 			params->died_philo = (ssize_t)idx;
 			pthread_mutex_lock(&params->lock_print);
+
 			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m\n", idx % 255, idx);
 			pthread_mutex_unlock(&params->lock_print);
 
 			pthread_mutex_unlock(&params->lock_died);
+
+			pthread_mutex_lock(&params->lock_state);
+			params->state[idx] = STATE_DIED;
+			pthread_mutex_unlock(&params->lock_state);
 			return (PHILO_DIED);
 		}
 		idx++;

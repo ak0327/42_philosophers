@@ -60,6 +60,7 @@
 # define STATE_WAITING	2
 # define STATE_EATING	3
 # define STATE_SLEEPING	4
+# define STATE_DIED		5
 
 /* fork state */
 //# define STATE_EMPTY	0
@@ -191,16 +192,18 @@ time_t		get_unix_time_ms(void);
 void		*do_routine(void *v_philo);
 
 
-int			take_forks(t_params *params, t_philo_info *philo);
-int			put_forks(t_params *params, t_philo_info *philo);
+int			take_forks_wo_lock_state(t_params *params, t_philo_info *philo);
+int			put_forks_wo_lock_state(t_params *params, t_philo_info *philo);
 
 void		print_waiting(t_stack *stack);
 void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
+int	check_philo_alieve(t_params *params, size_t idx, time_t std_time);
 
 
 void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
+void		print_timestamp(void);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);

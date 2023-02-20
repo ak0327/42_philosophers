@@ -6,46 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 09:56:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 11:16:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	debug_print_state_w_lock(t_params *params, size_t id)
-{
-	size_t	idx;
-	char	*str;
-
-	idx = 0;
-
-	pthread_mutex_lock(&params->lock_print);
-
-	printf("# state w (%zu) ::", id);
-	pthread_mutex_lock(&params->lock_state);
-	while (idx < params->num_of_philos)
-	{
-		if (params->state[idx] == STATE_THINKING)
-			str = "thinking";
-		if (params->state[idx] == STATE_HUNGRY)
-			str = "HUNGRY";
-		if (params->state[idx] == STATE_EATING)
-			str = "eating";
-		if (params->state[idx] == STATE_SLEEPING)
-			str = "sleeping";
-		if (params->state[idx] == STATE_WAITING)
-			str = "waiting";
-		printf("[%zu]%-10s", idx, str);
-		idx++;
-		if (idx < params->num_of_philos)
-			printf(", ");
-		else
-			printf("\n");
-	}
-	pthread_mutex_unlock(&params->lock_state);
-
-	pthread_mutex_unlock(&params->lock_print);
-}
 
 void	debug_print_state_wo_lock(t_params *params, size_t id)
 {
@@ -55,22 +20,40 @@ void	debug_print_state_wo_lock(t_params *params, size_t id)
 	idx = 0;
 	pthread_mutex_lock(&params->lock_print);
 
-	printf("# state wo(%zu) ::", id);
+	printf("# state wo(%zu):", id);
+	print_timestamp();
+	printf(":");
 	while (idx < params->num_of_philos)
 	{
 		if (params->state[idx] == STATE_THINKING)
 			str = "thinking";
 		if (params->state[idx] == STATE_HUNGRY)
-			str = "HUNGRY  ";
+			str = "\x1b[33mHUNGRY\x1b[0m";
 		if (params->state[idx] == STATE_EATING)
-			str = "eating  ";
+			str = "eating";
 		if (params->state[idx] == STATE_SLEEPING)
 			str = "sleeping";
-		printf("[%zu]%s, ", idx, str);
+		if (params->state[idx] == STATE_DIED)
+			str = "\x1b[31mDIED\x1b[0m";
+		printf("[%zu]%-10s", idx, str);
 		idx++;
+		if (idx < params->num_of_philos)
+			printf(", ");
+		else
+			printf("\n");
 	}
 	printf("\n");
 	pthread_mutex_unlock(&params->lock_print);
+
+}
+
+void	debug_print_state_w_lock(t_params *params, size_t id)
+{
+	pthread_mutex_lock(&params->lock_state);
+
+	debug_print_state_wo_lock(params, id);
+
+	pthread_mutex_unlock(&params->lock_state);
 
 }
 
@@ -107,12 +90,16 @@ int	check_philo_alieve(t_params *params, size_t idx, time_t std_time)
 		return (PHILO_DIED);
 	if (check_died(params, idx))
 	{
-		if (!params->is_died)
+		pthread_mutex_lock(&params->lock_died);
+		if (!params->is_died && params->died_philo == -1)
 		{
-			pthread_mutex_lock(&params->lock_died);
 			params->is_died = true;
 			params->died_philo = (ssize_t)idx;
 			pthread_mutex_unlock(&params->lock_died);
+
+			pthread_mutex_lock(&params->lock_state);
+			params->state[idx] = STATE_DIED;
+			pthread_mutex_unlock(&params->lock_state);
 		}
 
 		pthread_mutex_lock(&params->lock_print);
@@ -139,29 +126,36 @@ void	*do_routine(void *v_philo)
 	{
 
 		/* take a fork */
+		debug_print_state_w_lock(params, philo->idx);
+
 		pthread_mutex_lock(&params->lock_state);
-		params->state[philo->idx] = take_forks(params, philo);
+		params->state[philo->idx] = take_forks_wo_lock_state(params, philo);
 		pthread_mutex_unlock(&params->lock_state);
+
+		debug_print_state_w_lock(params, philo->idx);
 
 		while (params->state[philo->idx] == STATE_HUNGRY) //wait
 		{
 			if (check_philo_alieve(params, philo->idx, philo->start_time) == PHILO_DIED)
 			{
-				put_forks(params, philo);
+//				put_forks_wo_lock_state(params, philo);
+				pthread_mutex_lock(&params->lock_state);
+				params->state[philo->idx] = put_forks_wo_lock_state(params, philo);
+				pthread_mutex_unlock(&params->lock_state);
 				return (NULL);
 			}
 		}
 
-		/*
-		take_forks(params, philo);
+//		take_forks_wo_lock_state(params, philo);
 		if (check_philo_alieve(params, philo->idx, philo->start_time) == PHILO_DIED)
 		{
-			put_forks(params, philo);
+			pthread_mutex_lock(&params->lock_state);
+			params->state[philo->idx] = put_forks_wo_lock_state(params, philo);
+			pthread_mutex_unlock(&params->lock_state);
 			return (NULL);
 		}
-		*/
-		/* eat */
 
+		/* eat */
 		pthread_mutex_lock(&params->lock_print);
 		philo->start_time = get_unix_time_ms();
 		print_msg(philo->idx, TYPE_FORK, philo->start_time, params);
@@ -172,7 +166,19 @@ void	*do_routine(void *v_philo)
 		usleep(params->time_to_eat * 1000);
 
 		/* put fork_arr */
-		put_forks(params, philo);
+		if (check_philo_alieve(params, philo->idx, philo->start_time) == PHILO_DIED)
+		{
+			pthread_mutex_lock(&params->lock_state);
+			params->state[philo->idx] = put_forks_wo_lock_state(params, philo);
+			pthread_mutex_unlock(&params->lock_state);
+			return (NULL);
+		}
+
+		debug_print_state_w_lock(params, philo->idx);
+		pthread_mutex_lock(&params->lock_state);
+		params->state[philo->idx] = put_forks_wo_lock_state(params, philo);
+		pthread_mutex_unlock(&params->lock_state);
+		debug_print_state_w_lock(params, philo->idx);
 
 //		pthread_mutex_lock(&params->lock_eat_times);
 		params->eat_times[philo->idx]++;
