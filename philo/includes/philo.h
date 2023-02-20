@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 00:35:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 09:59:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@
 # define PRINT_THINKING	"is thinking"
 # define PRINT_DIED		"died"
 
-# define PHILO_DIED		0
+# define PHILO_DIED		-1
 # define PHILO_ALIVE	1
 
 /* philo state */
@@ -190,9 +190,17 @@ int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
 time_t		get_unix_time_ms(void);
 void		*do_routine(void *v_philo);
 
+
+int			take_forks(t_params *params, t_philo_info *philo);
+int			put_forks(t_params *params, t_philo_info *philo);
+
+void		print_waiting(t_stack *stack);
 void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
-int	take_forks(t_params *params, t_philo_info *philo);
+
+
+void		debug_print_state_w_lock(t_params *params, size_t id);
+void		debug_print_state_wo_lock(t_params *params, size_t id);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);
@@ -212,7 +220,8 @@ t_stack		*get_last_elem(t_stack *elem);
 void		ft_stack_clear(t_stack **stk);
 void		swap(t_stack **stack);
 
-void	print_waiting(t_stack *stack);
+size_t	min_size(size_t a, size_t b);
+size_t	max_size(size_t a, size_t b);
 
 
 #endif

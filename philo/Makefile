@@ -24,6 +24,7 @@ SRC		= main.c \
 		  init_params.c \
 		  create_and_terminate_thread.c \
 		  routine.c \
+		  handle_forks.c \
 		  time.c \
 		  print_console.c \
 		  exit.c \
@@ -39,6 +40,7 @@ LIB		= ft_atoi.c \
 		  ft_strtoll.c \
 		  ft_stack.c \
 		  ft_stack_operation.c \
+		  ft_math.c \
 
 LIBS	= $(addprefix $(LIB_DIR)/, $(LIB))
 
