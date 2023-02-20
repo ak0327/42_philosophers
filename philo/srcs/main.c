@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 11:13:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 12:57:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,9 +129,12 @@ int	monitor(t_params *params)
 
 			params->is_died = true;
 			params->died_philo = (ssize_t)idx;
+
 			pthread_mutex_lock(&params->lock_print);
 
-			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m\n", idx % 255, idx);
+			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m @", idx % 255, idx);
+			print_timestamp();
+			printf("\n");
 			pthread_mutex_unlock(&params->lock_print);
 
 			pthread_mutex_unlock(&params->lock_died);
@@ -167,20 +170,21 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
+//	printf("main:1\n");
 
-	while (true)
+	while (monitor(params) == PHILO_ALIVE)
 	{
-		if (monitor(params) == PHILO_DIED)
-			break ;
-		usleep(500);
 //		pthread_mutex_lock(&params->lock_waiter);
 //		decide_fork_using_philo(params);
 //		pthread_mutex_unlock(&params->lock_waiter);
 	}
+//	printf("main:2\n");
 
 	ret_value = terminate_threads(params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
+
+//	printf("main:3\n");
 
 	free_allocs(params);
 

@@ -198,12 +198,13 @@ int			put_forks_wo_lock_state(t_params *params, t_philo_info *philo);
 void		print_waiting(t_stack *stack);
 void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
 
-int	check_philo_alieve(t_params *params, size_t idx, time_t std_time);
+int			check_philo_alive(t_params *params, size_t idx, time_t std_time);
 
 
 void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
+char		*get_state_str(int state);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);

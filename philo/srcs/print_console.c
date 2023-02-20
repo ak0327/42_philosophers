@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 22:37:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 12:59:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 //		printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
 
 //		printf("%s%ld%03ld %zu %s%s\n", color, unix_time_sec, unix_time_msec, idx, msg, PRINT_COLOR_RESET);
-		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", idx % 255, unix_time_sec, unix_time_msec, idx, msg);
+//		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", idx % 255, unix_time_sec, unix_time_msec, idx, msg);
+		printf("\x1b[48;5;%03zum[%zu]%ld:%03ld %zu %s\x1b[0m\n",idx, idx % 255, unix_time_sec, unix_time_msec, idx, msg);
+
 	}
 }
