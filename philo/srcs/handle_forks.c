@@ -67,10 +67,10 @@ int	take_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 		params->state[philo->idx] = STATE_EATING;
 		printf("\n");
 		printf("[#Take] %zu-1 will:%zu\n", philo->idx, first_take);
-		pthread_mutex_lock(&params->lock_each_fork[first_take]);
+		pthread_mutex_lock(&params->fork_mutex[first_take]);
 		printf("[#Take] %zu-2 take:%zu\n", philo->idx, first_take);
 		printf("[#Take] %zu-3 will:%zu\n", philo->idx, second_take);
-		pthread_mutex_lock(&params->lock_each_fork[second_take]);
+		pthread_mutex_lock(&params->fork_mutex[second_take]);
 		printf("[#Take] %zu-4 take:%zu\n", philo->idx, second_take);
 		printf("\n");
 
@@ -92,10 +92,10 @@ int	take_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 
 //	printf("\n");
 //	printf("[#Take] %zu-1 will:%zu(%s)\n", philo->idx, first_take, controlled);
-	pthread_mutex_lock(&params->lock_each_fork[first_take]);
+	pthread_mutex_lock(&params->fork_mutex[first_take]);
 //	printf("[#Take] %zu-2 take:%zu(%s)\n", philo->idx, first_take, controlled);
 //	printf("[#Take] %zu-3 will:%zu(%s)\n", philo->idx, second_take, controlled);
-	pthread_mutex_lock(&params->lock_each_fork[second_take]);
+	pthread_mutex_lock(&params->fork_mutex[second_take]);
 //	printf("[#Take] %zu-4 take:%zu(%s)\n", philo->idx, second_take, controlled);
 //	printf("\n");
 
@@ -115,11 +115,11 @@ int	put_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 
 //	printf("\n");
 //	printf("  [#Put] %zu-1 will %zu\n", philo->idx, philo->first_take);
-	pthread_mutex_unlock(&params->lock_each_fork[philo->first_take]);
+	pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
 //	printf("  [#Put] %zu-2 put  %zu\n", philo->idx, philo->first_take);
 
 //	printf("  [#Put] %zu-3 will %zu\n", philo->idx, philo->second_take);
-	pthread_mutex_unlock(&params->lock_each_fork[philo->second_take]);
+	pthread_mutex_unlock(&params->fork_mutex[philo->second_take]);
 //	printf("  [#Put] %zu-4 put  %zu\n", philo->idx, philo->second_take);
 //	printf("\n");
 

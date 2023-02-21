@@ -20,7 +20,7 @@ void	print_eat_times(t_params *params)
 	printf("eat times:");
 	while (idx < params->num_of_philos)
 	{
-		printf("%zu", params->eat_times[idx]);
+		printf("%zu", params->each_eat_times[idx]);
 		idx++;
 		if (idx < params->num_of_philos)
 			printf(", ");
@@ -59,7 +59,7 @@ void	debug_print_state_wo_lock(t_params *params, size_t id)
 	while (idx < params->num_of_philos)
 	{
 		str = get_state_str(params->state[idx]);
-		printf("[%zu](%zu)%s", idx, params->eat_times[idx], str);
+		printf("[%zu](%zu)%s", idx, params->each_eat_times[idx], str);
 		idx++;
 		if (idx < params->num_of_philos)
 			printf(", ");
@@ -101,7 +101,7 @@ bool	is_meet_mast_eat_times(t_params *params)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		if (params->eat_times[idx] < (size_t)params->must_eat_times)
+		if (params->each_eat_times[idx] < (size_t)params->must_eat_times)
 			return (false);
 		idx++;
 	}
@@ -238,7 +238,7 @@ void	*do_routine(void *v_philo)
 		pthread_mutex_unlock(&params->lock_state);
 
 		pthread_mutex_lock(&params->lock_eat_times);
-		params->eat_times[philo->idx]++;
+		params->each_eat_times[philo->idx]++;
 		pthread_mutex_unlock(&params->lock_eat_times);
 
 //		debug_print_state_w_lock(params, philo->idx);

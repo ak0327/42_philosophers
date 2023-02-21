@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 14:17:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:24:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,8 @@
 # define STATE_DIED		5
 
 /* fork state */
-//# define STATE_EMPTY	0
-//# define STATE_WAITING	1
-//# define STATE_USING	2
+# define FORK_DIRTY	0
+# define FORK_CLEAN	1
 
 
 /* print color */
@@ -86,29 +85,6 @@ typedef struct s_stack_elem	t_stack;
 typedef enum s_input_type	t_input_type;
 typedef enum s_print_type	t_print_type;
 
-struct s_philo_info
-{
-	t_params		*params;
-
-	size_t			idx; //id
-	size_t			left_philo_idx;
-	size_t			right_philo_idx;
-
-	size_t			first_take;
-	size_t			second_take;
-
-	size_t			left_fork_idx;
-	size_t			right_fork_idx;
-
-	
-	time_t			start_time;
-
-	t_stack			*wait_info;
-	bool			is_allowed;
-
-	t_philo_info	*next;
-};
-
 struct s_params
 {
 	// args
@@ -118,36 +94,21 @@ struct s_params
 	time_t			time_to_sleep;
 	ssize_t			must_eat_times;
 
+	size_t			*each_eat_times;
+	bool			is_died;
+
 	// philo
 	pthread_t		*tid;
 
-	// lock_fork
-//	pthread_mutex_t	*fork_arr;
-
-	int				*fork_arr;
-	pthread_mutex_t	*lock_each_fork;
+	size_t			*philo_id;
+	ssize_t			*prev_used_by;
+	ssize_t			*held_by;
 
 	int				*state;
 
-	pthread_mutex_t	lock_fork;
-	pthread_mutex_t	lock_waiter;
-	pthread_mutex_t	lock_print;
-	pthread_mutex_t	lock_died;
-	pthread_mutex_t	lock_state;
-	pthread_mutex_t	lock_eat_times;
-
-	size_t			*eat_times;
-	time_t			died_time;
-
-	size_t			rev_philo_idx;
-	bool			is_rev_exist;
-
-	bool			is_died;
-	ssize_t			died_philo;
-
-	t_stack			*wait_queue;
-
-	t_philo_info	*philo_info;
+	// mutex
+	pthread_mutex_t	*fork_mutex;
+	pthread_mutex_t	print_mutex;
 
 };
 
@@ -179,13 +140,12 @@ enum s_input_type
 /* philo */
 int			init_params(int argc, char **argv, t_params **params);
 int			get_input_args(char **argv, t_params *params);
-int			init_thread(t_params *params);
 
 int			create_threads(t_params *params);
 int			monitor_philos(t_params *params);
 int			terminate_threads(t_params *params);
 
-void		free_allocs(t_params *params);
+void		free_params_and_assign_nullptr(t_params **params);
 int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
 
 time_t		get_unix_time_ms(void);

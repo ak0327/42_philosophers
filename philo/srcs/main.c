@@ -166,10 +166,6 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
-	params->philo_info = create_each_philo_info(&params);
-	if (!params->philo_info)
-		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
-
 	ret_value = create_threads(params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
@@ -190,7 +186,7 @@ int	main(int argc, char **argv)
 
 //	printf("main:3\n");
 
-	free_allocs(params);
+	free_params_and_assign_nullptr(params);
 
 	return (EXIT_SUCCESS);
 }

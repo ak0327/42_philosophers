@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 13:14:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:32:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,27 +30,28 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, int ret)
 		printf("[Error] Invalid argument. 0 <= MustEatTimes\n");
 	else
 		printf("[Error] Process error occurred\n");
-	free_allocs(params);
+	free_params_and_assign_nullptr(&params);
 	return (ret);
 }
 
-void	free_allocs(t_params *params)
+static void	free_ret_nullptr(void **ptr)
 {
-	size_t	idx;
+	if (!ptr)
+		return ;
+	free(*ptr);
+	*ptr = NULL;
+}
 
+void	free_params_and_assign_nullptr(t_params **params)
+{
 	if (!params)
 		return ;
-	free(params->tid);
-	free(params->fork_arr);
-	free(params->eat_times);
-	free(params->lock_each_fork);
-	idx = 0;
-	while (params->philo_info && idx < params->num_of_philos)
-	{
-		free(params->philo_info[idx].wait_info);
-		idx++;
-	}
-	free(params->philo_info);
-	free(params->state);
-	free(params);
+	free_ret_nullptr((void **)&(*params)->tid);
+	free_ret_nullptr((void **)&(*params)->each_eat_times);
+	free_ret_nullptr((void **)&(*params)->fork_mutex);
+	free_ret_nullptr((void **)&(*params)->state);
+	free_ret_nullptr((void **)&(*params)->prev_used_by);
+	free_ret_nullptr((void **)&(*params)->held_by);
+	free_ret_nullptr((void **)&(*params)->philo_id);
+	free_ret_nullptr((void **)params);
 }
