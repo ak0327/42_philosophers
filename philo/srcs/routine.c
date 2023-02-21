@@ -51,7 +51,6 @@ void	debug_print_state_wo_lock(t_params *params, size_t id)
 
 	idx = 0;
 	pthread_mutex_lock(&params->lock_print);
-	pthread_mutex_lock(&params->lock_eat_times);
 
 	printf("# state wo(%zu):", id);
 	print_timestamp();
@@ -67,7 +66,6 @@ void	debug_print_state_wo_lock(t_params *params, size_t id)
 			printf("\n");
 	}
 	printf("\n");
-	pthread_mutex_unlock(&params->lock_eat_times);
 	pthread_mutex_unlock(&params->lock_print);
 
 }
@@ -149,7 +147,7 @@ int	check_philo_alive(t_params *params, size_t idx, time_t std_time)
 	return (PHILO_ALIVE);
 }
 
-void	*do_routine(void *v_philo)
+void	*routine(void *v_philo)
 {
 	t_philo_info	*philo;
 	t_params		*params;

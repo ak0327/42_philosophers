@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 14:21:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:37:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 	const char		*msg = get_print_msg(type);
 //	const char		*color = get_print_color(type);
 
-	if (!params->is_died || params->died_philo == (ssize_t)idx)
+	if (!params->is_died || params->died_idx == (ssize_t)idx)
 	{
 //		printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
 

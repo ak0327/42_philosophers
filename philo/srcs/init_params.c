@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 14:33:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:42:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ int	init_params(int argc, char **argv, t_params **params)
 	is_process_success |= init_mutex(*params);
 
 	(*params)->is_died = false;
+	(*params)->died_idx = -1;
+
 	if (is_process_success)
 		return (SUCCESS);
 	free_params_and_assign_nullptr(params);
@@ -64,20 +66,23 @@ static int	init_alloc(t_params *params)
 	size_t	idx;
 
 	params->tid = (pthread_t *)malloc(sizeof(pthread_t) * params->num_of_philos);
-	params->philo_id = (size_t *)malloc(sizeof(size_t) * params->num_of_philos);
+	params->philo_idx = (size_t *)malloc(sizeof(size_t) * params->num_of_philos);
+
+	params->each_eat_times = (size_t *)malloc(sizeof(size_t) * params->num_of_philos);
+	params->each_start_time = (time_t *)malloc(sizeof(time_t) * params->num_of_philos);
+
 	params->state = (int *)malloc(sizeof(int) * params->num_of_philos);
 	params->held_by = (ssize_t *)malloc(sizeof(ssize_t) * params->num_of_philos);
 	params->prev_used_by = (ssize_t *)malloc(sizeof(ssize_t) * params->num_of_philos);
-	params->each_eat_times = (size_t *)malloc(sizeof(size_t) * params->num_of_philos);
 
-	if (!params->tid || !params->philo_id || !params->state \
-	|| !params->held_by || !params->prev_used_by || !params->each_eat_times)
+	if (!params->tid || !params->philo_idx || !params->state \
+ || !params->held_by || !params->prev_used_by || !params->each_eat_times)
 		return (FAILURE);
 
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		params->philo_id[idx] = idx;
+		params->philo_idx[idx] = idx;
 		params->state[idx] = FORK_DIRTY;
 		params->prev_used_by[idx] = (ssize_t)idx;
 		params->held_by[idx] = (ssize_t)idx;

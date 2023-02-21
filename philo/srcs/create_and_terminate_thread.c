@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 13:52:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:47:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,21 @@
 
 int	create_threads(t_params *params)
 {
-	size_t			idx;
 	const time_t	start_time = get_unix_time_ms();
+	size_t			*philo_id;
+	pthread_t		*tid;
+	size_t			idx;
 
-	if (!params)
-		return (FAILURE);
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		(&params->philo_info[idx])->start_time = start_time;
-		if (pthread_create(&params->tid[idx], NULL, do_routine, (void *)&params->philo_id[idx]) != SUCCESS)
+		params->each_start_time[idx] = start_time;
+		tid = &params->tid[idx];
+		philo_id = &params->philo_idx[idx];
+		if (pthread_create(tid, NULL, routine, (void *)philo_id) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx++;
 	}
-/*
-	idx = 1;
-	while (idx < params->num_of_philos)
-	{
-		(&params->philo_info[idx])->start_time = start_time;
-		if (pthread_create(&params->tid[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
-			return (PROCESS_ERROR);
-		idx += 2;
-	}
-//	usleep(1000);
-	idx = 0;
-	while (idx < params->num_of_philos)
-	{
-		(&params->philo_info[idx])->start_time = start_time;
-		if (pthread_create(&params->tid[idx], NULL, do_routine, (void *)&params->philo_info[idx]) != SUCCESS)
-			return (PROCESS_ERROR);
-		idx += 2;
-	}
-*/
 	return (SUCCESS);
 }
 

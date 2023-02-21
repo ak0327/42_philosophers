@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 14:24:05 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 14:42:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,17 +94,23 @@ struct s_params
 	time_t			time_to_sleep;
 	ssize_t			must_eat_times;
 
-	size_t			*each_eat_times;
-	bool			is_died;
 
 	// philo
 	pthread_t		*tid;
+	size_t			*philo_idx;
 
-	size_t			*philo_id;
+	time_t			start_time;
+	size_t			*each_eat_times;
+	time_t			*each_start_time;
+
+	// fork
+	int				*state;
 	ssize_t			*prev_used_by;
 	ssize_t			*held_by;
 
-	int				*state;
+	// died
+	bool			is_died;
+	ssize_t			died_idx;
 
 	// mutex
 	pthread_mutex_t	*fork_mutex;
@@ -149,7 +155,7 @@ void		free_params_and_assign_nullptr(t_params **params);
 int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
 
 time_t		get_unix_time_ms(void);
-void		*do_routine(void *v_philo);
+void		*routine(void *v_philo);
 
 
 int			take_forks_wo_lock_state(t_params *params, t_philo_info *philo);
