@@ -14,7 +14,10 @@ NAME	= philo
 
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -MMD -MP
-#-g -fsanitize=address -fsanitize=undefined -fsanitize=thread
+
+ifdef SANITIZE
+	GFLAGS	+= -g -fsanitize=address -fsanitize=undefined -fsanitize=thread
+endif
 
 VPATH	= $(SRC_DIR) $(LIB_DIR)
 
@@ -69,6 +72,12 @@ fclean	: clean
 	rm -f $(NAME)
 
 re		: fclean all
+
+sanitize:
+	make SANITIZE=1
+
+laeks	:
+	make LEAKS=1
 
 bonus	:
 

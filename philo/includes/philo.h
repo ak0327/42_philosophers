@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 21:36:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 22:01:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@
 # define FORK_DIRTY	0
 # define FORK_CLEAN	1
 
-
 /* print color */
 # define PRINT_COLOR_WHITE	"\x1b[00m"
 # define PRINT_COLOR_RED	"\x1b[31m"
@@ -75,9 +74,6 @@
 # define PRINT_COLOR_YELLOW	"\x1b[33m"
 # define PRINT_COLOR_BLUE	"\x1b[34m"
 # define PRINT_COLOR_RESET	"\x1b[0m"
-
-/* parameter */
-# define MONITOR_TIME_SPAN_US	5000
 
 typedef struct s_params		t_params;
 typedef struct s_philo_info	t_philo_info;
@@ -189,7 +185,7 @@ void		monitor(t_params *params);
 
 
 void		print_waiting(t_stack *stack);
-void		print_msg(size_t idx, t_print_type type, time_t time, t_params *params);
+void		print_msg(size_t idx, t_print_type type, t_params *params);
 
 int			check_philo_alive(t_params *params, size_t idx, time_t std_time);
 
@@ -198,6 +194,9 @@ void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
 char		*get_state_str(int state);
+void		check_philo_died(t_params *params);
+bool		is_meet_must_eat_times(t_params *params);
+void		terminate_philo(t_params *params);
 
 int			destroy_params(t_params *params);
 
