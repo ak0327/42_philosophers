@@ -6,19 +6,59 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 13:07:35 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 18:49:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	take_forks(t_philo_info *philo_info)
+int	take_forks(t_philo_info *philo)
 {
+	const size_t	first_take = philo->first_take;
+	const size_t	second_take = philo->second_take;
+	t_params		*params;
 
+	params = philo->params_ptr;
+
+	pthread_mutex_lock(&params->fork_mutex[first_take]);
+	params->held_by[first_take] = (ssize_t)philo->idx;
+
+	while (pthread_mutex_trylock(&params->fork_mutex[second_take]))
+	{
+		if (params->prev_used_by[first_take] == (ssize_t)philo->idx)
+		{
+			params->held_by[first_take] = -1;
+			params->prev_used_by[first_take] = -1;
+			pthread_mutex_unlock(&params->fork_mutex[first_take]);
+		}
+	}
+	params->held_by[second_take] = (ssize_t)philo->idx;
+	print_msg(philo->idx, TYPE_FORK, philo->start_time, params);
+
+	if (params->held_by[first_take] != (ssize_t)philo->idx)
+	{
+		pthread_mutex_lock(&params->fork_mutex[first_take]);
+		params->held_by[first_take] = (ssize_t)philo->idx;
+	}
+	print_msg(philo->idx, TYPE_FORK, philo->start_time, params);
+	return (SUCCESS);
 }
 
-int	put_forks(t_philo_info *philo_info)
+int	put_forks(t_philo_info *philo)
 {
+	const size_t	first_take = philo->first_take;
+	const size_t	second_take = philo->second_take;
+	t_params		*params;
 
+	params = philo->params_ptr;
+
+	params->held_by[first_take] = -1;
+	params->prev_used_by[first_take] = (ssize_t)philo->idx;
+	pthread_mutex_unlock(&params->fork_mutex[first_take]);
+	params->held_by[second_take] = -1;
+	pthread_mutex_unlock(&params->fork_mutex[second_take]);
+	params->prev_used_by[second_take] = (ssize_t)philo->idx;
+
+	return (SUCCESS);
 }
 

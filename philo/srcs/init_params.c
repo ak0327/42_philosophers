@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 15:09:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 18:45:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ static int	init_mutex(t_params *params)
 	if (!params->fork_mutex)
 		return (FAILURE);
 
+	if (pthread_mutex_init(&params->died_mutex, NULL) != SUCCESS)
+		return (FAILURE);
+
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
@@ -65,28 +68,30 @@ static int	init_alloc(t_params **params)
 {
 	size_t	idx;
 
-	(*params)->tid = (pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
+	(*params)->thread_id = (pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
 	(*params)->philo_info = (t_philo_info *)malloc(sizeof(t_philo_info) * (*params)->num_of_philos);
 
 	(*params)->state = (int *)malloc(sizeof(int) * (*params)->num_of_philos);
 	(*params)->held_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 	(*params)->prev_used_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 
-	if (!(*params)->tid || !(*params)->philo_info \
-	|| !(*params)->state || !(*params)->held_by || !(*params)->prev_used_by)
+	if (!(*params)->thread_id || !(*params)->philo_info \
+ || !(*params)->state || !(*params)->held_by || !(*params)->prev_used_by)
 		return (FAILURE);
 
 	idx = 0;
 	while (idx < (*params)->num_of_philos)
 	{
-		(*params)->philo_info[idx].philo_idx = idx;
-		(*params)->philo_info[idx].params_ptr = *params;
+		(*params)->philo_info[idx].idx = idx;
+		(*params)->philo_info[idx].first_take = min_size(idx, (idx + 1) % (*params)->num_of_philos);
+		(*params)->philo_info[idx].second_take = max_size(idx, (idx + 1) % (*params)->num_of_philos);
 		(*params)->philo_info[idx].start_time = 0;
 		(*params)->philo_info[idx].eat_times = 0;
+		(*params)->philo_info[idx].params_ptr = *params;
 
 		(*params)->state[idx] = FORK_DIRTY;
-		(*params)->prev_used_by[idx] = (ssize_t)idx;
-		(*params)->held_by[idx] = (ssize_t)idx;
+		(*params)->prev_used_by[idx] = -1;
+		(*params)->held_by[idx] = -1;
 	}
 	return (SUCCESS);
 }

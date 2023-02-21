@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 16:06:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 18:15:03 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,22 @@
 
 /* message */
 # define PRINT_FORK		"has taken a fork"
-# define PRINT_EATING	"is eating"
-# define PRINT_SLEEPING	"is sleeping"
-# define PRINT_THINKING	"is thinking"
+# define PRINT_EATING	"is start_eating"
+# define PRINT_SLEEPING	"is start_sleeping"
+# define PRINT_THINKING	"is start_thinking"
 # define PRINT_DIED		"died"
 
 # define PHILO_DIED		-1
 # define PHILO_ALIVE	1
 
 /* philo state */
-# define STATE_THINKING	0
-# define STATE_HUNGRY	1
-# define STATE_WAITING	2
-# define STATE_EATING	3
-# define STATE_SLEEPING	4
-# define STATE_DIED		5
+# define STATE_THINKING		0
+# define STATE_HUNGRY		1
+# define STATE_WAITING		2
+# define STATE_EATING		3
+# define STATE_SLEEPING		4
+# define STATE_DIED			5
+# define STATE_TERMINATED	6
 
 /* fork state */
 # define FORK_DIRTY	0
@@ -95,11 +96,12 @@ struct s_params
 	ssize_t			must_eat_times;
 
 	// philo
-	pthread_t		*tid;
+	pthread_t		*thread_id;
 	t_philo_info	*philo_info;
 
-	// fork
 	int				*state;
+
+	// fork
 	ssize_t			*prev_used_by;
 	ssize_t			*held_by;
 
@@ -110,16 +112,23 @@ struct s_params
 	// mutex
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	died_mutex;
 
 	pthread_t		monitor;
+	bool			is_continue_monitor;
 };
 
 struct s_philo_info
 {
-	size_t		philo_idx;
+	size_t		idx;
+
+	size_t		first_take;
+	size_t		second_take;
 
 	time_t		start_time;
 	size_t		eat_times;
+
+	bool		is_continue;
 
 	t_params	*params_ptr;
 };
@@ -163,8 +172,8 @@ int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
 time_t		get_unix_time_ms(void);
 void		*routine(void *v_philo_info);
 
-int			take_forks(t_philo_info *philo_info);
-int			put_forks(t_philo_info *philo_info);
+int			take_forks(t_philo_info *philo);
+int			put_forks(t_philo_info *philo);
 void		*monitor(void *v_params);
 
 
@@ -178,6 +187,8 @@ void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
 char		*get_state_str(int state);
+
+int			destroy_params(t_params *params);
 
 /* libs */
 int			ft_atoi(const char *str, bool *is_success);

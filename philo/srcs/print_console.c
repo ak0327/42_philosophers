@@ -33,13 +33,15 @@ void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)
 	const char		*msg = get_print_msg(type);
 //	const char		*color = get_print_color(type);
 
-	if (!params->is_died || params->died_idx == (ssize_t)idx)
-	{
-//		printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
+	if (!params->is_died)
+		if (!(params->died_idx == (ssize_t)idx && type == TYPE_DIED))
+			return ;
 
-//		printf("%s%ld%03ld %zu %s%s\n", color, unix_time_sec, unix_time_msec, idx, msg, PRINT_COLOR_RESET);
-		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", idx % 255, unix_time_sec, unix_time_msec, idx, msg);
+//	printf("[%zu] %ld:%03ld(ms) %03zu %s\n", idx, unix_time_sec, unix_time_msec, idx, msg);
+
+//	printf("%s%ld%03ld %zu %s%s\n", color, unix_time_sec, unix_time_msec, idx, msg, PRINT_COLOR_RESET);
+	pthread_mutex_lock(&params->print_mutex);
+	printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", idx % 255, unix_time_sec, unix_time_msec, idx, msg);
 //		printf("\x1b[48;5;%03zum[%zu]%ld:%03ld %zu %s\x1b[0m\n",idx, idx % 255, unix_time_sec, unix_time_msec, idx, msg);
-
-	}
+	pthread_mutex_unlock(&params->print_mutex);
 }

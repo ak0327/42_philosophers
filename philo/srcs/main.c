@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 15:02:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 18:46:03 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,12 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
-	free_params(&params);
+	while (!params->is_died);
+
+
+	ret_value = destroy_params(params);
+	if (ret_value != SUCCESS)
+		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
 	return (EXIT_SUCCESS);
 }
