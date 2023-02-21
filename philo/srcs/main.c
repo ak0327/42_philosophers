@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 12:57:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 14:23:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,11 @@ int	monitor(t_params *params)
 			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m @", idx % 255, idx);
 			print_timestamp();
 			printf("\n");
+
+
 			pthread_mutex_unlock(&params->lock_print);
+
+			debug_print_state_wo_lock(params, idx);
 
 			pthread_mutex_unlock(&params->lock_died);
 

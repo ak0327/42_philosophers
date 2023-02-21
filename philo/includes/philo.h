@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 09:59:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 14:17:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ struct s_params
 	pthread_mutex_t	lock_state;
 	pthread_mutex_t	lock_eat_times;
 
-	ssize_t			*eat_times;
+	size_t			*eat_times;
 	time_t			died_time;
 
 	size_t			rev_philo_idx;
@@ -224,8 +224,8 @@ t_stack		*get_last_elem(t_stack *elem);
 void		ft_stack_clear(t_stack **stk);
 void		swap(t_stack **stack);
 
-size_t	min_size(size_t a, size_t b);
-size_t	max_size(size_t a, size_t b);
-
+size_t		min_size(size_t a, size_t b);
+size_t		max_size(size_t a, size_t b);
+size_t		abs_size(size_t a, size_t b);
 
 #endif

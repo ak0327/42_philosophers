@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:59:22 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 09:59:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 14:01:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,3 +26,9 @@ size_t	max_size(size_t a, size_t b)
 	return (b);
 }
 
+size_t	abs_size(size_t a, size_t b)
+{
+	if (a >= b)
+		return (a - b);
+	return (b - a);
+}

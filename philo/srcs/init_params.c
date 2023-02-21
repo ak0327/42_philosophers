@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/19 13:14:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/20 14:18:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,10 @@ int	init_thread(t_params *params)
 		is_process_failure = true;
 	memset(params->fork_arr, 0, sizeof(int) * params->num_of_philos);
 
-	params->eat_times = (ssize_t *)malloc(sizeof(ssize_t) * params->num_of_philos);
+	params->eat_times = (size_t *)malloc(sizeof(ssize_t) * params->num_of_philos);
 	if (!params->fork_arr)
 		is_process_failure = true;
-	memset(params->eat_times, 0, sizeof(ssize_t) * params->num_of_philos);
+	memset(params->eat_times, 0, sizeof(size_t) * params->num_of_philos);
 
 	params->state = (int *)malloc(sizeof(int) * params->num_of_philos);
 	if (!params->state)
