@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 11:52:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 13:07:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,58 +19,24 @@ bool	is_philo_can_eating_wo_lock_state(t_params *params, size_t idx)
 //	size_t			left_eat_times;
 //	size_t			right_eat_times;
 
+	return ((params->state[idx] == STATE_WAITING \
+	|| params->state[idx] == STATE_THINKING) \
+	&& params->state[left_idx] != STATE_EATING \
+	&& params->state[right_idx] != STATE_EATING);
+
 //	return ((params->state[idx] != STATE_EATING \
 //	&& params->state[left_idx] != STATE_EATING \
 //	&& params->state[right_idx] != STATE_EATING));
+	if ((params->state[idx] == STATE_WAITING \
+	|| params->state[idx] == STATE_THINKING) \
+	&& params->state[left_idx] != STATE_EATING \
+	&& params->state[right_idx] != STATE_EATING)
+		return (true);
 
 	if (params->state[idx] == STATE_DIED \
 	|| params->state[left_idx] == STATE_DIED \
 	|| params->state[right_idx] == STATE_DIED)
 		return (false);
-
-	if (params->state[idx] == STATE_HUNGRY \
-	&& params->state[left_idx] != STATE_EATING \
-	&& params->state[right_idx] != STATE_EATING)
-		return (true);
-
-//	if (params->state[idx] == STATE_EATING \
-//	|| params->state[idx] == STATE_SLEEPING \
-//	|| params->state[left_idx] == STATE_EATING \
-//	|| params->state[right_idx] == STATE_EATING)
-//		return (false);
-//
-//	pthread_mutex_lock(&params->lock_eat_times);
-//	left_eat_times = params->eat_times[left_idx];
-//	if (params->state[left_idx] == STATE_EATING)
-//		left_eat_times++;
-//	right_eat_times = params->eat_times[right_idx];
-//	if (params->state[right_idx] == STATE_EATING)
-//		right_eat_times++;
-//	pthread_mutex_unlock(&params->lock_eat_times);
-//
-//	if (params->eat_times[idx] > left_eat_times + 1 \
-//	|| params->eat_times[idx] > right_eat_times + 1)
-//		return (false);
-
-//	if ((params->state[idx] == STATE_HUNGRY \
-//	&& params->state[left_idx] != STATE_EATING \
-//	&& params->state[right_idx] != STATE_EATING))
-//		return (true);
-
-//	if (params->state[left_idx] == STATE_THINKING \
-//	&& params->state[right_idx] == STATE_THINKING)
-//		return (true);
-
-//	if ((params->state[idx] == STATE_HUNGRY \
-//	&& params->state[left_idx] == STATE_HUNGRY \
-//	&& params->state[right_idx] == STATE_HUNGRY))
-//		return (true);
-
-//	if (params->state[idx] != STATE_HUNGRY \
-//	&& (params->state[left_idx] == STATE_HUNGRY \
-//	|| params->state[right_idx] == STATE_HUNGRY))
-//		return (false);
-
 	return (false);
 }
 
@@ -83,30 +49,34 @@ int	take_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 	const size_t	left_idx = params->philo_info[philo->idx].left_philo_idx;
 	const size_t	right_idx = params->philo_info[philo->idx].right_philo_idx;
 
-	if (params->state[philo->idx] != STATE_HUNGRY \
-	&& (params->state[left_idx] == STATE_HUNGRY \
-	|| params->state[right_idx] == STATE_HUNGRY))
+	if (params->state[philo->idx] == STATE_THINKING \
+	&& (params->state[left_idx] == STATE_WAITING \
+	|| params->state[right_idx] == STATE_WAITING))
+	{
+		params->state[philo->idx] = STATE_THINKING;
 		return (STATE_THINKING);
+	}
 
-	params->state[philo->idx] = STATE_HUNGRY;
+	params->state[philo->idx] = STATE_WAITING;
 
 	if (is_philo_can_eating_wo_lock_state(params, philo->idx))
 //	if (params->state[philo->left_philo_idx] != STATE_EATING \
 //	&& params->state[philo->right_philo_idx] != STATE_EATING)
 	{
-		params->state[philo->idx] = STATE_EATING;
 //		printf("take fork(%zu), %s\n", philo->idx, get_state_str(params->state[philo->idx]));
-//		printf("\n");
-//		printf("[#Take] %zu-1 will:%zu\n", philo->idx, first_take);
+		params->state[philo->idx] = STATE_EATING;
+		printf("\n");
+		printf("[#Take] %zu-1 will:%zu\n", philo->idx, first_take);
 		pthread_mutex_lock(&params->lock_each_fork[first_take]);
-//		printf("[#Take] %zu-2 take:%zu\n", philo->idx, first_take);
-//		printf("[#Take] %zu-3 will:%zu\n", philo->idx, second_take);
+		printf("[#Take] %zu-2 take:%zu\n", philo->idx, first_take);
+		printf("[#Take] %zu-3 will:%zu\n", philo->idx, second_take);
 		pthread_mutex_lock(&params->lock_each_fork[second_take]);
-//		printf("[#Take] %zu-4 take:%zu\n", philo->idx, second_take);
-//		printf("\n");
+		printf("[#Take] %zu-4 take:%zu\n", philo->idx, second_take);
+		printf("\n");
+
 		return (STATE_EATING);
 	}
-	return (STATE_HUNGRY);
+	return (STATE_WAITING);
 
 //	pthread_mutex_unlock(&params->lock_state);
 
@@ -139,7 +109,7 @@ int	take_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 
 int	put_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 {
-//	debug_print_state_w_lock(params, philo->idx);
+	debug_print_state_w_lock(params, philo->idx);
 
 //	pthread_mutex_lock(&params->lock_state);
 
@@ -161,19 +131,29 @@ int	put_forks_wo_lock_state(t_params *params, t_philo_info *philo)
 
 	params->state[philo->idx] = STATE_THINKING;
 
-	if (params->state[philo->left_philo_idx] == STATE_HUNGRY \
+	if (params->state[philo->left_philo_idx] == STATE_WAITING \
 	&& is_philo_can_eating_wo_lock_state(params, philo->left_philo_idx))
 	{
 		params->state[philo->left_philo_idx] = \
 		take_forks_wo_lock_state(params, &params->philo_info[philo->left_philo_idx]);
 	}
-	if (params->state[philo->right_philo_idx] == STATE_HUNGRY \
+	if (params->state[philo->right_philo_idx] == STATE_WAITING \
 	&& is_philo_can_eating_wo_lock_state(params, philo->right_philo_idx))
 	{
 		params->state[philo->right_philo_idx] = \
 		take_forks_wo_lock_state(params, &params->philo_info[philo->right_philo_idx]);
 	}
-//	pthread_mutex_unlock(&params->lock_state);
+
+//	if (params->state[philo->left_philo_idx] == STATE_THINKING)
+//	{
+//		params->state[philo->left_philo_idx] = STATE_HUNGRY;
+//	}
+//	if (params->state[philo->right_philo_idx] == STATE_THINKING)
+//	{
+//		params->state[philo->right_philo_idx] = STATE_HUNGRY;
+//	}
+
+	//	pthread_mutex_unlock(&params->lock_state);
 
 //	printf("\n");
 //	printf("  [#Put] %zu-1 put %zu\n", philo->idx, philo->first_take);

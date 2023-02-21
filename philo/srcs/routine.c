@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/20 14:21:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 13:02:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ char	*get_state_str(int state)
 		return("thinking");
 	if (state == STATE_HUNGRY)
 		return("\x1b[33mHUNGRY\x1b[0m  ");
+	if (state == STATE_WAITING)
+		return("\x1b[33mWAITING\x1b[0m  ");
 	if (state == STATE_EATING)
 		return("eating  ");
 	if (state == STATE_SLEEPING)
@@ -111,7 +113,7 @@ int	check_philo_alive(t_params *params, size_t idx, time_t std_time)
 {
 	if (params->is_died && params->died_philo != (ssize_t)idx)
 	{
-//		printf("ret PHILO_DIED died:%zu (%zu)\n", params->died_philo, idx);
+		printf("ret PHILO_DIED died:%zu (%zu)\n", params->died_philo, idx);
 		return (PHILO_DIED);
 	}
 
@@ -169,16 +171,21 @@ void	*do_routine(void *v_philo)
 
 		// (1) でEATINGにできなかった場合
 		// 両隣のforkが使える状態になればSTATE_EATINGになる
-		/*
-		if (params->state[philo->idx] == STATE_HUNGRY)
+
+		if (params->state[philo->idx] != STATE_EATING)
 		{
-			if (check_philo_alive(params, philo->idx, philo->start_time) == PHILO_DIED)
+			if (check_philo_alive(params, philo->idx, philo->start_time) ==	PHILO_DIED)
+			{
+				printf("ret PHILO_DIED died:%zu (%zu)\n", params->died_philo, philo->idx);
 				return (NULL);
-			continue ;
+			}
+			continue;
 		}
-		 */
-//		debug_print_state_w_lock(params, philo->idx);
-		while (params->state[philo->idx] == STATE_HUNGRY) //wait
+
+		debug_print_state_w_lock(params, philo->idx);
+
+	/*
+		while (params->state[philo->idx] == STATE_WAITING) //wait
 		{
 			if (check_philo_alive(params, philo->idx, philo->start_time) == PHILO_DIED)
 			{
@@ -188,9 +195,10 @@ void	*do_routine(void *v_philo)
 //				pthread_mutex_unlock(&params->lock_state);
 				return (NULL);
 			}
-			usleep(500);
-		}
 
+//			usleep(500);
+		}
+*/
 //		debug_print_state_w_lock(params, philo->idx);
 
 //		take_forks_wo_lock_state(params, philo);
