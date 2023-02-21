@@ -12,5 +12,13 @@
 
 #include "philo.h"
 
+int	take_forks(t_philo_info *philo_info)
+{
 
+}
+
+int	put_forks(t_philo_info *philo_info)
+{
+
+}
 

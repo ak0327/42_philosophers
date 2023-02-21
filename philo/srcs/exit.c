@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 14:36:44 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 15:01:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, int ret)
 		printf("[Error] Invalid argument. 0 <= MustEatTimes\n");
 	else
 		printf("[Error] Process error occurred\n");
-	free_params_and_assign_nullptr(&params);
+	free_params(&params);
 	return (ret);
 }
 
@@ -42,15 +42,13 @@ static void	free_ret_nullptr(void **ptr)
 	*ptr = NULL;
 }
 
-void	free_params_and_assign_nullptr(t_params **params)
+void	free_params(t_params **params)
 {
 	if (!params)
 		return ;
 	free_ret_nullptr((void **)&(*params)->tid);
-	free_ret_nullptr((void **)&(*params)->philo_idx);
 
-	free_ret_nullptr((void **)&(*params)->each_eat_times);
-	free_ret_nullptr((void **)&(*params)->each_start_time);
+	free_ret_nullptr((void **)&(*params)->philo_info);
 
 	free_ret_nullptr((void **)&(*params)->state);
 	free_ret_nullptr((void **)&(*params)->prev_used_by);

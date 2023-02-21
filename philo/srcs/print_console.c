@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 14:37:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 15:03:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,6 @@ static char	*get_print_msg(t_print_type type)
 		return (PRINT_THINKING);
 	return (PRINT_DIED);
 }
-
-/*
-static char	*get_print_color(t_print_type type)
-{
-	if (type == TYPE_FORK)
-		return (PRINT_COLOR_WHITE);
-	if (type == TYPE_EATING)
-		return (PRINT_COLOR_GREEN);
-	if (type == TYPE_SLEEPING)
-		return (PRINT_COLOR_YELLOW);
-	if (type == TYPE_THINKING)
-		return (PRINT_COLOR_BLUE);
-	return (PRINT_COLOR_RED);
-}
-*/
 
 //TODO: idx->+1
 void	print_msg(size_t idx, t_print_type type, time_t time, t_params *params)

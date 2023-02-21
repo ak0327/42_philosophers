@@ -6,14 +6,15 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 14:34:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 15:02:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 // fork     0   1   2   3   0
-// philo  3 ^ 0 ^ 1 ^ 2 ^ 3 ^
+// philo    ^ 0 ^ 1 ^ 2 ^ 3 ^
+
 
 int	main(int argc, char **argv)
 {
@@ -33,9 +34,7 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
 
-//	printf("main:3\n");
-
-	free_params_and_assign_nullptr(&params);
+	free_params(&params);
 
 	return (EXIT_SUCCESS);
 }
