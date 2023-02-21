@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 18:45:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 18:50:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static int	init_mutex(t_params *params)
 	{
 		if (pthread_mutex_init(&params->fork_mutex[idx], NULL) != SUCCESS)
 			return (FAILURE);
+		idx++;
 	}
 	return (SUCCESS);
 }
@@ -68,14 +69,14 @@ static int	init_alloc(t_params **params)
 {
 	size_t	idx;
 
-	(*params)->thread_id = (pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
+	(*params)->philo_tid = (pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
 	(*params)->philo_info = (t_philo_info *)malloc(sizeof(t_philo_info) * (*params)->num_of_philos);
 
 	(*params)->state = (int *)malloc(sizeof(int) * (*params)->num_of_philos);
 	(*params)->held_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 	(*params)->prev_used_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 
-	if (!(*params)->thread_id || !(*params)->philo_info \
+	if (!(*params)->philo_tid || !(*params)->philo_info \
  || !(*params)->state || !(*params)->held_by || !(*params)->prev_used_by)
 		return (FAILURE);
 
@@ -92,6 +93,7 @@ static int	init_alloc(t_params **params)
 		(*params)->state[idx] = FORK_DIRTY;
 		(*params)->prev_used_by[idx] = -1;
 		(*params)->held_by[idx] = -1;
+		idx++;
 	}
 	return (SUCCESS);
 }

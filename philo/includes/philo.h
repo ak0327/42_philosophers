@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 18:15:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 19:56:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@
 
 /* message */
 # define PRINT_FORK		"has taken a fork"
-# define PRINT_EATING	"is start_eating"
-# define PRINT_SLEEPING	"is start_sleeping"
-# define PRINT_THINKING	"is start_thinking"
+# define PRINT_EATING	"is eating"
+# define PRINT_SLEEPING	"is sleeping"
+# define PRINT_THINKING	"is thinking"
 # define PRINT_DIED		"died"
 
 # define PHILO_DIED		-1
@@ -96,7 +96,7 @@ struct s_params
 	ssize_t			must_eat_times;
 
 	// philo
-	pthread_t		*thread_id;
+	pthread_t		*philo_tid;
 	t_philo_info	*philo_info;
 
 	int				*state;
@@ -114,7 +114,7 @@ struct s_params
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	died_mutex;
 
-	pthread_t		monitor;
+	pthread_t		monitor_tid;
 	bool			is_continue_monitor;
 };
 
@@ -174,7 +174,7 @@ void		*routine(void *v_philo_info);
 
 int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo);
-void		*monitor(void *v_params);
+void		monitor(t_params *params);
 
 
 void		print_waiting(t_stack *stack);

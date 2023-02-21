@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 18:49:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 19:23:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	put_forks(t_philo_info *philo)
 	params->prev_used_by[first_take] = (ssize_t)philo->idx;
 	pthread_mutex_unlock(&params->fork_mutex[first_take]);
 	params->held_by[second_take] = -1;
-	pthread_mutex_unlock(&params->fork_mutex[second_take]);
 	params->prev_used_by[second_take] = (ssize_t)philo->idx;
+	pthread_mutex_unlock(&params->fork_mutex[second_take]);
 
 	return (SUCCESS);
 }

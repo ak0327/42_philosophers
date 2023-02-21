@@ -46,7 +46,7 @@ void	free_params(t_params **params)
 {
 	if (!params)
 		return ;
-	free_ret_nullptr((void **)&(*params)->thread_id);
+	free_ret_nullptr((void **)&(*params)->philo_tid);
 
 	free_ret_nullptr((void **)&(*params)->philo_info);
 

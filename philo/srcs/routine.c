@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 18:48:34 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 19:53:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,57 +44,64 @@ char	*get_state_str(int state)
 	return("\x1b[31mDIED\x1b[0m    ");
 }
 
-bool	is_died(t_params *params)
+bool	is_died(t_philo_info *philo)
 {
 	const time_t	now = get_unix_time_ms();
-	t_philo_info	philo_info;
-	size_t			idx;
+	const size_t	idx = philo->idx;
+	t_params		*params;
 
+	params = philo->params_ptr;
 	if (params->is_died)
 		return (true);
-	idx = 0;
-	while (idx < params->num_of_philos)
+	if (now - philo->start_time >= params->time_to_die)
 	{
-		philo_info = params->philo_info[idx];
-		if (now - philo_info.start_time >= params->time_to_die)
-		{
-			params->is_died = true;
-			params->died_idx = (ssize_t)idx;
-			return (true);
-		}
-		idx++;
+		pthread_mutex_lock(&params->died_mutex);
+		params->is_died = true;
+		params->died_idx = (ssize_t)idx;
+		pthread_mutex_unlock(&params->died_mutex);
+		philo->is_continue = false;
+		return (true);
 	}
 	return (false);
 }
 
 void	start_eating(t_philo_info *philo)
 {
+	const time_t	now_time = get_unix_time_ms();
 	t_params		*params;
 
 	params = philo->params_ptr;
+	if (params->is_died)
+		return ;
 	params->state[philo->idx] = STATE_EATING;
-	philo->start_time = get_unix_time_ms();
-	print_msg(philo->idx, TYPE_EATING, philo->start_time, params);
+	print_msg(philo->idx, TYPE_EATING, now_time, params);
+	philo->start_time = now_time;
 	usleep(params->time_to_eat * 1000);
 }
 
 void	start_sleeping(t_philo_info *philo)
 {
+	const time_t	now_time = get_unix_time_ms();
 	t_params		*params;
 
 	params = philo->params_ptr;
+	if (params->is_died)
+		return ;
 	params->state[philo->idx] = STATE_SLEEPING;
-	print_msg(philo->idx, TYPE_SLEEPING, philo->start_time, params);
+	print_msg(philo->idx, TYPE_SLEEPING, now_time, params);
 	usleep(params->time_to_sleep * 1000);
 }
 
 void	start_thinking(t_philo_info *philo)
 {
+	const time_t	now_time = get_unix_time_ms();
 	t_params		*params;
 
 	params = philo->params_ptr;
+	if (params->is_died)
+		return ;
 	params->state[philo->idx] = STATE_THINKING;
-	print_msg(philo->idx, TYPE_THINKING, philo->start_time, params);
+	print_msg(philo->idx, TYPE_THINKING, now_time, params);
 }
 
 void	*routine(void *v_philo_info)
@@ -105,19 +112,16 @@ void	*routine(void *v_philo_info)
 	philo = (t_philo_info *)v_philo_info;
 	params = philo->params_ptr;
 
-	while (!params->is_died)
+//	printf("idx:%zu, fork:%zu->%zu\n", philo->idx, philo->first_take, philo->second_take);
+	while (!philo->is_continue)
 	{
+//		printf("idx:%zu, start:%zu\n", philo->idx, philo->start_time);
 		take_forks(philo);
 		start_eating(philo);
 		put_forks(philo);
-		if (is_died(params))
-			break ;
 		start_sleeping(philo);
-		if (is_died(params))
-			break ;
 		start_thinking(philo);
-
-		if (is_died(params))
+		if (is_died(philo))
 			break ;
 	}
 	params->state[philo->idx] = STATE_TERMINATED;
@@ -126,40 +130,33 @@ void	*routine(void *v_philo_info)
 	return (NULL);
 }
 
-void	*monitor(void *v_params)
+void	monitor(t_params *params)
 {
-	const time_t	time_to_die = ((t_params *)v_params)->time_to_die;
-	time_t			now_time;
-	t_params		*params;
-	time_t			start_time;
-	size_t			idx;
+	time_t		now_time;
+	time_t		start_time;
+	size_t		idx;
 
-	params = (t_params *)v_params;
-	while (!params->is_died)
+	now_time = get_unix_time_ms();
+	idx = 0;
+	while (idx < params->num_of_philos)
 	{
-		now_time = get_unix_time_ms();
-		idx = 0;
-		while (idx < params->num_of_philos && !params->is_died)
+		start_time = params->philo_info[idx].start_time;
+		if (now_time - start_time >= params->time_to_die)
 		{
-			start_time = params->philo_info[idx].start_time;
-			if (now_time - start_time >= time_to_die)
-			{
-				pthread_mutex_lock(&params->died_mutex);
-				params->is_died = true;
-				params->died_idx = (ssize_t)idx;
-				pthread_mutex_unlock(&params->died_mutex);
+			pthread_mutex_lock(&params->died_mutex);
+			params->is_died = true;
+			params->died_idx = (ssize_t)idx;
+			pthread_mutex_unlock(&params->died_mutex);
 
-				//// debug ////
-				pthread_mutex_lock(&params->print_mutex);
-				printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m @", idx % 255, idx);
-				print_timestamp();
-				printf("\n");
-				pthread_mutex_unlock(&params->print_mutex);
-				///////////////
-				break ;
-			}
-			idx++;
+			//// debug ////
+			pthread_mutex_lock(&params->print_mutex);
+
+			printf("\x1b[31mmonitor\x1b[0m \x1b[48;5;%03zum%zu\x1b[0m \x1b[31mis died\x1b[0m @ %zu\n", idx % 255, idx, now_time);
+			pthread_mutex_unlock(&params->print_mutex);
+			params->is_continue_monitor = false;
+			///////////////
+			break ;
 		}
+		idx++;
 	}
-	return (NULL);
 }
