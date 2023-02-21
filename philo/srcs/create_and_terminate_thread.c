@@ -17,7 +17,6 @@ int	create_threads(t_params *params)
 	const time_t	start_time = get_unix_time_ms();
 	size_t			idx;
 
-	printf("start time:%zu\n", start_time);
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{

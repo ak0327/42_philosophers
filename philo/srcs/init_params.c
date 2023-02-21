@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 18:50:57 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 21:42:49 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,18 @@ static int	init_alloc(t_params **params)
 	while (idx < (*params)->num_of_philos)
 	{
 		(*params)->philo_info[idx].idx = idx;
-		(*params)->philo_info[idx].first_take = min_size(idx, (idx + 1) % (*params)->num_of_philos);
-		(*params)->philo_info[idx].second_take = max_size(idx, (idx + 1) % (*params)->num_of_philos);
+		if (idx % 2 == 0)
+		{
+			(*params)->philo_info[idx].first_take = idx;
+			(*params)->philo_info[idx].second_take = (idx + 1) % (*params)->num_of_philos;
+		}
+		else
+		{
+			(*params)->philo_info[idx].first_take = (idx + 1) % (*params)->num_of_philos;
+			(*params)->philo_info[idx].second_take = idx;
+		}
+//		(*params)->philo_info[idx].first_take = min_size(idx, (idx + 1) % (*params)->num_of_philos);
+//		(*params)->philo_info[idx].second_take = max_size(idx, (idx + 1) % (*params)->num_of_philos);
 		(*params)->philo_info[idx].start_time = 0;
 		(*params)->philo_info[idx].eat_times = 0;
 		(*params)->philo_info[idx].params_ptr = *params;

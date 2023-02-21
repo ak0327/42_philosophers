@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 19:53:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 21:25:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,8 @@ void	*routine(void *v_philo_info)
 	philo = (t_philo_info *)v_philo_info;
 	params = philo->params_ptr;
 
-//	printf("idx:%zu, fork:%zu->%zu\n", philo->idx, philo->first_take, philo->second_take);
 	while (!philo->is_continue)
 	{
-//		printf("idx:%zu, start:%zu\n", philo->idx, philo->start_time);
 		take_forks(philo);
 		start_eating(philo);
 		put_forks(philo);
@@ -129,6 +127,7 @@ void	*routine(void *v_philo_info)
 		print_msg(philo->idx, TYPE_DIED, philo->start_time + params->time_to_die, params);
 	return (NULL);
 }
+#include <sys/time.h>
 
 void	monitor(t_params *params)
 {
@@ -138,9 +137,9 @@ void	monitor(t_params *params)
 
 	now_time = get_unix_time_ms();
 	idx = 0;
+	start_time = params->philo_info[idx].start_time;
 	while (idx < params->num_of_philos)
 	{
-		start_time = params->philo_info[idx].start_time;
 		if (now_time - start_time >= params->time_to_die)
 		{
 			pthread_mutex_lock(&params->died_mutex);

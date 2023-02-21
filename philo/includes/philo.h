@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 19:56:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 21:36:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 # define TIME_TO_SLEEP_IDX		4
 # define MUST_EAT_TIMES_IDX		5
 
-# define JST					9
+# define TO_JST					9
 
 /* message */
 # define PRINT_FORK		"has taken a fork"
@@ -85,6 +85,7 @@ typedef struct s_stack_elem	t_stack;
 
 typedef enum s_input_type	t_input_type;
 typedef enum s_print_type	t_print_type;
+typedef enum s_philo_state	t_state;
 
 struct s_params
 {
@@ -138,6 +139,16 @@ struct s_stack_elem
 	size_t	idx;
 	t_stack	*prev;
 	t_stack	*next;
+};
+
+enum s_philo_state
+{
+	e_thinking,
+	e_waiting,
+	e_eating,
+	e_sleeping,
+	e_died,
+	e_terminated,
 };
 
 enum s_print_type
