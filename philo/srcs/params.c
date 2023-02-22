@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 13:10:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 17:34:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,19 @@ static int	init_mutex(t_params *params)
 	if (!params->fork_mutex)
 		return (FAILURE);
 
+	params->prev_used_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
+	if (!params->prev_used_mutex)
+		return (FAILURE);
+
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
 		if (pthread_mutex_init(&params->fork_mutex[idx], NULL) != SUCCESS)
 			return (FAILURE);
+
+		if (pthread_mutex_init(&params->prev_used_mutex[idx], NULL) != SUCCESS)
+			return (FAILURE);
+
 		if (pthread_mutex_init(&params->philo_info[idx].philo_mutex, NULL) != SUCCESS)
 			return (FAILURE);
 
@@ -86,7 +94,8 @@ static int	init_alloc(t_params **params)
 	(*params)->prev_used_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 
 	if (!(*params)->philo_tid || !(*params)->philo_info \
- || !(*params)->state || !(*params)->held_by || !(*params)->prev_used_by)
+	|| !(*params)->state || !(*params)->held_by \
+	|| !(*params)->prev_used_by)
 		return (FAILURE);
 
 	idx = 0;
@@ -96,20 +105,21 @@ static int	init_alloc(t_params **params)
 
 		(*params)->philo_info[idx].first_take = idx;
 		(*params)->philo_info[idx].second_take = (idx + 1) % (*params)->num_of_philos;
-//		if (idx % 2 == 1)
-//		{
-//			swap_tmp = (*params)->philo_info[idx].first_take;
-//			(*params)->philo_info[idx].first_take = (*params)->philo_info[idx].second_take;
-//			(*params)->philo_info[idx].second_take = swap_tmp;
-//		}
-		if (idx + 1 == (*params)->num_of_philos)
+		if (idx % 2 == 1)
 		{
 			swap_tmp = (*params)->philo_info[idx].first_take;
 			(*params)->philo_info[idx].first_take = (*params)->philo_info[idx].second_take;
 			(*params)->philo_info[idx].second_take = swap_tmp;
 		}
+//		if (idx + 1 == (*params)->num_of_philos)
+//		{
+//			swap_tmp = (*params)->philo_info[idx].first_take;
+//			(*params)->philo_info[idx].first_take = (*params)->philo_info[idx].second_take;
+//			(*params)->philo_info[idx].second_take = swap_tmp;
+//		}
 //		(*params)->philo_info[idx].first_take = min_size(idx, (idx + 1) % (*params)->num_of_philos);
 //		(*params)->philo_info[idx].second_take = max_size(idx, (idx + 1) % (*params)->num_of_philos);
+
 		(*params)->philo_info[idx].start_time = 0;
 		(*params)->philo_info[idx].eat_times = 0;
 		(*params)->philo_info[idx].params_ptr = *params;
@@ -139,13 +149,20 @@ int	destroy_params(t_params *params)
 	{
 		if (pthread_mutex_destroy(&params->fork_mutex[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
+
+		if (pthread_mutex_destroy(&params->prev_used_mutex[idx]) != SUCCESS)
+			return (PROCESS_ERROR);
+
+		if (pthread_mutex_destroy(&params->philo_info[idx].philo_mutex) != SUCCESS)
+			return (PROCESS_ERROR);
+
 		idx++;
 	}
 	if (pthread_mutex_destroy(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 
-//	if (pthread_mutex_destroy(&params->died_mutex) != SUCCESS)
-//		return (PROCESS_ERROR);
+	if (pthread_mutex_destroy(&params->died_mutex) != SUCCESS)
+		return (PROCESS_ERROR);
 
 	free_params(&params);
 

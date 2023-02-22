@@ -13,7 +13,7 @@
 NAME	= philo
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP -g -fsanitize=undefined -fsanitize=thread
 
 ifdef SANITIZE
 	CFLAGS	+= -g -fsanitize=undefined -fsanitize=thread

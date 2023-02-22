@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 12:01:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 17:32:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ struct s_params
 
 	// mutex
 	pthread_mutex_t	*fork_mutex;
+	pthread_mutex_t	*prev_used_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	died_mutex;
 
