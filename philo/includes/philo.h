@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 17:32:14 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 19:32:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,19 @@
 # define SUCCESS				0
 # define FAILURE				1
 # define PROCESS_ERROR			2
-# define INVALID_ARG_COUNT		3
-# define INVALID_NUM_OF_PHILOS	4
-# define INVALID_TIME_TO_DIE	5
-# define INVALID_TIME_TO_EAT	6
-# define INVALID_TIME_TO_SLEEP	7
-# define INVALID_MUST_EAT_TIMES	8
-# define INTERRUPT				9
-# define CONTINUE				10
+# define CONTINUE				3
+# define BREAK					4
+
+# define PHILO_ALIVE			0
+# define PHILO_DIED				6
+
+/* invalid */
+# define INVALID_ARG_COUNT		0
+# define INVALID_NUM_OF_PHILOS	1
+# define INVALID_TIME_TO_DIE	2
+# define INVALID_TIME_TO_EAT	3
+# define INVALID_TIME_TO_SLEEP	4
+# define INVALID_MUST_EAT_TIMES	5
 
 /* index */
 # define NUM_OF_PHILOS_IDX		1
@@ -51,8 +56,6 @@
 # define PRINT_THINKING	"is thinking"
 # define PRINT_DIED		"died"
 
-# define PHILO_DIED		-1
-# define PHILO_ALIVE	1
 
 /* philo state */
 # define STATE_THINKING		0
@@ -103,7 +106,7 @@ struct s_params
 	ssize_t			*held_by;
 
 	// died
-	bool			is_died;
+	int				is_died;
 	ssize_t			died_idx;
 
 	// mutex
@@ -187,13 +190,13 @@ time_t		get_unix_time_ms(void);
 void		*routine(void *v_philo_info);
 
 int			take_forks(t_philo_info *philo);
-int			put_forks(t_philo_info *philo);
-void		print_msg(size_t idx, t_print_type type, t_params *params);
+int			put_forks(t_philo_info *philo, int prev_ret_val);
+int			print_msg(size_t idx, t_print_type type, t_params *params, time_t time);
 
 /* philo_status */
-bool		get_is_died(t_params *params, ssize_t *idx);
-bool		is_meet_must_eat_times(t_params *params);
-int			is_some_philo_died(t_params *params);
+int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_value);
+int			is_meet_must_eat_times(t_params *params, int prev_ret_value);
+int			is_some_philo_died(t_params *paramsd);
 
 
 void		debug_print_state_w_lock(t_params *params, size_t id);

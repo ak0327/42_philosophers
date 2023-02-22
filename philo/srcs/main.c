@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 17:49:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 19:05:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,11 @@ int	main(int argc, char **argv)
 	ret_value = create_threads(params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free_allocs(ret_value, params, EXIT_FAILURE));
-	while (true)
+	while (ret_value == SUCCESS)
 	{
-		if (is_some_philo_died(params))
-		{
-//			printf("#### MONIOTE philo died ####\n");
-			break ;
-		}
-		if (is_meet_must_eat_times(params))
-		{
-//			printf("#### MONIOTE meet must eat times ####\n");
-			break ;
-		}
 		usleep(500);
+		ret_value = is_some_philo_died(params);
+		ret_value = is_meet_must_eat_times(params, ret_value);
 	}
 	ret_value = terminate_threads(params);
 	if (ret_value != SUCCESS)
