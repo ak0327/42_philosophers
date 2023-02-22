@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 11:47:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 13:10:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,13 @@ static int	init_alloc(t_params **params)
 
 		(*params)->philo_info[idx].first_take = idx;
 		(*params)->philo_info[idx].second_take = (idx + 1) % (*params)->num_of_philos;
-		if (idx % 2 == 1)
+//		if (idx % 2 == 1)
+//		{
+//			swap_tmp = (*params)->philo_info[idx].first_take;
+//			(*params)->philo_info[idx].first_take = (*params)->philo_info[idx].second_take;
+//			(*params)->philo_info[idx].second_take = swap_tmp;
+//		}
+		if (idx + 1 == (*params)->num_of_philos)
 		{
 			swap_tmp = (*params)->philo_info[idx].first_take;
 			(*params)->philo_info[idx].first_take = (*params)->philo_info[idx].second_take;

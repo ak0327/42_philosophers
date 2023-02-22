@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 12:27:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 13:12:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	*routine(void *v_philo_info)
 	t_philo_info	*philo;
 
 	philo = (t_philo_info *)v_philo_info;
+//	printf("start:%zu\n", philo->idx);
 	while (true)
 	{
 		take_forks(philo);
