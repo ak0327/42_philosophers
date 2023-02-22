@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 15:01:57 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 17:47:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,7 @@ void	free_params(t_params **params)
 	free_ret_nullptr((void **)&(*params)->held_by);
 
 	free_ret_nullptr((void **)&(*params)->fork_mutex);
+	free_ret_nullptr((void **)&(*params)->prev_used_mutex);
+
 	free_ret_nullptr((void **)params);
 }
