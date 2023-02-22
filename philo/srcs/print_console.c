@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 19:49:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 20:25:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ static char	*get_print_msg(t_print_type type)
 	return (PRINT_DIED);
 }
 
-int	print_msg(size_t idx, t_print_type type, t_params *params, time_t time)
+int	print_msg(size_t idx, t_print_type type, t_params *params, struct timeval tv)
 {
-	const time_t	unix_time_sec = time / 1000;
-	const time_t	unix_time_msec = time % 1000;
+	const time_t	unix_time_sec = tv.tv_sec;
+	const time_t	unix_time_msec = tv.tv_usec / 1000;
 	int				is_died;
 	ssize_t			died_idx;
 

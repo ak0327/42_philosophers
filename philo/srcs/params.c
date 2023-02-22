@@ -101,7 +101,6 @@ static void	init_alloc_elem(t_params **params, size_t idx)
 //		(*params)->philo_info[idx].first_take = min_size(idx, (idx + 1) % (*params)->num_of_philos);
 //		(*params)->philo_info[idx].second_take = max_size(idx, (idx + 1) % (*params)->num_of_philos);
 
-	(*params)->philo_info[idx].start_time = 0;
 	(*params)->philo_info[idx].eat_times = 0;
 	(*params)->philo_info[idx].params_ptr = *params;
 	(*params)->philo_info[idx].is_meet_eat_times = true;

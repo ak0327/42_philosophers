@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 19:32:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 20:27:21 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 /* return value */
@@ -123,21 +124,21 @@ struct s_params
 
 struct s_philo_info
 {
-	size_t		idx;
+	size_t			idx;
 
-	size_t		first_take;
-	size_t		second_take;
+	size_t			first_take;
+	size_t			second_take;
 
-	time_t		start_time;
-	size_t		eat_times;
+	struct timeval	start_time;
+	size_t			eat_times;
 
 //	pthread_mutex_t	eat_times_mutex;
 //	pthread_mutex_t	start_time_mutex;
 	pthread_mutex_t	philo_mutex;
 
-	bool		is_meet_eat_times;
+	bool			is_meet_eat_times;
 
-	t_params	*params_ptr;
+	t_params		*params_ptr;
 };
 
 struct s_stack_elem
@@ -191,7 +192,8 @@ void		*routine(void *v_philo_info);
 
 int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo, int prev_ret_val);
-int			print_msg(size_t idx, t_print_type type, t_params *params, time_t time);
+//int			print_msg(size_t idx, t_print_type type, t_params *params, time_t time);
+int			print_msg(size_t idx, t_print_type type, t_params *params, struct timeval tv);
 
 /* philo_status */
 int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_value);

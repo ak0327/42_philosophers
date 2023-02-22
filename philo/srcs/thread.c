@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 11:33:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 20:29:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	create_threads(t_params *params)
 {
-	const time_t	start_time = get_unix_time_ms();
+	struct timeval	tv;
 	size_t			idx;
 
 	/*
@@ -29,10 +29,11 @@ int	create_threads(t_params *params)
 	}
 	 */
 
+	gettimeofday(&tv, NULL);
 	idx = 1;
 	while (idx < params->num_of_philos)
 	{
-		params->philo_info[idx].start_time = start_time;
+		params->philo_info[idx].start_time = tv;
 		if (pthread_create(&params->philo_tid[idx], NULL, routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;
@@ -40,7 +41,7 @@ int	create_threads(t_params *params)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		params->philo_info[idx].start_time = start_time;
+		params->philo_info[idx].start_time = tv;
 		if (pthread_create(&params->philo_tid[idx], NULL, routine, (void *)&params->philo_info[idx]) != SUCCESS)
 			return (PROCESS_ERROR);
 		idx += 2;

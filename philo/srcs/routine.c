@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 19:48:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 20:21:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,17 @@
 static int	start_eating(t_philo_info *philo, int prev_ret_val)
 {
 	int				ret_value;
-	const time_t	time = get_unix_time_ms();
+	struct timeval	tv;
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr, time);
+	gettimeofday(&tv, NULL);
+	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr, tv);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
 	if (pthread_mutex_lock(&philo->philo_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	philo->start_time = time;
+	philo->start_time = tv;
 	pthread_mutex_unlock(&philo->philo_mutex);
 
 	usleep(philo->params_ptr->time_to_eat * 1000);
@@ -34,15 +35,15 @@ static int	start_eating(t_philo_info *philo, int prev_ret_val)
 static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 {
 	int				ret_value;
-	const time_t	time = get_unix_time_ms();
+	struct timeval	tv;
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
 
-	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr, time);
+	gettimeofday(&tv, NULL);
+	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr, tv);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
-
 	usleep(philo->params_ptr->time_to_sleep * 1000);
 	return (ret_value);
 }
@@ -50,12 +51,12 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 static int	start_thinking(t_philo_info *philo, int prev_ret_val)
 {
 	int				ret_value;
-	const time_t	time = get_unix_time_ms();
+	struct timeval	tv;
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-
-	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr, time);
+	gettimeofday(&tv, NULL);
+	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr, tv);
 	return (ret_value);
 }
 
@@ -63,7 +64,7 @@ static int	update_eat_times(t_philo_info *philo, int prev_ret_val)
 {
 	size_t	eat_times;
 
-	if (prev_ret_val != SUCCESS && prev_ret_val != PHILO_ALIVE)
+	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
 
 	if (philo->params_ptr->must_eat_times < 0)
@@ -89,6 +90,7 @@ void	*routine(void *v_philo_info)
 
 	ret_value = SUCCESS;
 	philo = (t_philo_info *)v_philo_info;
+//	printf("(%zu)start:%ld, %zu-%zu-%zu-%zu\n", philo->idx, philo->start_time, philo->params_ptr->num_of_philos, philo->params_ptr->time_to_die, philo->params_ptr->time_to_eat, philo->params_ptr->time_to_sleep);
 	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
 //		printf("(%zu)-1 %d\n", philo->idx, ret_value);

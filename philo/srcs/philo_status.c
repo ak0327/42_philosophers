@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 11:22:42 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 19:29:46 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 20:35:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
@@ -67,9 +67,9 @@ int	get_is_died(t_params *params, ssize_t *idx, int prev_ret_value)
 	return (is_died);
 }
 
-static time_t	get_start_time(t_philo_info *philo)
+static struct timeval	get_start_time(t_philo_info *philo)
 {
-	time_t	start_time;
+	struct timeval	start_time;
 
 	pthread_mutex_lock(&philo->philo_mutex);
 	start_time = philo->start_time;
@@ -79,10 +79,11 @@ static time_t	get_start_time(t_philo_info *philo)
 
 int	is_some_philo_died(t_params *params)
 {
-	const time_t	now_time = get_unix_time_ms();
-	int				is_died;
-	time_t			start_time;
+	struct timeval	now_tv;
+	struct timeval	start_tv;
+	time_t			delta_time;
 	size_t			idx;
+	int				is_died;
 
 	idx = 0;
 	if (get_is_died(params, NULL, SUCCESS) == PHILO_DIED)
@@ -90,14 +91,17 @@ int	is_some_philo_died(t_params *params)
 	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	is_died = PHILO_ALIVE;
+	gettimeofday(&now_tv, NULL);
 	while (idx < params->num_of_philos)
 	{
-		start_time = get_start_time(&params->philo_info[idx]);
-		if (now_time - start_time >= params->time_to_die)
+		start_tv = get_start_time(&params->philo_info[idx]);
+		delta_time = (now_tv.tv_sec - start_tv.tv_sec) * 1000 \
+		+ (now_tv.tv_usec - start_tv.tv_usec) / 1000;
+		if (delta_time >= params->time_to_die)
 		{
-			params->is_died = true;
+			params->is_died = PHILO_DIED;
 			params->died_idx = (ssize_t)idx;
-			print_msg(idx, TYPE_DIED, params, now_time);
+			print_msg(idx, TYPE_DIED, params, now_tv);
 			params->died_idx = -1;
 			is_died = PHILO_DIED;
 			break ;
