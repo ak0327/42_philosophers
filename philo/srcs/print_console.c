@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 20:25:57 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 21:51:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,31 @@ static char	*get_print_msg(t_print_type type)
 	return (PRINT_DIED);
 }
 
-int	print_msg(size_t idx, t_print_type type, t_params *params, struct timeval tv)
+int	print_msg(size_t idx, t_print_type type, t_params *params)
 {
-	const time_t	unix_time_sec = tv.tv_sec;
-	const time_t	unix_time_msec = tv.tv_usec / 1000;
+	struct timeval	tv;
 	int				is_died;
-	ssize_t			died_idx;
 
+//	printf("print(%zu)-1\n", idx);
 	if (pthread_mutex_lock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	if (type != TYPE_DIED)
+//	printf("print(%zu)-2\n", idx);
+	pthread_mutex_lock(&params->died_mutex);
+//	printf("print(%zu)-3\n", idx);
+
+	is_died = params->is_died;
+	pthread_mutex_unlock(&params->died_mutex);
+
+	if (type != TYPE_DIED && is_died == PHILO_DIED)
 	{
-		is_died = get_is_died(params, &died_idx, SUCCESS);
-		if (is_died == PHILO_DIED)
-		{
-			if (pthread_mutex_unlock(&params->print_mutex) != SUCCESS)
-				return (PROCESS_ERROR);
-			return (PHILO_DIED);
-		}
+		pthread_mutex_unlock(&params->print_mutex);
+		return (PHILO_DIED);
 	}
-	printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
-	idx % 255, unix_time_sec, unix_time_msec, idx + 1, get_print_msg(type));
+
+	gettimeofday(&tv, NULL);
+	printf("\x1b[48;5;%03zum%ld%03d %zu %s\x1b[0m\n", \
+	idx % 255, tv.tv_sec, tv.tv_usec / 1000, idx + 1, get_print_msg(type));
+
 	if (pthread_mutex_unlock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (SUCCESS);

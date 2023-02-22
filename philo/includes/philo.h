@@ -33,13 +33,13 @@
 # define PHILO_ALIVE			0
 # define PHILO_DIED				6
 
-/* invalid */
-# define INVALID_ARG_COUNT		0
-# define INVALID_NUM_OF_PHILOS	1
-# define INVALID_TIME_TO_DIE	2
-# define INVALID_TIME_TO_EAT	3
-# define INVALID_TIME_TO_SLEEP	4
-# define INVALID_MUST_EAT_TIMES	5
+/* print_err_msg */
+# define INVALID_ARG_COUNT		10
+# define INVALID_NUM_OF_PHILOS	11
+# define INVALID_TIME_TO_DIE	12
+# define INVALID_TIME_TO_EAT	13
+# define INVALID_TIME_TO_SLEEP	14
+# define INVALID_MUST_EAT_TIMES	15
 
 /* index */
 # define NUM_OF_PHILOS_IDX		1
@@ -132,6 +132,7 @@ struct s_philo_info
 	struct timeval	start_time;
 	size_t			eat_times;
 
+
 //	pthread_mutex_t	eat_times_mutex;
 //	pthread_mutex_t	start_time_mutex;
 	pthread_mutex_t	philo_mutex;
@@ -182,7 +183,7 @@ int			get_input_args(char **argv, t_params *params);
 
 int			create_threads(t_params *params);
 int			monitor_philos(t_params *params);
-int			terminate_threads(t_params *params);
+int			join_threads(t_params *params);
 
 void		free_params(t_params **params);
 int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
@@ -193,12 +194,14 @@ void		*routine(void *v_philo_info);
 int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo, int prev_ret_val);
 //int			print_msg(size_t idx, t_print_type type, t_params *params, time_t time);
-int			print_msg(size_t idx, t_print_type type, t_params *params, struct timeval tv);
+int			print_msg(size_t idx, t_print_type type, t_params *params);
 
 /* philo_status */
 int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_value);
-int			is_meet_must_eat_times(t_params *params, int prev_ret_value);
 int			is_some_philo_died(t_params *paramsd);
+int			is_meet_must_eat_times(t_params *params, int prev_ret_value);
+int			is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_value);
+bool		get_is_meet_must_eat_times(t_philo_info *philo);
 
 
 void		debug_print_state_w_lock(t_params *params, size_t id);

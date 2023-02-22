@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 20:37:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 22:15:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ int	take_forks(t_philo_info *philo)
 	t_params		*params;
 	ssize_t			first_prev;
 	ssize_t			second_prev;
-	struct timeval	tv;
 
 	params = philo->params_ptr;
 	first_prev = get_prev_used_by(philo->first_take, params);
@@ -48,8 +47,7 @@ int	take_forks(t_philo_info *philo)
 	if (pthread_mutex_lock(&params->fork_mutex[philo->first_take]) != SUCCESS)
 		return (PROCESS_ERROR);
 //	params->held_by[philo->first_take] = (ssize_t)idx;
-	gettimeofday(&tv, NULL);
-	if (print_msg(philo->idx, TYPE_FORK, params, tv) == PHILO_DIED)
+	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
 		return (PHILO_DIED);
@@ -57,8 +55,7 @@ int	take_forks(t_philo_info *philo)
 	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
 //	params->held_by[philo->second_take] = (ssize_t)philo->idx;
-	gettimeofday(&tv, NULL);
-	if (print_msg(philo->idx, TYPE_FORK, params, tv) == PHILO_DIED)
+	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
 		pthread_mutex_unlock(&params->fork_mutex[philo->second_take]);

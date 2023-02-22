@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 18:54:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 22:36:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,13 @@ static int	init_mutex(t_params *params)
 {
 	size_t	idx;
 
-	params->fork_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
+	params->fork_mutex = \
+	(pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
 	if (!params->fork_mutex)
 		return (FAILURE);
 
-	params->prev_used_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
+	params->prev_used_mutex = \
+	(pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
 	if (!params->prev_used_mutex)
 		return (FAILURE);
 
@@ -103,7 +105,7 @@ static void	init_alloc_elem(t_params **params, size_t idx)
 
 	(*params)->philo_info[idx].eat_times = 0;
 	(*params)->philo_info[idx].params_ptr = *params;
-	(*params)->philo_info[idx].is_meet_eat_times = true;
+	(*params)->philo_info[idx].is_meet_eat_times = false;
 
 //	(*params)->state[idx] = FORK_DIRTY;
 	(*params)->prev_used_by[idx] = -1;
@@ -114,12 +116,15 @@ static int	init_alloc(t_params **params)
 {
 	size_t	idx;
 
-	(*params)->philo_tid = (pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
-	(*params)->philo_info = (t_philo_info *)malloc(sizeof(t_philo_info) * (*params)->num_of_philos);
+	(*params)->philo_tid = \
+	(pthread_t *)malloc(sizeof(pthread_t) * (*params)->num_of_philos);
+	(*params)->philo_info = \
+	(t_philo_info *)malloc(sizeof(t_philo_info) * (*params)->num_of_philos);
 
 //	(*params)->state = (int *)malloc(sizeof(int) * (*params)->num_of_philos);
 //	(*params)->held_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
-	(*params)->prev_used_by = (ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
+	(*params)->prev_used_by = \
+	(ssize_t *)malloc(sizeof(ssize_t) * (*params)->num_of_philos);
 
 	if (!(*params)->philo_tid || !(*params)->philo_info || !(*params)->prev_used_by)
 		return (FAILURE);
