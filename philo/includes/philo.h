@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 23:46:53 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 12:01:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ struct s_params
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	died_mutex;
 
+	bool			is_sim_fin;
+
 	pthread_t		monitor_tid;
 	bool			is_continue_monitor;
 };
@@ -129,7 +131,7 @@ struct s_philo_info
 //	pthread_mutex_t	start_time_mutex;
 	pthread_mutex_t	philo_mutex;
 
-	bool		is_continue;
+	bool		is_meet_eat_times;
 
 	t_params	*params_ptr;
 };
@@ -185,21 +187,18 @@ void		*routine(void *v_philo_info);
 
 int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo);
-void		monitor(t_params *params);
-
-
-void		print_waiting(t_stack *stack);
 void		print_msg(size_t idx, t_print_type type, t_params *params);
 
-int			check_philo_alive(t_params *params, size_t idx, time_t std_time);
+/* philo_status */
+bool		get_is_died(t_params *params, ssize_t *idx);
+bool		is_meet_must_eat_times(t_params *params);
+int			is_some_philo_died(t_params *params);
 
 
 void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
 char		*get_state_str(int state);
-int			is_philo_died(t_params *params);
-bool		is_meet_must_eat_times(t_params *params);
 void		terminate_philo(t_params *params);
 
 int			destroy_params(t_params *params);
@@ -225,5 +224,8 @@ void		swap(t_stack **stack);
 size_t		min_size(size_t a, size_t b);
 size_t		max_size(size_t a, size_t b);
 size_t		abs_size(size_t a, size_t b);
+
+/* debug_print */
+void		print_eat_times(t_params *params);
 
 #endif

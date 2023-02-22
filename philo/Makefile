@@ -13,7 +13,7 @@
 NAME	= philo
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP -g -fsanitize=thread
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP
 
 ifdef SANITIZE
 	CFLAGS	+= -g -fsanitize=undefined -fsanitize=thread
@@ -25,13 +25,15 @@ VPATH	= $(SRC_DIR) $(LIB_DIR)
 SRC_DIR	= ./srcs
 SRC		= main.c \
 		  init_args.c \
-		  init_params.c \
-		  create_and_terminate_thread.c \
+		  params.c \
+		  thread.c \
 		  routine.c \
 		  handle_forks.c \
 		  time.c \
 		  print_console.c \
 		  exit.c \
+		  debug_print.c \
+		  philo_status.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
