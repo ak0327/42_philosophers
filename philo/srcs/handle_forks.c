@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:15:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 22:59:52 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,8 @@ int	take_forks(t_philo_info *philo)
 	second_prev = get_prev_used_by(philo->second_take, params);
 	if (first_prev == (ssize_t)philo->idx || second_prev == (ssize_t)philo->idx)
 		return (CONTINUE);
-
 	if (pthread_mutex_lock(&params->fork_mutex[philo->first_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-//	params->held_by[philo->first_take] = (ssize_t)idx;
 	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
@@ -54,7 +52,6 @@ int	take_forks(t_philo_info *philo)
 	}
 	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-//	params->held_by[philo->second_take] = (ssize_t)philo->idx;
 	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
@@ -72,25 +69,17 @@ int	put_forks(t_philo_info *philo, int prev_ret_val)
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-
 	params = philo->params_ptr;
 	first_take = philo->first_take;
 	second_take = philo->second_take;
-
-//	params->held_by[first_take] = -1;
 	if (update_prev_used_by(first_take, philo->idx, params) != SUCCESS)
 		return (PROCESS_ERROR);
-//	params->prev_used_by[first_take] = (ssize_t)philo->idx;
 	if (pthread_mutex_unlock(&params->fork_mutex[first_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-
-//	params->held_by[second_take] = -1;
-//	params->prev_used_by[second_take] = (ssize_t)philo->idx;
 	if (update_prev_used_by(second_take, philo->idx, params) != SUCCESS)
 		return (PROCESS_ERROR);
 	if (pthread_mutex_unlock(&params->fork_mutex[second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-
 	return (SUCCESS);
 }
 

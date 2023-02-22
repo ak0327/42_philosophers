@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 11:22:42 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:49:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 23:12:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
@@ -23,7 +23,7 @@ static ssize_t	get_eat_times(t_philo_info *philo)
 	return ((ssize_t)eat_times);
 }
 
-static bool	get_is_meet_eat_times(t_philo_info *philo)
+bool	get_is_meet_eat_times(t_philo_info *philo)
 {
 	bool	is_meet_eat_times;
 
@@ -98,63 +98,4 @@ int	get_is_died(t_params *params, ssize_t *idx, int prev_ret_value)
 	if (pthread_mutex_unlock(&params->died_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (is_died);
-}
-
-static struct timeval	get_start_time(t_philo_info *philo)
-{
-	struct timeval	start_time;
-
-	pthread_mutex_lock(&philo->philo_mutex);
-	start_time = philo->start_time;
-	pthread_mutex_unlock(&philo->philo_mutex);
-	return (start_time);
-}
-
-int	is_some_philo_died(t_params *params)
-{
-	struct timeval	now_tv;
-	struct timeval	start_tv;
-	time_t			delta_time;
-	size_t			idx;
-	int				is_died;
-
-	idx = 0;
-//	if (get_is_died(params, NULL, SUCCESS) == PHILO_DIED)
-//		return (PHILO_DIED);
-//	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
-//		return (PROCESS_ERROR);
-	pthread_mutex_lock(&params->died_mutex);
-	is_died = params->is_died;
-	pthread_mutex_unlock(&params->died_mutex);
-
-	if (is_died == PHILO_DIED)
-		return (PHILO_DIED);
-
-	gettimeofday(&now_tv, NULL);
-	while (idx < params->num_of_philos)
-	{
-		start_tv = get_start_time(&params->philo_info[idx]);
-		delta_time = (now_tv.tv_sec - start_tv.tv_sec) * 1000 \
-		+ (now_tv.tv_usec - start_tv.tv_usec) / 1000;
-		if (!get_is_meet_eat_times(&params->philo_info[idx]) \
-		&& delta_time >= params->time_to_die)
-		{
-			pthread_mutex_lock(&params->died_mutex);
-			params->is_died = PHILO_DIED;
-			params->died_idx = (ssize_t)idx;
-			pthread_mutex_unlock(&params->died_mutex);
-
-			print_msg(idx, TYPE_DIED, params);
-			printf(" died(%zu)\n", idx + 1);
-
-			pthread_mutex_lock(&params->died_mutex);
-			params->died_idx = -1;
-			pthread_mutex_unlock(&params->died_mutex);
-			return (PHILO_DIED);
-		}
-		idx++;
-	}
-	if (pthread_mutex_unlock(&params->died_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
-	return (PHILO_ALIVE);
 }

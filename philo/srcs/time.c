@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:57:25 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 22:13:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 23:00:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ void	print_timestamp(void)
 
 	gettimeofday(&tv, NULL);
 	unix_time = tv.tv_sec;
-	msec = tv.tv_usec/1000;
-	printf("%ld:%03d(ms)",unix_time, (int)msec);
+	msec = tv.tv_usec / 1000;
+	printf("%ld:%03d(ms)", unix_time, (int)msec);
 }

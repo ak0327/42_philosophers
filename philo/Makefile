@@ -28,7 +28,8 @@ VPATH	= $(SRC_DIR) $(LIB_DIR)
 SRC_DIR	= ./srcs
 SRC		= main.c \
 		  init_args.c \
-		  params.c \
+		  params_init.c \
+		  params_destroy.c \
 		  thread.c \
 		  routine.c \
 		  handle_forks.c \
@@ -37,6 +38,7 @@ SRC		= main.c \
 		  exit.c \
 		  debug_print.c \
 		  philo_status.c \
+		  is_died.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

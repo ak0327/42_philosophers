@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/27 18:28:00 by takira            #+#    #+#             */
-/*   Updated: 2023/02/18 14:45:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 22:58:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,3 @@ void	swap(t_stack **stack)
 	second_elem->next = first_elem;
 	*stack = second_elem;
 }
-

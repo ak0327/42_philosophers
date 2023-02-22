@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:56:56 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 10:56:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 23:05:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	print_eat_times(t_params *params)
 {
-	size_t idx;
+	size_t	idx;
 
 	idx = 0;
 	printf("start_eating times:");
@@ -28,4 +28,3 @@ void	print_eat_times(t_params *params)
 			printf("\n");
 	}
 }
-

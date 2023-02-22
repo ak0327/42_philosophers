@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 21:05:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 23:25:44 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,4 @@ int	print_err_msg_and_free_allocs(int err, t_params *params, int ret)
 		printf("[Error] Process abort\n");
 	free_params(&params);
 	return (ret);
-}
-
-static void	free_ret_nullptr(void **ptr)
-{
-	if (!ptr)
-		return ;
-	free(*ptr);
-	*ptr = NULL;
-}
-
-void	free_params(t_params **params)
-{
-	if (!params)
-		return ;
-	free_ret_nullptr((void **)&(*params)->philo_tid);
-	free_ret_nullptr((void **)&(*params)->philo_info);
-	free_ret_nullptr((void **)&(*params)->prev_used_by);
-//	free_ret_nullptr((void **)&(*params)->held_by);
-//	free_ret_nullptr((void **)&(*params)->state);
-	free_ret_nullptr((void **)&(*params)->fork_mutex);
-	free_ret_nullptr((void **)&(*params)->prev_used_mutex);
-	free_ret_nullptr((void **)params);
 }

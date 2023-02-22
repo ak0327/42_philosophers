@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 20:27:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 23:28:46 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@
 # define PRINT_THINKING	"is thinking"
 # define PRINT_DIED		"died"
 
-
 /* philo state */
 # define STATE_THINKING		0
 # define STATE_HUNGRY		1
@@ -83,62 +82,38 @@ typedef struct s_params		t_params;
 typedef struct s_philo_info	t_philo_info;
 typedef struct s_stack_elem	t_stack;
 
-typedef enum s_input_type	t_input_type;
-typedef enum s_print_type	t_print_type;
-typedef enum s_philo_state	t_state;
+typedef enum e_input_type	t_input_type;
+typedef enum e_print_type	t_print_type;
 
 struct s_params
 {
-	// args
 	size_t			num_of_philos;
 	time_t			time_to_die;
 	time_t			time_to_eat;
 	time_t			time_to_sleep;
 	ssize_t			must_eat_times;
-
-	// philo
 	pthread_t		*philo_tid;
 	t_philo_info	*philo_info;
-
 	int				*state;
-
-	// fork
 	ssize_t			*prev_used_by;
 	ssize_t			*held_by;
-
-	// died
 	int				is_died;
 	ssize_t			died_idx;
-
-	// mutex
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	*prev_used_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	died_mutex;
-
-	bool			is_sim_fin;
-
-	pthread_t		monitor_tid;
-	bool			is_continue_monitor;
 };
 
 struct s_philo_info
 {
 	size_t			idx;
-
 	size_t			first_take;
 	size_t			second_take;
-
 	struct timeval	start_time;
 	size_t			eat_times;
-
-
-//	pthread_mutex_t	eat_times_mutex;
-//	pthread_mutex_t	start_time_mutex;
 	pthread_mutex_t	philo_mutex;
-
 	bool			is_meet_eat_times;
-
 	t_params		*params_ptr;
 };
 
@@ -149,17 +124,7 @@ struct s_stack_elem
 	t_stack	*next;
 };
 
-enum s_philo_state
-{
-	e_thinking,
-	e_waiting,
-	e_eating,
-	e_sleeping,
-	e_died,
-	e_terminated,
-};
-
-enum s_print_type
+enum e_print_type
 {
 	TYPE_FORK,
 	TYPE_EATING,
@@ -168,7 +133,7 @@ enum s_print_type
 	TYPE_DIED
 };
 
-enum s_input_type
+enum e_input_type
 {
 	TYPE_NUM_OF_PHILO,
 	TYPE_TIME_TO_DIE,
@@ -178,11 +143,37 @@ enum s_input_type
 };
 
 /* philo */
+
+/* exit.c */
+
+
+/* debug_print.c */
+
+/* handle_forks.c */
+
+/* init_args.c */
+
+/* is_died.c */
+
+/* params_init.c */
+
+/* params_destroy.c */
+
+/* philo_status.c */
+
+/* print_console.c */
+
+
+/* routine.c */
+
+/* thread.c */
+
+/* time.c */
+
 int			init_params(int argc, char **argv, t_params **params);
 int			get_input_args(char **argv, t_params *params);
 
 int			create_threads(t_params *params);
-int			monitor_philos(t_params *params);
 int			join_threads(t_params *params);
 
 void		free_params(t_params **params);
@@ -193,16 +184,15 @@ void		*routine(void *v_philo_info);
 
 int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo, int prev_ret_val);
-//int			print_msg(size_t idx, t_print_type type, t_params *params, time_t time);
 int			print_msg(size_t idx, t_print_type type, t_params *params);
 
 /* philo_status */
-int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_value);
+int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
 int			is_some_philo_died(t_params *paramsd);
-int			is_meet_must_eat_times(t_params *params, int prev_ret_value);
-int			is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_value);
+int			is_meet_must_eat_times(t_params *params, int prev_ret_val);
+int			is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_val);
 bool		get_is_meet_must_eat_times(t_philo_info *philo);
-
+bool		get_is_meet_eat_times(t_philo_info *philo);
 
 void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
