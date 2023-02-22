@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 21:42:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 10:06:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,8 @@ static int	init_mutex(t_params *params)
 {
 	size_t	idx;
 
-	if (pthread_mutex_init(&params->print_mutex, NULL) != SUCCESS)
-		return (FAILURE);
-
 	params->fork_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * params->num_of_philos);
 	if (!params->fork_mutex)
-		return (FAILURE);
-
-	if (pthread_mutex_init(&params->died_mutex, NULL) != SUCCESS)
 		return (FAILURE);
 
 	idx = 0;
@@ -60,8 +54,22 @@ static int	init_mutex(t_params *params)
 	{
 		if (pthread_mutex_init(&params->fork_mutex[idx], NULL) != SUCCESS)
 			return (FAILURE);
+		if (pthread_mutex_init(&params->philo_info[idx].philo_mutex, NULL) != SUCCESS)
+			return (FAILURE);
+
+//		if (pthread_mutex_init(&params->philo_info[idx].eat_times_mutex, NULL) != SUCCESS)
+//			return (FAILURE);
+//		if (pthread_mutex_init(&params->philo_info[idx].start_time_mutex, NULL) != SUCCESS)
+//			return (FAILURE);
 		idx++;
 	}
+
+	if (pthread_mutex_init(&params->print_mutex, NULL) != SUCCESS)
+		return (FAILURE);
+
+	if (pthread_mutex_init(&params->died_mutex, NULL) != SUCCESS)
+		return (FAILURE);
+
 	return (SUCCESS);
 }
 
@@ -99,6 +107,7 @@ static int	init_alloc(t_params **params)
 		(*params)->philo_info[idx].start_time = 0;
 		(*params)->philo_info[idx].eat_times = 0;
 		(*params)->philo_info[idx].params_ptr = *params;
+		(*params)->philo_info[idx].is_continue = true;
 
 		(*params)->state[idx] = FORK_DIRTY;
 		(*params)->prev_used_by[idx] = -1;

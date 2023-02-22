@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 22:22:18 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 10:06:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,9 @@ int	terminate_threads(t_params *params)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		params->philo_info[idx].is_continue = false;
+		pthread_mutex_lock(&params->philo_info[idx].philo_mutex);
+		params->philo_info[idx].is_continue = false; //ここ
+		pthread_mutex_unlock(&params->philo_info[idx].philo_mutex);
 		idx++;
 	}
 	idx = 0;

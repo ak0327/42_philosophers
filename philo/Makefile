@@ -13,10 +13,11 @@
 NAME	= philo
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP -g -fsanitize=thread
 
 ifdef SANITIZE
-	GFLAGS	+= -g -fsanitize=address -fsanitize=undefined -fsanitize=thread
+	CFLAGS	+= -g -fsanitize=undefined -fsanitize=thread
+	#-fsanitize=address -fsanitize=undefined
 endif
 
 VPATH	= $(SRC_DIR) $(LIB_DIR)
@@ -85,6 +86,6 @@ norm	:
 	@norminette -v
 	@norminette $(SRC_DIR) $(LIB_DIR) $(INCLUDE_DIR)
 
-.PHONY	: all clean fclean re bonus
+.PHONY	: all clean fclean re bonus sanitize leaks
 
 -include	$(DEPS)

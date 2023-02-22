@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/21 22:01:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/21 23:46:53 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,10 @@ struct s_philo_info
 	time_t		start_time;
 	size_t		eat_times;
 
+//	pthread_mutex_t	eat_times_mutex;
+//	pthread_mutex_t	start_time_mutex;
+	pthread_mutex_t	philo_mutex;
+
 	bool		is_continue;
 
 	t_params	*params_ptr;
@@ -194,7 +198,7 @@ void		debug_print_state_w_lock(t_params *params, size_t id);
 void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
 char		*get_state_str(int state);
-void		check_philo_died(t_params *params);
+int			is_philo_died(t_params *params);
 bool		is_meet_must_eat_times(t_params *params);
 void		terminate_philo(t_params *params);
 
