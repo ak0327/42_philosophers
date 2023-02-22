@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 19:25:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 19:48:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,21 +89,36 @@ void	*routine(void *v_philo_info)
 
 	ret_value = SUCCESS;
 	philo = (t_philo_info *)v_philo_info;
-	while (ret_value == SUCCESS)
+	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
+//		printf("(%zu)-1 %d\n", philo->idx, ret_value);
 		ret_value = take_forks(philo);
 		if (ret_value == CONTINUE)
 			continue ;
+//		printf("(%zu)-2 %d\n", philo->idx, ret_value);
 		ret_value = start_eating(philo, ret_value);
+//		printf("(%zu)-3 %d\n", philo->idx, ret_value);
 		ret_value = put_forks(philo, ret_value);
+//		printf("(%zu)-4 %d\n", philo->idx, ret_value);
+
 		ret_value = update_eat_times(philo, ret_value);
+//		printf("(%zu)-5 %d\n", philo->idx, ret_value);
+
 		ret_value = start_sleeping(philo, ret_value);
+
+//		printf("(%zu)-6 %d\n", philo->idx, ret_value);
 		ret_value = start_thinking(philo, ret_value);
+
+//		printf("(%zu)-7 %d\n", philo->idx, ret_value);
 		ret_value = get_is_died(philo->params_ptr, NULL, ret_value);
+//		printf("(%zu)-8 %d\n", philo->idx, ret_value);
 		ret_value = is_meet_must_eat_times(philo->params_ptr, ret_value);
+//		printf("(%zu)-9 %d\n", philo->idx, ret_value);
+
 	}
 	if (ret_value == PROCESS_ERROR)
 		printf("[Error] Process abort\n");
+//	printf("(%zu)fin %d\n", philo->idx, ret_value);
 	return (NULL);
 }
 
