@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 13:12:35 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/22 13:32:34 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static void	start_eating(t_philo_info *philo)
 	pthread_mutex_unlock(&philo->philo_mutex);
 
 	usleep(philo->params_ptr->time_to_eat * 1000);
-
 }
 
 static void	start_sleeping(t_philo_info *philo)
