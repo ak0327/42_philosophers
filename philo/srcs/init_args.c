@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:59:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 11:33:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	check_num_validity(long long num, t_input_type type)
 	return (1 <= num);
 }
 
-int	get_input_args(char **argv, t_params *params)
+static int	get_std_args(char **argv, t_params *params)
 {
 	bool		is_success;
 	long long	arg_num;
@@ -46,6 +46,14 @@ int	get_input_args(char **argv, t_params *params)
 	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
 		return (INVALID_TIME_TO_SLEEP);
 	params->time_to_sleep = (time_t)arg_num;
+	return (SUCCESS);
+}
+
+static int	get_option_arg(char **argv, t_params *params)
+{
+	bool		is_success;
+	long long	arg_num;
+
 	params->must_eat_times = -1;
 	if (argv[MUST_EAT_TIMES_IDX])
 	{
@@ -54,5 +62,18 @@ int	get_input_args(char **argv, t_params *params)
 			return (INVALID_MUST_EAT_TIMES);
 		params->must_eat_times = (ssize_t)arg_num;
 	}
+	return (SUCCESS);
+}
+
+int	get_input_args(char **argv, t_params *params)
+{
+	int	ret_value;
+
+	ret_value = get_std_args(argv, params);
+	if (ret_value != SUCCESS)
+		return (ret_value);
+	ret_value = get_option_arg(argv, params);
+	if (ret_value != SUCCESS)
+		return (ret_value);
 	return (SUCCESS);
 }

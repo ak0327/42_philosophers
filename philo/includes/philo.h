@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 23:28:46 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 11:29:42 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,11 @@ struct s_params
 	time_t			time_to_eat;
 	time_t			time_to_sleep;
 	ssize_t			must_eat_times;
-	pthread_t		*philo_tid;
-	t_philo_info	*philo_info;
-	int				*state;
-	ssize_t			*prev_used_by;
-	ssize_t			*held_by;
 	int				is_died;
 	ssize_t			died_idx;
+	t_philo_info	*philo_info;
+	pthread_t		*philo_tid;
+	ssize_t			*prev_used_by;
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	*prev_used_mutex;
 	pthread_mutex_t	print_mutex;
@@ -142,67 +140,57 @@ enum e_input_type
 	TYPE_MUST_EAT_TIMES
 };
 
-/* philo */
-
-/* exit.c */
-
-
-/* debug_print.c */
-
-/* handle_forks.c */
-
-/* init_args.c */
-
-/* is_died.c */
-
+/* ------------ */
+/*     philo    */
+/* ------------ */
 /* params_init.c */
+int			init_params(int argc, char **argv, t_params **params);
 
 /* params_destroy.c */
+int			destroy_params(t_params *params);
+void		free_params(t_params **params);
 
-/* philo_status.c */
-
-/* print_console.c */
-
-
-/* routine.c */
-
-/* thread.c */
-
-/* time.c */
-
-int			init_params(int argc, char **argv, t_params **params);
+/* init_args.c */
 int			get_input_args(char **argv, t_params *params);
 
+/* handle_forks.c */
+int			take_forks(t_philo_info *philo);
+int			put_forks(t_philo_info *philo, int prev_ret_val);
+
+/* is_died.c */
+int			is_some_philo_died(t_params *paramsd);
+int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
+
+/* philo_status.c */
+int			is_meet_must_eat_times(t_params *params, int prev_ret_val);
+bool		get_is_meet_must_eat_times(t_philo_info *philo);
+bool		get_is_meet_eat_times(t_philo_info *philo);
+int			is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_val);
+
+/* print_console.c */
+int			print_msg(size_t idx, t_print_type type, t_params *params);
+
+/* routine.c */
+void		*routine(void *v_philo_info);
+
+/* thread.c */
 int			create_threads(t_params *params);
 int			join_threads(t_params *params);
 
-void		free_params(t_params **params);
-int			print_err_msg_and_free_allocs(int err, t_params *params, int ret);
-
+/* time.c */
 time_t		get_unix_time_ms(void);
-void		*routine(void *v_philo_info);
-
-int			take_forks(t_philo_info *philo);
-int			put_forks(t_philo_info *philo, int prev_ret_val);
-int			print_msg(size_t idx, t_print_type type, t_params *params);
-
-/* philo_status */
-int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
-int			is_some_philo_died(t_params *paramsd);
-int			is_meet_must_eat_times(t_params *params, int prev_ret_val);
-int			is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_val);
-bool		get_is_meet_must_eat_times(t_philo_info *philo);
-bool		get_is_meet_eat_times(t_philo_info *philo);
-
-void		debug_print_state_w_lock(t_params *params, size_t id);
-void		debug_print_state_wo_lock(t_params *params, size_t id);
 void		print_timestamp(void);
-char		*get_state_str(int state);
-void		terminate_philo(t_params *params);
 
-int			destroy_params(t_params *params);
+/* exit.c */
+int			print_err_msg_and_free(int err, t_params *params, int ret);
 
-/* libs */
+/* debug_print.c */
+void		print_eat_times(t_params *params);
+
+/* ------------ */
+/*     libs     */
+/* ------------ */
+// libft
 int			ft_atoi(const char *str, bool *is_success);
 int			ft_isdigit(int c);
 size_t		ft_strlen_ns(const char *s);
@@ -210,6 +198,7 @@ char		*ft_strchr(const char *s, int c);
 int			ft_isspace(char c);
 long long	ft_strtoll(char *num, bool *is_success);
 
+// stack
 void		add_left(t_stack *elem, t_stack **stk);
 void		add_right(t_stack *elem, t_stack **stk);
 t_stack		*pop_left(t_stack **stk);
@@ -220,11 +209,9 @@ t_stack		*get_last_elem(t_stack *elem);
 void		ft_stack_clear(t_stack **stk);
 void		swap(t_stack **stack);
 
+// math
 size_t		min_size(size_t a, size_t b);
 size_t		max_size(size_t a, size_t b);
 size_t		abs_size(size_t a, size_t b);
-
-/* debug_print */
-void		print_eat_times(t_params *params);
 
 #endif

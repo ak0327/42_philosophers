@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	print_err_msg_and_free_allocs(int err, t_params *params, int ret)
+int	print_err_msg_and_free(int err, t_params *params, int ret)
 {
 	if (err == INVALID_ARG_COUNT)
 		printf("[Error] Invalid argument. Input as following:\n" \

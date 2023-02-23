@@ -66,3 +66,19 @@ int	is_some_philo_died(t_params *params)
 	}
 	return (PHILO_ALIVE);
 }
+
+int	get_is_died(t_params *params, ssize_t *idx, int prev_ret_value)
+{
+	int	is_died;
+
+	if (!(prev_ret_value == SUCCESS || prev_ret_value == CONTINUE))
+		return (prev_ret_value);
+	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
+		return (PROCESS_ERROR);
+	is_died = params->is_died;
+	if (idx)
+		*idx = params->died_idx;
+	if (pthread_mutex_unlock(&params->died_mutex) != SUCCESS)
+		return (PROCESS_ERROR);
+	return (is_died);
+}

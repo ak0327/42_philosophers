@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:59:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 11:20:00 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static ssize_t	get_prev_used_by(size_t fork_idx, t_params *params)
 	return (prev_used_by);
 }
 
-static int	update_prev_used_by(size_t fork_idx, size_t used_by, t_params *params)
+static int	update_prev_used(size_t fork_idx, size_t used_by, t_params *params)
 {
 	if (pthread_mutex_lock(&params->prev_used_mutex[fork_idx]) != SUCCESS)
 		return (PROCESS_ERROR);
@@ -72,14 +72,13 @@ int	put_forks(t_philo_info *philo, int prev_ret_val)
 	params = philo->params_ptr;
 	first_take = philo->first_take;
 	second_take = philo->second_take;
-	if (update_prev_used_by(first_take, philo->idx, params) != SUCCESS)
+	if (update_prev_used(first_take, philo->idx, params) != SUCCESS)
 		return (PROCESS_ERROR);
 	if (pthread_mutex_unlock(&params->fork_mutex[first_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-	if (update_prev_used_by(second_take, philo->idx, params) != SUCCESS)
+	if (update_prev_used(second_take, philo->idx, params) != SUCCESS)
 		return (PROCESS_ERROR);
 	if (pthread_mutex_unlock(&params->fork_mutex[second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (SUCCESS);
 }
-
