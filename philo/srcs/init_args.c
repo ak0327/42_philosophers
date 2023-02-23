@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 11:33:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 11:49:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	get_std_args(char **argv, t_params *params)
 
 	arg_num = ft_strtoll(argv[NUM_OF_PHILOS_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_NUM_OF_PHILO))
-		return (INVALID_NUM_OF_PHILOS); //TODO: if num_of_philos = 1
+		return (INVALID_NUM_OF_PHILOS);
 	params->num_of_philos = (size_t)arg_num;
 	arg_num = ft_strtoll(argv[TIME_TO_DIE_IDX], &is_success);
 	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_DIE))

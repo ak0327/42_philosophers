@@ -34,3 +34,19 @@ void	print_timestamp(void)
 	msec = tv.tv_usec / 1000;
 	printf("%ld:%03d(ms)", unix_time, (int)msec);
 }
+
+struct timeval	get_start_time(t_philo_info *philo)
+{
+	struct timeval	start_time;
+
+	pthread_mutex_lock(&philo->philo_mutex);
+	start_time = philo->start_time;
+	pthread_mutex_unlock(&philo->philo_mutex);
+	return (start_time);
+}
+
+time_t	get_delta_time(struct timeval now_tv, struct timeval start_tv)
+{
+	return ((now_tv.tv_sec - start_tv.tv_sec) * 1000 \
+		+ (now_tv.tv_usec - start_tv.tv_usec) / 1000);
+}

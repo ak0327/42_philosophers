@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 11:20:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 11:55:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,27 @@ static int	update_prev_used(size_t fork_idx, size_t used_by, t_params *params)
 	return (SUCCESS);
 }
 
+static int	take_second_fork(t_philo_info *philo)
+{
+	t_params		*params;
+
+	params = philo->params_ptr;
+	if (philo->first_take == philo->second_take)
+	{
+		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
+		return (BREAK);
+	}
+	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
+		return (PROCESS_ERROR);
+	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
+	{
+		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
+		pthread_mutex_unlock(&params->fork_mutex[philo->second_take]);
+		return (PHILO_DIED);
+	}
+	return (SUCCESS);
+}
+
 int	take_forks(t_philo_info *philo)
 {
 	t_params		*params;
@@ -50,15 +71,7 @@ int	take_forks(t_philo_info *philo)
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
 		return (PHILO_DIED);
 	}
-	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
-		return (PROCESS_ERROR);
-	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
-	{
-		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
-		pthread_mutex_unlock(&params->fork_mutex[philo->second_take]);
-		return (PHILO_DIED);
-	}
-	return (SUCCESS);
+	return (take_second_fork(philo));
 }
 
 int	put_forks(t_philo_info *philo, int prev_ret_val)
