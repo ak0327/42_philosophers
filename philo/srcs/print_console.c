@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:59:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 15:33:53 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static char	*get_print_msg(t_print_type type)
 		return (PRINT_SLEEPING);
 	if (type == TYPE_THINKING)
 		return (PRINT_THINKING);
+	if (type == TYPE_SIM_START)
+		return (PRINT_SIM_START);
 	return (PRINT_DIED);
 }
 
@@ -32,17 +34,24 @@ int	print_msg(size_t idx, t_print_type type, t_params *params)
 
 	if (pthread_mutex_lock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	pthread_mutex_lock(&params->died_mutex);
-	is_died = params->is_died;
-	pthread_mutex_unlock(&params->died_mutex);
+	is_died = PHILO_ALIVE;
+	if (type != TYPE_DIED)
+	{
+		pthread_mutex_lock(&params->died_mutex);
+		is_died = params->is_died;
+		pthread_mutex_unlock(&params->died_mutex);
+	}
 	if (type != TYPE_DIED && is_died == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->print_mutex);
 		return (PHILO_DIED);
 	}
 	gettimeofday(&tv, NULL);
-	printf("\x1b[48;5;%03zum%ld%03d %zu %s\x1b[0m\n", \
-	idx % 255, tv.tv_sec, tv.tv_usec / 1000, idx + 1, get_print_msg(type));
+	if (type == TYPE_SIM_START)
+		printf("%ld%03d %s\n", tv.tv_sec, tv.tv_usec / 1000, get_print_msg(type));
+	else
+		printf("\x1b[48;5;%03zum%ld%03d %zu %s\x1b[0m\n", \
+		idx % 255, tv.tv_sec, tv.tv_usec / 1000, idx + 1, get_print_msg(type));
 	if (pthread_mutex_unlock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (SUCCESS);

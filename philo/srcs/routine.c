@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 23:02:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 12:12:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static int	start_eating(t_philo_info *philo)
 {
-	int				ret_value;
-	struct timeval	tv;
+	int			ret_value;
+	t_timeval	tv;
 
 	gettimeofday(&tv, NULL);
 	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr);
@@ -32,10 +32,14 @@ static int	start_eating(t_philo_info *philo)
 
 static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 {
-	int	ret_value;
+	int			ret_value;
+	t_timeval	tv;
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
+	gettimeofday(&tv, NULL);
+	if (check_and_update_died_w_lock(philo->params_ptr, philo->idx, tv) == PHILO_DIED)
+		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
@@ -45,10 +49,14 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 
 static int	start_thinking(t_philo_info *philo, int prev_ret_val)
 {
-	int	ret_value;
+	int			ret_value;
+	t_timeval	tv;
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
+	gettimeofday(&tv, NULL);
+	if (check_and_update_died_w_lock(philo->params_ptr, philo->idx, tv) == PHILO_DIED)
+		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr);
 	return (ret_value);
 }

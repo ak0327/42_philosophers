@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 22:50:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 12:27:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@ int	create_threads(t_params *params)
 	struct timeval	tv;
 	size_t			idx;
 
-	gettimeofday(&tv, NULL);
 	idx = 1;
+	gettimeofday(&tv, NULL);
+	params->philo_info[idx].start_time = tv;
+	print_msg(0, TYPE_SIM_START, params);
 	while (idx < params->num_of_philos)
 	{
 		params->philo_info[idx].start_time = tv;

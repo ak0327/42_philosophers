@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 11:49:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/23 15:44:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,12 @@
 # define TO_JST					9
 
 /* message */
-# define PRINT_FORK		"has taken a fork"
-# define PRINT_EATING	"is eating"
-# define PRINT_SLEEPING	"is sleeping"
-# define PRINT_THINKING	"is thinking"
-# define PRINT_DIED		"died"
+# define PRINT_FORK			"has taken a fork"
+# define PRINT_EATING		"is eating"
+# define PRINT_SLEEPING		"is sleeping"
+# define PRINT_THINKING		"is thinking"
+# define PRINT_DIED			"died"
+# define PRINT_SIM_START	"simulation start"
 
 /* philo state */
 # define STATE_THINKING		0
@@ -81,6 +82,7 @@
 typedef struct s_params		t_params;
 typedef struct s_philo_info	t_philo_info;
 typedef struct s_stack_elem	t_stack;
+typedef struct timeval		t_timeval;
 
 typedef enum e_input_type	t_input_type;
 typedef enum e_print_type	t_print_type;
@@ -108,7 +110,7 @@ struct s_philo_info
 	size_t			idx;
 	size_t			first_take;
 	size_t			second_take;
-	struct timeval	start_time;
+	t_timeval		start_time;
 	size_t			eat_times;
 	pthread_mutex_t	philo_mutex;
 	bool			is_meet_eat_times;
@@ -128,7 +130,8 @@ enum e_print_type
 	TYPE_EATING,
 	TYPE_SLEEPING,
 	TYPE_THINKING,
-	TYPE_DIED
+	TYPE_DIED,
+	TYPE_SIM_START
 };
 
 enum e_input_type
@@ -144,77 +147,79 @@ enum e_input_type
 /*     philo    */
 /* ------------ */
 /* params_init.c */
-int				init_params(int argc, char **argv, t_params **params);
+int			init_params(int argc, char **argv, t_params **params);
 
 /* params_destroy.c */
-int				destroy_params(t_params *params);
-void			free_params(t_params **params);
+int			destroy_params(t_params *params);
+void		free_params(t_params **params);
 
 /* init_args.c */
-int				get_input_args(char **argv, t_params *params);
+int			get_input_args(char **argv, t_params *params);
 
 /* handle_forks.c */
-int				take_forks(t_philo_info *philo);
-int				put_forks(t_philo_info *philo, int prev_ret_val);
+int			take_forks(t_philo_info *philo);
+int			put_forks(t_philo_info *philo, int prev_ret_val);
 
 /* is_died.c */
-int				is_some_philo_died(t_params *paramsd);
-int				get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
+int			is_some_philo_died(t_params *paramsd);
+int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
+int			check_and_update_died_wo_lock(t_params *params, size_t idx, t_timeval now_tv);
+int			check_and_update_died_w_lock(t_params *params, size_t idx, t_timeval now_tv);
 
 /* philo_status.c */
-int				is_meet_must_eat_times(t_params *params, int prev_ret_val);
-bool			get_is_meet_must_eat_times(t_philo_info *philo);
-bool			get_is_meet_eat_times(t_philo_info *philo);
-int				is_each_philo_meet_eat_times(\
+int			is_meet_must_eat_times(t_params *params, int prev_ret_val);
+bool		get_is_meet_must_eat_times(t_philo_info *philo);
+bool		get_is_meet_eat_times(t_philo_info *philo);
+int			is_each_philo_meet_eat_times(\
 t_philo_info *philo, int prev_ret_val);
 
 /* print_console.c */
-int				print_msg(size_t idx, t_print_type type, t_params *params);
+int			print_msg(size_t idx, t_print_type type, t_params *params);
 
 /* routine.c */
-void			*routine(void *v_philo_info);
+void		*routine(void *v_philo_info);
 
 /* thread.c */
-int				create_threads(t_params *params);
-int				join_threads(t_params *params);
+int			create_threads(t_params *params);
+int			join_threads(t_params *params);
 
 /* time.c */
-time_t			get_unix_time_ms(void);
-void			print_timestamp(void);
-struct timeval	get_start_time(t_philo_info *philo);
-time_t			get_delta_time(struct timeval now_tv, struct timeval start_tv);
+time_t		get_unix_time_ms(void);
+void		print_timestamp(void);
+t_timeval	get_start_time(t_philo_info *philo);
+time_t		get_delta_time(struct timeval now_tv, struct timeval start_tv);
 
 /* exit.c */
-int				print_err_msg_and_free(int err, t_params *params, int ret);
+int			print_err_msg_and_free(int err, t_params *params, int ret);
 
 /* debug_print.c */
-void			print_eat_times(t_params *params);
+void		print_eat_times(t_params *params);
 
 /* ------------ */
 /*     libs     */
 /* ------------ */
 // libft
-int				ft_atoi(const char *str, bool *is_success);
-int				ft_isdigit(int c);
-size_t			ft_strlen_ns(const char *s);
-char			*ft_strchr(const char *s, int c);
-int				ft_isspace(char c);
-long long		ft_strtoll(char *num, bool *is_success);
+int			ft_atoi(const char *str, bool *is_success);
+int			ft_isdigit(int c);
+size_t		ft_strlen_ns(const char *s);
+char		*ft_strchr(const char *s, int c);
+int			ft_isspace(char c);
+long long	ft_strtoll(char *num, bool *is_success);
 
 // stack
-void			add_left(t_stack *elem, t_stack **stk);
-void			add_right(t_stack *elem, t_stack **stk);
-t_stack			*pop_left(t_stack **stk);
-t_stack			*pop_right(t_stack **stk);
-size_t			get_stack_size(t_stack *stk);
-t_stack			*create_stack_elem(size_t idx);
-t_stack			*get_last_elem(t_stack *elem);
-void			ft_stack_clear(t_stack **stk);
-void			swap(t_stack **stack);
+void		add_left(t_stack *elem, t_stack **stk);
+void		add_right(t_stack *elem, t_stack **stk);
+t_stack		*pop_left(t_stack **stk);
+t_stack		*pop_right(t_stack **stk);
+size_t		get_stack_size(t_stack *stk);
+t_stack		*create_stack_elem(size_t idx);
+t_stack		*get_last_elem(t_stack *elem);
+void		ft_stack_clear(t_stack **stk);
+void		swap(t_stack **stack);
 
 // math
-size_t			min_size(size_t a, size_t b);
-size_t			max_size(size_t a, size_t b);
-size_t			abs_size(size_t a, size_t b);
+size_t		min_size(size_t a, size_t b);
+size_t		max_size(size_t a, size_t b);
+size_t		abs_size(size_t a, size_t b);
 
 #endif
