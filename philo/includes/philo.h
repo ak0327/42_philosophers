@@ -193,6 +193,7 @@ time_t		get_unix_time_ms(void);
 void		print_timestamp(void);
 time_t		get_start_time(t_philo_info *philo);
 time_t		get_delta_time(time_t now_ms, time_t start_ms);
+void		sleep_ms(time_t time_ms);
 
 /* exit.c */
 int			print_err_msg_and_free(int err, t_params *params, int ret);

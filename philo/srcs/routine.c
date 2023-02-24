@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 13:49:05 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:17:34 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ static int	start_eating(t_philo_info *philo)
 	const time_t	now_time = get_unix_time_ms();
 
 	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
-	{
-		printf("(%zu) check->died, %zu\n", philo->idx, now_time);
 		return (PHILO_DIED);
-	}
 	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
@@ -30,7 +27,7 @@ static int	start_eating(t_philo_info *philo)
 	philo->start_time = now_time;
 	if (pthread_mutex_unlock(&philo->philo_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	usleep(philo->params_ptr->time_to_eat * 1000);
+	sleep_ms(philo->params_ptr->time_to_eat);
 	return (ret_value);
 }
 
@@ -46,7 +43,7 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
-	usleep(philo->params_ptr->time_to_sleep * 1000);
+	sleep_ms(philo->params_ptr->time_to_sleep);
 	return (ret_value);
 }
 
