@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:11:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:34:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	take_forks(t_philo_info *philo)
 	params = philo->params_ptr;
 	first_prev = get_prev_used_by(philo->first_take, params);
 	second_prev = get_prev_used_by(philo->second_take, params);
+	if (is_some_philo_died(params) == PHILO_DIED)
+		return (PHILO_DIED);
 	if (first_prev == (ssize_t)philo->idx || second_prev == (ssize_t)philo->idx)
 		return (CONTINUE);
 	if (pthread_mutex_lock(&params->fork_mutex[philo->first_take]) != SUCCESS)
@@ -82,7 +84,7 @@ int	put_forks(t_philo_info *philo, int prev_ret_val)
 	size_t		first_take;
 	size_t		second_take;
 
-	if (prev_ret_val != SUCCESS)
+	if (prev_ret_val == PROCESS_ERROR)
 		return (prev_ret_val);
 	params = philo->params_ptr;
 	first_take = philo->first_take;
