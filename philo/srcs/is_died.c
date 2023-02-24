@@ -6,25 +6,14 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 23:11:00 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 13:28:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:43:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-/*
-static int	update_died(t_params *params, ssize_t idx)
-{
-	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
-	params->is_died = PHILO_DIED;
-	params->died_idx = idx;
-	if (pthread_mutex_unlock(&params->died_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
-	return (SUCCESS);
-}
-*/
 
-int	check_and_update_died_wo_lock(t_params *params, size_t idx, time_t now_time)
+static  int	check_and_update_died_wo_lock(\
+t_params *params, size_t idx, time_t now_time)
 {
 	time_t	start_time;
 	time_t	delta_time;
@@ -35,24 +24,25 @@ int	check_and_update_died_wo_lock(t_params *params, size_t idx, time_t now_time)
 	delta_time = get_delta_time(now_time, start_time);
 	if (!is_meet_eat_times && delta_time >= params->time_to_die)
 	{
-		if (params->is_died == PHILO_DIED)
-			return (PHILO_DIED);
 		params->is_died = PHILO_DIED;
 		params->died_idx = (ssize_t)idx;
-		print_msg(idx, TYPE_DIED, params);
-		params->died_idx = -1;
+//		print_msg(idx, TYPE_DIED, params);
+//		params->died_idx = -1;
 		return (PHILO_DIED);
 	}
 	return (PHILO_ALIVE);
 }
 
-int	check_and_update_died_w_lock(t_params *params, size_t idx, time_t now_time)
+int	check_and_update_died(t_params *params, size_t idx, time_t now_time)
 {
 	int		ret_value;
+	int		is_died;
 
 	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	ret_value = check_and_update_died_wo_lock(params, idx, now_time);
+	is_died = params->is_died;
+	if (is_died == PHILO_ALIVE)
+		ret_value = check_and_update_died_wo_lock(params, idx, now_time);
 	if (pthread_mutex_unlock(&params->died_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (ret_value);
@@ -65,8 +55,6 @@ int	is_some_philo_died(t_params *params)
 	int				ret_val;
 
 	idx = 0;
-//	if (get_is_died(params, NULL, SUCCESS) == PHILO_DIED)
-//		return (PHILO_DIED);
 	if (pthread_mutex_lock(&params->died_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	ret_val = params->is_died;

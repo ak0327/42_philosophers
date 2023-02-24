@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 12:12:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:49:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ static int	start_eating(t_philo_info *philo)
 	int				ret_value;
 	const time_t	now_time = get_unix_time_ms();
 
-	if (check_and_update_died_w_lock(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	{
+		printf("(%zu) check->died, %zu\n", philo->idx, now_time);
 		return (PHILO_DIED);
+	}
 	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
@@ -33,12 +36,12 @@ static int	start_eating(t_philo_info *philo)
 
 static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 {
-	int			ret_value;
+	int				ret_value;
 	const time_t	now_time = get_unix_time_ms();
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-	if (check_and_update_died_w_lock(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
 		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
@@ -49,12 +52,12 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 
 static int	start_thinking(t_philo_info *philo, int prev_ret_val)
 {
-	int			ret_value;
+	int				ret_value;
 	const time_t	now_time = get_unix_time_ms();
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-	if (check_and_update_died_w_lock(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
 		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr);
 	return (ret_value);
@@ -80,6 +83,7 @@ void	*routine(void *v_philo_info)
 {
 	t_philo_info	*philo;
 	int				ret_value;
+	ssize_t			died_philo;
 
 	ret_value = SUCCESS;
 	philo = (t_philo_info *)v_philo_info;
@@ -99,5 +103,8 @@ void	*routine(void *v_philo_info)
 	}
 	if (ret_value == PROCESS_ERROR)
 		printf("[Error] Process abort\n");
+	get_is_died(philo->params_ptr, &died_philo, SUCCESS);
+	if (ret_value == PHILO_DIED && died_philo == (ssize_t)philo->idx)
+		print_msg(philo->idx, TYPE_DIED, philo->params_ptr);
 	return (NULL);
 }

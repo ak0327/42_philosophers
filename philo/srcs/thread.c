@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 13:25:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:37:52 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ int	create_threads(t_params *params)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
-	params->start_time = start_time;
-	if (pthread_create(&params->monitor_tid, NULL, monitor, \
-		(void *)&params) != SUCCESS)
-		return (PROCESS_ERROR);
+//	params->start_time = start_time;
+//	if (pthread_create(&params->monitor_tid, NULL, monitor, \
+//		(void *)&params) != SUCCESS)
+//		return (PROCESS_ERROR);
 	return (SUCCESS);
 }
 
@@ -60,7 +60,7 @@ int	join_threads(t_params *params)
 			return (PROCESS_ERROR);
 		idx++;
 	}
-	if (pthread_join(params->monitor_tid, NULL) != SUCCESS)
-		return (PROCESS_ERROR);
+//	if (pthread_join(params->monitor_tid, NULL) != SUCCESS)
+//		return (PROCESS_ERROR);
 	return (SUCCESS);
 }

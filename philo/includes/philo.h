@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 13:16:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:31:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,8 +166,7 @@ int			put_forks(t_philo_info *philo, int prev_ret_val);
 /* is_died.c */
 int			is_some_philo_died(t_params *params);
 int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
-int			check_and_update_died_w_lock(t_params *params, size_t idx, time_t now_time);
-int			check_and_update_died_wo_lock(t_params *params, size_t idx, time_t now_time);
+int			check_and_update_died(t_params *params, size_t idx, time_t now_time);
 
 /* philo_status.c */
 int			is_meet_must_eat_times(t_params *params, int prev_ret_val);

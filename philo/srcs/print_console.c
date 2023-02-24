@@ -46,20 +46,18 @@ int	print_msg(size_t idx, t_print_type type, t_params *params)
 {
 	time_t	time;
 	int		is_died;
+	ssize_t	died_philo;
 
 //	usleep(10);
 //	printf(" (%zu)print-1\n", idx + 1);
 	if (pthread_mutex_lock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 //	printf(" (%zu)print-2\n", idx + 1);
-	if (type != TYPE_DIED)
+	is_died = get_is_died(params, &died_philo, SUCCESS);
+	if (is_died == PHILO_DIED && type != TYPE_DIED)
 	{
-		is_died = get_is_died(params, NULL, SUCCESS);
-		if (is_died == PHILO_DIED)
-		{
-			pthread_mutex_unlock(&params->print_mutex);
-			return (PHILO_DIED);
-		}
+		pthread_mutex_unlock(&params->print_mutex);
+		return (PHILO_DIED);
 	}
 //	printf(" (%zu)print-7\n", idx + 1);
 	time = get_print_time(&params->philo_info[idx], type);
