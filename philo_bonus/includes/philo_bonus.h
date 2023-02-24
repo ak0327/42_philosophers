@@ -6,14 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 17:10:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 21:49:21 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_BONUS_H
 # define PHILO_BONUS_H
 
-# include <errno.h>
 # include <limits.h>
 # include <pthread.h>
 # include <stdbool.h>
@@ -22,6 +21,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <sys/sem.h>
 
 /* return value */
 # define SUCCESS				0
@@ -73,12 +73,18 @@ struct s_params
 	time_t			time_to_eat;
 	time_t			time_to_sleep;
 	ssize_t			must_eat_times;
+
 	int				is_died;
 	ssize_t			died_idx;
+
 	t_philo_info	*philo_info;
 	pthread_t		*philo_tid;
+
 	pthread_t		monitor_tid;
+
 	ssize_t			*prev_used_by;
+
+	
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	*prev_used_mutex;
 	pthread_mutex_t	print_mutex;

@@ -14,8 +14,8 @@
 
 /*
  index of philo and forks are following:
-  fork     0   1   2   3   0
-  philo    ^ 0 ^ 1 ^ 2 ^ 3 ^
+  fork   4forks in middle of the table
+  philo  0  1  2  3
 */
 
 int	main(int argc, char **argv)
@@ -27,6 +27,8 @@ int	main(int argc, char **argv)
 	ret_value = init_params(argc, argv, &params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, params, EXIT_FAILURE));
+
+
 	ret_value = create_threads(params);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, params, EXIT_FAILURE));
