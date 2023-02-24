@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:34:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:58:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,12 @@ static int	take_second_fork(t_philo_info *philo)
 	t_params		*params;
 
 	params = philo->params_ptr;
+	if (philo->first_take == philo->second_take)
+	{
+		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
+		wait_while_philo_alive(params);
+		return (PHILO_DIED);
+	}
 	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
 	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
@@ -67,12 +73,6 @@ int	take_forks(t_philo_info *philo)
 	|| print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
-		return (PHILO_DIED);
-	}
-	if (philo->first_take == philo->second_take)
-	{
-		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
-		while (is_some_philo_died(params) != PHILO_DIED);
 		return (PHILO_DIED);
 	}
 	return (take_second_fork(philo));

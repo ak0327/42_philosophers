@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:35:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:01:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ static int	start_eating(t_philo_info *philo)
 	int				ret_value;
 	const time_t	now_time = get_unix_time_ms();
 
-	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(\
+	philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
 		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
@@ -38,7 +39,8 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(\
+	philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
 		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
@@ -54,7 +56,8 @@ static int	start_thinking(t_philo_info *philo, int prev_ret_val)
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
-	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	if (check_and_update_died(\
+	philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
 		return (PHILO_DIED);
 	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr);
 	return (ret_value);
@@ -86,8 +89,7 @@ void	*routine(void *v_philo_info)
 	philo = (t_philo_info *)v_philo_info;
 	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
-		ret_value = take_forks(philo);
-		if (ret_value != SUCCESS)
+		if (take_forks(philo) != SUCCESS)
 			continue ;
 		ret_value = start_eating(philo);
 		ret_value = put_forks(philo, ret_value);

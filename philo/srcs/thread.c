@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 14:56:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:49:32 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	create_threads(t_params *params)
+static void	set_start_time(t_params *params)
 {
 	time_t	start_time;
 	size_t	idx;
@@ -24,6 +24,12 @@ int	create_threads(t_params *params)
 		params->philo_info[idx].start_time = start_time;
 		idx++;
 	}
+	params->start_time = start_time;
+}
+
+static int	create_philo_threads(t_params *params)
+{
+	size_t	idx;
 
 	idx = 1;
 	print_msg(0, TYPE_SIM_START, params);
@@ -42,9 +48,23 @@ int	create_threads(t_params *params)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
-	params->start_time = start_time;
+	return (SUCCESS);
+}
+
+static int	create_monitor_thread(t_params *params)
+{
 	if (pthread_create(&params->monitor_tid, NULL, monitor, \
 		(void *)params) != SUCCESS)
+		return (PROCESS_ERROR);
+	return (SUCCESS);
+}
+
+int	create_threads(t_params *params)
+{
+	set_start_time(params);
+	if (create_philo_threads(params) == PROCESS_ERROR)
+		return (PROCESS_ERROR);
+	if (create_monitor_thread(params) == PROCESS_ERROR)
 		return (PROCESS_ERROR);
 	return (SUCCESS);
 }

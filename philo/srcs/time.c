@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:57:25 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:29:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:53:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,6 @@ void	sleep_ms(time_t time_ms)
 		gettimeofday(&now_tv, NULL);
 		if (get_delta_timeval_ms(now_tv, start_tv) >= time_ms)
 			break ;
+		usleep(500);
 	}
 }
