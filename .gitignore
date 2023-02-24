@@ -1,11 +1,20 @@
 *
 
-!/philo/
 !.gitignore
+
+!/philo/
 !/philo/libs
 !/philo/includes
 !/philo/srcs
 !/philo/Makefile
+
+!/philo_bonus/
+!/philo_bonus/libs
+!/philo_bonus/includes
+!/philo_bonus/srcs
+!/philo_bonus/Makefile
+
 !*.c
 !*.h
+
 /objs/
