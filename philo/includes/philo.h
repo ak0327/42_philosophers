@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:54:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:08:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,7 @@ void		sleep_ms(time_t time_ms);
 
 /* exit.c */
 int			print_err_msg_and_free(int err, t_params *params, int ret);
+void		print_msg_when_terminate_philo(int ret_value, t_philo_info *philo);
 
 /* debug_print.c */
 void		print_eat_times(t_params *params);

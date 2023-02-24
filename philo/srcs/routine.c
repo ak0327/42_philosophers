@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 16:01:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:08:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,13 @@ void	*routine(void *v_philo_info)
 {
 	t_philo_info	*philo;
 	int				ret_value;
-	ssize_t			died_philo;
 
 	ret_value = SUCCESS;
 	philo = (t_philo_info *)v_philo_info;
 	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
-		if (take_forks(philo) != SUCCESS)
+		ret_value = take_forks(philo);
+		if (ret_value != SUCCESS)
 			continue ;
 		ret_value = start_eating(philo);
 		ret_value = put_forks(philo, ret_value);
@@ -100,10 +100,6 @@ void	*routine(void *v_philo_info)
 		if (ret_value == PHILO_DIED || get_is_meet_must_eat_times(philo))
 			break ;
 	}
-	if (ret_value == PROCESS_ERROR)
-		printf("[Error] Process abort\n");
-	get_is_died(philo->params_ptr, &died_philo, SUCCESS);
-	if (ret_value == PHILO_DIED && died_philo == (ssize_t)philo->idx)
-		print_msg(philo->idx, TYPE_DIED, philo->params_ptr);
+	print_msg_when_terminate_philo(ret_value, philo);
 	return (NULL);
 }

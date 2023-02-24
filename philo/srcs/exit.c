@@ -33,3 +33,14 @@ int	print_err_msg_and_free(int err, t_params *params, int ret)
 	free_params(&params);
 	return (ret);
 }
+
+void	print_msg_when_terminate_philo(int ret_value, t_philo_info *philo)
+{
+	ssize_t	died_philo;
+
+	if (ret_value == PROCESS_ERROR)
+		printf("[Error] Process abort\n");
+	get_is_died(philo->params_ptr, &died_philo, SUCCESS);
+	if (ret_value == PHILO_DIED && died_philo == (ssize_t)philo->idx)
+		print_msg(philo->idx, TYPE_DIED, philo->params_ptr);
+}
