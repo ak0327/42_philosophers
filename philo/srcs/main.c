@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 12:23:09 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:20:52 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, params, EXIT_FAILURE));
 
+	/*
 	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
 		ret_value = is_some_philo_died(params);
@@ -39,6 +40,7 @@ int	main(int argc, char **argv)
 	}
 	if (ret_value == PROCESS_ERROR)
 		return (print_err_msg_and_free(ret_value, params, EXIT_FAILURE));
+	*/
 
 	ret_value = join_threads(params);
 	if (ret_value != SUCCESS)

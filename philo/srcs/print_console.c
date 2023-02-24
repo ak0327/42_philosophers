@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 15:33:53 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:13:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,34 +27,51 @@ static char	*get_print_msg(t_print_type type)
 	return (PRINT_DIED);
 }
 
+time_t	get_print_time(t_philo_info *philo, t_print_type type)
+{
+	time_t	now_time;
+	time_t	start_time;
+	time_t	time_to_die;
+
+	now_time = get_unix_time_ms();
+	if (type != TYPE_DIED)
+		return (now_time);
+	start_time = get_start_time(philo);
+	time_to_die = philo->params_ptr->time_to_die;
+	now_time = start_time + time_to_die;
+	return (now_time);
+}
+
 int	print_msg(size_t idx, t_print_type type, t_params *params)
 {
-	struct timeval	tv;
-	int				is_died;
+	time_t	time;
+	int		is_died;
 
+//	usleep(10);
+//	printf(" (%zu)print-1\n", idx + 1);
 	if (pthread_mutex_lock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
-	is_died = PHILO_ALIVE;
+//	printf(" (%zu)print-2\n", idx + 1);
 	if (type != TYPE_DIED)
 	{
-		pthread_mutex_lock(&params->died_mutex);
-		is_died = params->is_died;
-		pthread_mutex_unlock(&params->died_mutex);
+		is_died = get_is_died(params, NULL, SUCCESS);
+		if (is_died == PHILO_DIED)
+		{
+			pthread_mutex_unlock(&params->print_mutex);
+			return (PHILO_DIED);
+		}
 	}
-	if (type != TYPE_DIED && is_died == PHILO_DIED)
-	{
-		pthread_mutex_unlock(&params->print_mutex);
-		return (PHILO_DIED);
-	}
-	gettimeofday(&tv, NULL);
+//	printf(" (%zu)print-7\n", idx + 1);
+	time = get_print_time(&params->philo_info[idx], type);
 	if (type == TYPE_SIM_START)
-		printf("%ld%03d %s\n", tv.tv_sec, tv.tv_usec / 1000, get_print_msg(type));
+		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else
-		printf("\x1b[48;5;%03zum%ld%03d %zu %s\x1b[0m\n", \
-		idx % 255, tv.tv_sec, tv.tv_usec / 1000, idx + 1, get_print_msg(type));
+		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
+		idx % 255, time / 1000, time % 1000, idx + 1, get_print_msg(type));
 	if (pthread_mutex_unlock(&params->print_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (SUCCESS);
 }
 
 //	printf("%ld%03ld %zu %s\n", unix_time_sec, unix_time_msec, idx, msg);
+//printf("%ld %03d\n", tv.tv_sec, tv.tv_usec / 1000);

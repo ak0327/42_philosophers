@@ -39,6 +39,7 @@ SRC		= main.c \
 		  debug_print.c \
 		  philo_status.c \
 		  is_died.c \
+		  monitor.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

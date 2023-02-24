@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/23 15:44:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:16:03 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,14 @@ struct s_params
 	ssize_t			died_idx;
 	t_philo_info	*philo_info;
 	pthread_t		*philo_tid;
+	pthread_t		monitor_tid;
 	ssize_t			*prev_used_by;
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	*prev_used_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	died_mutex;
+	bool			is_monitor_end;
+	time_t			start_time;
 };
 
 struct s_philo_info
@@ -110,7 +113,7 @@ struct s_philo_info
 	size_t			idx;
 	size_t			first_take;
 	size_t			second_take;
-	t_timeval		start_time;
+	time_t			start_time;
 	size_t			eat_times;
 	pthread_mutex_t	philo_mutex;
 	bool			is_meet_eat_times;
@@ -161,10 +164,10 @@ int			take_forks(t_philo_info *philo);
 int			put_forks(t_philo_info *philo, int prev_ret_val);
 
 /* is_died.c */
-int			is_some_philo_died(t_params *paramsd);
+int			is_some_philo_died(t_params *params);
 int			get_is_died(t_params *params, ssize_t *idx, int prev_ret_val);
-int			check_and_update_died_wo_lock(t_params *params, size_t idx, t_timeval now_tv);
-int			check_and_update_died_w_lock(t_params *params, size_t idx, t_timeval now_tv);
+int			check_and_update_died_w_lock(t_params *params, size_t idx, time_t now_time);
+int			check_and_update_died_wo_lock(t_params *params, size_t idx, time_t now_time);
 
 /* philo_status.c */
 int			is_meet_must_eat_times(t_params *params, int prev_ret_val);
@@ -179,6 +182,9 @@ int			print_msg(size_t idx, t_print_type type, t_params *params);
 /* routine.c */
 void		*routine(void *v_philo_info);
 
+/* monitor.c */
+void		*monitor(void *v_params);
+
 /* thread.c */
 int			create_threads(t_params *params);
 int			join_threads(t_params *params);
@@ -186,8 +192,8 @@ int			join_threads(t_params *params);
 /* time.c */
 time_t		get_unix_time_ms(void);
 void		print_timestamp(void);
-t_timeval	get_start_time(t_philo_info *philo);
-time_t		get_delta_time(struct timeval now_tv, struct timeval start_tv);
+time_t		get_start_time(t_philo_info *philo);
+time_t		get_delta_time(time_t now_ms, time_t start_ms);
 
 /* exit.c */
 int			print_err_msg_and_free(int err, t_params *params, int ret);

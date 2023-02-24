@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 23:25:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 11:10:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ int	init_params(int argc, char **argv, t_params **params)
 	is_process_success |= init_mutex(*params);
 	(*params)->is_died = PHILO_ALIVE;
 	(*params)->died_idx = -1;
+	(*params)->is_monitor_end = false;
 	if (is_process_success)
 		return (SUCCESS);
 	free_params(params);
