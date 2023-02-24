@@ -44,7 +44,7 @@ int	is_meet_must_eat_times(t_params *params, int prev_ret_val)
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{
-		if (!get_is_meet_eat_times(&params->philo_info[idx]))
+		if (get_is_meet_eat_times(&params->philo_info[idx]) == false)
 			return (CONTINUE);
 		idx++;
 	}

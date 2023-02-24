@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 10:56:56 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 23:05:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:20:44 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,16 @@ void	print_eat_times(t_params *params)
 		else
 			printf("\n");
 	}
+}
+
+void	print_timestamp(void)
+{
+	t_timeval	tv;
+	time_t		unix_time;
+	time_t		msec;
+
+	gettimeofday(&tv, NULL);
+	unix_time = tv.tv_sec;
+	msec = tv.tv_usec / 1000;
+	printf("%ld:%03d(ms)", unix_time, (int)msec);
 }

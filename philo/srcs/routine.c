@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:12:09 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 14:17:34 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:58:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,13 @@ static int	start_eating(t_philo_info *philo)
 	int				ret_value;
 	const time_t	now_time = get_unix_time_ms();
 
+//	printf("(%zu) start eating-1\n", philo->idx + 1);
 	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
-		return (PHILO_DIED);
+		{
+//			printf("(%zu) start eating-2 (died)\n", philo->idx + 1);
+			return (PHILO_DIED);
+		}
+//	printf("(%zu) start eating-2\n", philo->idx + 1);
 	ret_value = print_msg(philo->idx, TYPE_EATING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
@@ -38,8 +43,13 @@ static int	start_sleeping(t_philo_info *philo, int prev_ret_val)
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
+//	printf("(%zu) start sleeping-1\n", philo->idx + 1);
 	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
+	{
+//		printf("(%zu) start sleeping-2 (died)\n", philo->idx + 1);
 		return (PHILO_DIED);
+	}
+//	printf("(%zu) start sleeping-2\n", philo->idx + 1);
 	ret_value = print_msg(philo->idx, TYPE_SLEEPING, philo->params_ptr);
 	if (ret_value == PHILO_DIED)
 		return (PHILO_DIED);
@@ -54,8 +64,14 @@ static int	start_thinking(t_philo_info *philo, int prev_ret_val)
 
 	if (prev_ret_val != SUCCESS)
 		return (prev_ret_val);
+//	printf("(%zu) start thinking-1\n", philo->idx + 1);
+
 	if (check_and_update_died(philo->params_ptr, philo->idx, now_time) == PHILO_DIED)
-		return (PHILO_DIED);
+		{
+//			printf("(%zu) start thinking-2 (died)\n", philo->idx + 1);
+			return (PHILO_DIED);
+		}
+//	printf("(%zu) start thinking-2\n", philo->idx + 1);
 	ret_value = print_msg(philo->idx, TYPE_THINKING, philo->params_ptr);
 	return (ret_value);
 }
@@ -94,10 +110,13 @@ void	*routine(void *v_philo_info)
 		ret_value = update_eat_times(philo, ret_value);
 		ret_value = start_sleeping(philo, ret_value);
 		ret_value = start_thinking(philo, ret_value);
+//		printf("(%zu)-1 ret:%d\n", philo->idx + 1, ret_value);
 		ret_value = get_is_died(philo->params_ptr, NULL, ret_value);
-		if (get_is_meet_must_eat_times(philo))
+//		printf("(%zu)-2 ret:%d\n", philo->idx + 1, ret_value);
+		if (ret_value == PHILO_DIED || get_is_meet_must_eat_times(philo))
 			break ;
 	}
+//	printf("(%zu)-3 ret:%d\n", philo->idx + 1, ret_value);
 	if (ret_value == PROCESS_ERROR)
 		printf("[Error] Process abort\n");
 	get_is_died(philo->params_ptr, &died_philo, SUCCESS);

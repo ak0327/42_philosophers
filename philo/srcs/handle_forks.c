@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 09:56:44 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 13:23:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:11:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,8 @@ static int	take_second_fork(t_philo_info *philo)
 	t_params		*params;
 
 	params = philo->params_ptr;
-//	printf("take (%zu)-4 try %zu\n", philo->idx + 1, philo->second_take);
 	if (pthread_mutex_lock(&params->fork_mutex[philo->second_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-//	printf("take (%zu)-5 tak %zu\n", philo->idx + 1, philo->second_take);
 	if (print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
@@ -61,20 +59,18 @@ int	take_forks(t_philo_info *philo)
 	second_prev = get_prev_used_by(philo->second_take, params);
 	if (first_prev == (ssize_t)philo->idx || second_prev == (ssize_t)philo->idx)
 		return (CONTINUE);
-//	printf("take (%zu)-1 try %zu\n", philo->idx + 1, philo->first_take);
 	if (pthread_mutex_lock(&params->fork_mutex[philo->first_take]) != SUCCESS)
 		return (PROCESS_ERROR);
-//	printf("take (%zu)-2 tak %zu\n", philo->idx + 1, philo->first_take);
-	if (philo->first_take == philo->second_take)
-	{
-		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
-		return (BREAK);
-	}
 	if (is_some_philo_died(params) == PHILO_DIED \
 	|| print_msg(philo->idx, TYPE_FORK, params) == PHILO_DIED)
 	{
-//		printf("take (%zu)-3 put %zu\n", philo->idx + 1, philo->first_take);
 		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
+		return (PHILO_DIED);
+	}
+	if (philo->first_take == philo->second_take)
+	{
+		pthread_mutex_unlock(&params->fork_mutex[philo->first_take]);
+		while (is_some_philo_died(params) != PHILO_DIED);
 		return (PHILO_DIED);
 	}
 	return (take_second_fork(philo));
