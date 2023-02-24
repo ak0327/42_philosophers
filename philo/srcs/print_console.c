@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 15:35:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 22:17:49 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ int	print_msg(size_t idx, t_print_type type, t_params *params)
 	int		is_died;
 	ssize_t	died_philo;
 
-	if (pthread_mutex_lock(&params->print_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
 	is_died = get_is_died(params, &died_philo, SUCCESS);
 	if (is_died == PHILO_DIED && type != TYPE_DIED)
 	{
@@ -62,8 +60,6 @@ int	print_msg(size_t idx, t_print_type type, t_params *params)
 	else
 		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
 		idx % 255, time / 1000, time % 1000, idx + 1, get_print_msg(type));
-	if (pthread_mutex_unlock(&params->print_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
 	return (SUCCESS);
 }
 

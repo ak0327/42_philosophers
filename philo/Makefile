@@ -66,7 +66,7 @@ IFLAGS		= $(addprefix -I, $(INCLUDE_DIR))
 
 
 $(NAME)	: $(OBJS)
-	$(CC) $(CFLAGS) $(DEPS_FLAG) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
@@ -88,12 +88,10 @@ test:
 leaks	:
 	make re WITH_LEAKS=1
 
-bonus	:
-
 norm	:
 	@norminette -v
 	@norminette $(SRC_DIR) $(LIB_DIR) $(INCLUDE_DIR)
 
-.PHONY	: all clean fclean re bonus sanitize leaks
+.PHONY	: all clean fclean re bonus test leaks norm
 
 -include	$(DEPS)
