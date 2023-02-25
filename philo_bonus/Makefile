@@ -16,6 +16,10 @@ VPATH	= $(SRC_DIR) $(LIB_DIR)
 
 SRC_DIR	= ./srcs
 SRC		= main.c \
+		  exit.c \
+		  info_init.c \
+		  info_destroy.c \
+		  init_args.c \
 
 SRCS	= $(addprefix $(SRC_DIR), $(SRC))
 

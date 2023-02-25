@@ -21,7 +21,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
-# include <sys/sem.h>
+# include <semaphore.h>
 
 /* return value */
 # define SUCCESS				0
@@ -58,7 +58,7 @@
 # define PRINT_DIED			"died"
 # define PRINT_SIM_START	"simulation start"
 
-typedef struct s_params		t_params;
+typedef struct s_info		t_info;
 typedef struct s_philo_info	t_philo_info;
 typedef struct s_stack_elem	t_stack;
 typedef struct timeval		t_timeval;
@@ -66,7 +66,7 @@ typedef struct timeval		t_timeval;
 typedef enum e_input_type	t_input_type;
 typedef enum e_print_type	t_print_type;
 
-struct s_params
+struct s_info
 {
 	size_t			num_of_philos;
 	time_t			time_to_die;
@@ -76,6 +76,11 @@ struct s_params
 
 	int				is_died;
 	ssize_t			died_idx;
+	int				is_sim_fin;
+
+	sem_t			*sem_forks;
+	sem_t			*sem_waiter;
+
 
 	t_philo_info	*philo_info;
 	pthread_t		*philo_tid;
@@ -84,25 +89,22 @@ struct s_params
 
 	ssize_t			*prev_used_by;
 
-	
-	pthread_mutex_t	*fork_mutex;
-	pthread_mutex_t	*prev_used_mutex;
-	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	died_mutex;
-	bool			is_monitor_end;
 	time_t			start_time;
 };
 
 struct s_philo_info
 {
 	size_t			idx;
-	size_t			first_take;
-	size_t			second_take;
+
 	time_t			start_time;
 	size_t			eat_times;
-	pthread_mutex_t	philo_mutex;
+
+	t_info			*info_ptr;
+
+
+	size_t			first_take;
+	size_t			second_take;
 	bool			is_meet_eat_times;
-	t_params		*params_ptr;
 };
 
 struct s_stack_elem
@@ -137,17 +139,17 @@ enum e_input_type
 /* ------------ */
 
 /* params_init.c */
-int		init_params(int argc, char **argv, t_params **params);
+int		init_info(int argc, char **argv, t_info **info);
 
 /* params_destroy.c */
-void	free_params(t_params **params);
-int		destroy_params(t_params *params);
+void	free_info(t_info **info);
+int		destroy_info(t_info *info);
 
 /* get_input_args.c */
-int		get_input_args(char **argv, t_params *params);
+int		get_input_args(char **argv, t_info *info);
 
 /* exit.c */
-int	print_err_msg_and_free(int err, t_params *params, int ret);
+int		print_err_msg_and_free(int err, t_info *info, int ret);
 
 /* ------------ */
 /*     libs     */
