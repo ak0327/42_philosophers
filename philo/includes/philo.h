@@ -116,7 +116,7 @@ struct s_philo_info
 	time_t			start_time;
 	size_t			eat_times;
 	pthread_mutex_t	philo_mutex;
-	bool			is_meet_eat_times;
+	bool			is_satisfied;
 	t_params		*params_ptr;
 };
 
@@ -205,7 +205,7 @@ void		print_msg_when_terminate_philo(int ret_value, t_philo_info *philo);
 void		print_eat_times(t_params *params);
 
 /* ------------ */
-/*     libs     */
+/*     libs_bonus     */
 /* ------------ */
 // libft
 int			ft_atoi(const char *str, bool *is_success);

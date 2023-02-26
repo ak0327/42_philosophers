@@ -73,7 +73,7 @@ static int	update_eat_times(t_philo_info *philo, int prev_ret_val)
 		return (PROCESS_ERROR);
 	philo->eat_times++;
 	if ((ssize_t)philo->eat_times >= philo->params_ptr->must_eat_times)
-		philo->is_meet_eat_times = true;
+		philo->is_satisfied = true;
 	if (pthread_mutex_unlock(&philo->philo_mutex) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (SUCCESS);

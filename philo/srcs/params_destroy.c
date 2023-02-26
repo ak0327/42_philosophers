@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 23:24:43 by takira            #+#    #+#             */
-/*   Updated: 2023/02/22 23:25:34 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 13:49:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	free_ret_nullptr(void **ptr)
 
 void	free_params(t_params **params)
 {
-	if (!params)
+	if (!params || !*params)
 		return ;
 	free_ret_nullptr((void **)&(*params)->philo_tid);
 	free_ret_nullptr((void **)&(*params)->philo_info);
