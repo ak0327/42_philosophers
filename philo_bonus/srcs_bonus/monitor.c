@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:08:07 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 16:10:22 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:43:06 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo_bonus.h"
+#include "philo_bonus.h"
 
 void	*monitor(t_philo_info *philo)
 {
@@ -18,7 +18,6 @@ void	*monitor(t_philo_info *philo)
 	time_t	now_time;
 
 	ret_value = CONTINUE;
-//	printf("(%zu)monitor start\n", philo->idx + 1);
 	while (true)
 	{
 		usleep(500);
@@ -30,7 +29,6 @@ void	*monitor(t_philo_info *philo)
 		if (ret_value != CONTINUE)
 			break ;
 	}
-//	printf("(%zu)monitor end ret:%d\n", philo->idx + 1, ret_value);
 	if (ret_value == PHILO_DIED)
 		return ((void *)PHILO_DIED);
 	if (ret_value == PROCESS_ERROR)

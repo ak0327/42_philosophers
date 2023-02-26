@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 16:10:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:34:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,23 @@
 # include <signal.h>
 
 /* return value */
-# define SUCCESS				0
-# define FAILURE				1
-# define PROCESS_ERROR			2
-# define CONTINUE				3
-# define BREAK					4
+# define SUCCESS		0
+# define FAILURE		1
+# define PROCESS_ERROR	2
+# define CONTINUE		3
+# define BREAK			4
 
-# define PHILO_ALIVE			0
-# define PHILO_DIED				6
+# define PHILO_ALIVE	0
+# define PHILO_DIED		6
+
+/* fork */
+# define CHILD_PROCESS	0
 
 /* semaphore */
 # define SEM_FORKS	"/sem_forks"
 # define SEM_WAITER	"/sem_waiter"
 # define SEM_PHILO	"/sem_philo_"
+# define SEM_PRINT	"/sem_print"
 
 /* print_err_msg */
 # define INVALID_ARG_COUNT		10
@@ -118,18 +122,14 @@ struct s_info
 	ssize_t			must_eat_times;
 
 	int				is_died;
-	ssize_t			died_idx;
-	int				is_sim_fin;
 
 	sem_t			*sem_forks;
 	sem_t			*sem_waiter;
 
+	sem_t			*sem_print;
+
 	t_philo_info	*philo_info;
 	pthread_t		*philo_tid;
-
-	pthread_t		monitor_tid;
-
-	ssize_t			*prev_used_by;
 
 	time_t			start_time;
 };
@@ -155,58 +155,51 @@ struct s_philo_info
 	t_info			*info_ptr;
 };
 
-
 /* ------------ */
 /*     philo    */
 /* ------------ */
 
 /* params_init.c */
-int		init_info(int argc, char **argv, t_info **info);
+int			init_info(int argc, char **argv, t_info **info);
 
 /* params_destroy.c */
-void	free_info(t_info **info);
-int		destroy_info(t_info *info);
+void		free_info(t_info **info);
+int			destroy_info(t_info *info);
 
 /* get_input_args.c */
-int		get_input_args(char **argv, t_info *info);
+int			get_input_args(char **argv, t_info *info);
 
 /* exit.c */
-int		print_err_msg_and_free(int err, t_info *info, int ret);
+int			print_err_msg_and_free(int err, t_info *info, int ret);
 
 /* routine.c */
-void	*routine(t_philo_info *philo);
-
+void		*routine(t_philo_info *philo);
 
 /* check_philo_status.c */
-bool	get_is_died(t_philo_info *philo);
-size_t	get_eat_cnt(t_philo_info *philo);
-int		check_philo_died(t_philo_info *philo, time_t now_time);
-int		check_continue(t_philo_info *philo);
-
-
+bool		get_is_died(t_philo_info *philo);
+size_t		get_eat_cnt(t_philo_info *philo);
+int			check_philo_died(t_philo_info *philo, time_t now_time);
+int			check_continue(t_philo_info *philo);
 
 /* time.c */
-void	sleep_ms(time_t time_ms);
-time_t	get_delta_time_ms(time_t now_ms, time_t start_ms);
-time_t	get_unix_time_ms(void);
+void		sleep_ms(time_t time_ms);
+time_t		get_delta_time_ms(time_t now_ms, time_t start_ms);
+time_t		get_unix_time_ms(void);
 
 /* handle_forks.c */
-int		take_forks(t_philo_info *philo);
-int		put_forks_and_update_eat_times(t_philo_info *philo);
+int			take_forks(t_philo_info *philo);
+int			put_forks_and_update_eat_times(t_philo_info *philo);
 
 /* monitor.c */
-void	*monitor(t_philo_info *philo);
+void		*monitor(t_philo_info *philo);
 
+/* start_routine.c */
+int			start_routine(t_info *info);
 
-
-time_t	get_print_time(t_philo_info *philo, t_print_type type);
-int		print_msg(t_print_type type, t_philo_info *philo);
-
-bool	get_is_died(t_philo_info *philo);
-
-int		check_philo_died(t_philo_info *philo, time_t now_time);
-
-
+/* print_console.c */
+time_t		get_print_time(t_philo_info *philo, t_print_type type);
+int			print_msg(t_print_type type, t_philo_info *philo);
+int			print_msg_if_alive(t_philo_info *philo, t_print_type type);
 
 /* ------------ */
 /*     libs_bonus     */

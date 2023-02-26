@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:09:17 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 16:10:07 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:34:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo_bonus.h"
+#include "philo_bonus.h"
 
 bool	get_is_died(t_philo_info *philo)
 {
@@ -41,14 +41,11 @@ int	check_philo_died(t_philo_info *philo, time_t now_time)
 	int		ret_value;
 	time_t	start_time;
 	time_t	delta_time;
-//	bool	is_satisfied;
 
 	ret_value = PHILO_ALIVE;
 	if (sem_wait(philo->sem_philo) != SUCCESS)
 		return (PROCESS_ERROR);
-//	is_satisfied = philo->is_satisfied;
 	start_time = philo->start_time;
-
 	delta_time = get_delta_time_ms(now_time, start_time);
 	if (delta_time >= philo->info_ptr->time_to_die)
 	{
@@ -57,7 +54,6 @@ int	check_philo_died(t_philo_info *philo, time_t now_time)
 	}
 	if (sem_post(philo->sem_philo) != SUCCESS)
 		return (PROCESS_ERROR);
-
 	return (ret_value);
 }
 

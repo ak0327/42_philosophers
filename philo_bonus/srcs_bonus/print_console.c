@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 16:17:37 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:37:58 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,24 @@ time_t	get_print_time(t_philo_info *philo, t_print_type type)
 	return (now_time);
 }
 
+int	print_msg_if_alive(t_philo_info *philo, t_print_type type)
+{
+	t_info	*info;
+	time_t	now_time;
+	int		ret_value;
+
+	info = philo->info_ptr;
+	now_time = get_unix_time_ms();
+	if (check_philo_died(philo, now_time) == PHILO_DIED)
+	{
+		print_msg(TYPE_DIED, philo);
+		sem_post(info->sem_waiter);
+		return (PHILO_DIED);
+	}
+	ret_value = print_msg(type, philo);
+	return (ret_value);
+}
+
 int	print_msg(t_print_type type, t_philo_info *philo)
 {
 	const size_t	idx = philo->idx;
@@ -54,12 +72,15 @@ int	print_msg(t_print_type type, t_philo_info *philo)
 		if (is_died)
 			return (PHILO_DIED);
 	}
+	sem_wait(philo->info_ptr->sem_print);
 	time = get_print_time(philo, type);
 	if (type == TYPE_SIM_START)
 		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else
 		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
 		idx % 255, time / 1000, time % 1000, idx + 1, get_print_msg(type));
+	if (type != TYPE_DIED)
+		sem_post(philo->info_ptr->sem_print);
 	return (SUCCESS);
 }
 

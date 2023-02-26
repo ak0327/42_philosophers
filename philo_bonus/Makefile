@@ -25,6 +25,7 @@ SRC		= main.c \
 		  handle_forks.c \
 		  monitor.c \
 		  check_philo_status.c \
+		  start_routine.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

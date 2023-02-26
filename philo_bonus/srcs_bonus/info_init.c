@@ -6,15 +6,15 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 16:59:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:42:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static char *get_sem_name(size_t idx)
+static char	*get_sem_name(size_t idx)
 {
-	char 	*sem_name;
+	char	*sem_name;
 	char	*itoa;
 	size_t	len;
 
@@ -32,6 +32,7 @@ static char *get_sem_name(size_t idx)
 	}
 	ft_strlcat_ns(sem_name, SEM_PHILO, len + 1);
 	ft_strlcat_ns(sem_name, itoa, len + 1);
+	free(itoa);
 	return (sem_name);
 }
 
@@ -41,15 +42,12 @@ static int	init_alloc(t_info **info)
 
 	(*info)->philo_info = \
 	(t_philo_info *)malloc(sizeof(t_philo_info) * (*info)->num_of_philos);
-//	(*info)->philo_info = \
-//	(t_philo_info *)ft_calloc(sizeof(t_philo_info), (*info)->num_of_philos);
-	if (!(*info)->philo_info )
+	if (!(*info)->philo_info)
 		return (FAILURE);
 	idx = 0;
 	while (idx < (*info)->num_of_philos)
 	{
 		(*info)->philo_info[idx].idx = idx;
-		(*info)->philo_info[idx].status = PH_THINKING;
 		(*info)->philo_info[idx].start_time = 0;
 		(*info)->philo_info[idx].eat_cnt = 0;
 		(*info)->philo_info[idx].info_ptr = *info;
@@ -63,31 +61,40 @@ static int	init_alloc(t_info **info)
 	return (SUCCESS);
 }
 
-static int	init_semaphore(t_info *info)
+static int	init_sem_philos(t_info *info)
 {
 	size_t	idx;
 	char	*sem_name;
-
-	sem_unlink(SEM_FORKS);
-	info->sem_forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 0644, info->num_of_philos);
-	if (info->sem_forks == SEM_FAILED)
-		return (FAILURE);
-
-	sem_unlink(SEM_WAITER);
-	info->sem_waiter = sem_open(SEM_WAITER, O_CREAT | O_EXCL, 0644, 1);
-	if (info->sem_waiter == SEM_FAILED)
-		return (FAILURE);
 
 	idx = 0;
 	while (idx < info->num_of_philos)
 	{
 		sem_name = info->philo_info[idx].sem_name;
 		sem_unlink(sem_name);
-		info->philo_info[idx].sem_philo = sem_open(sem_name, O_CREAT | O_EXCL, 0644, 1);
+		info->philo_info[idx].sem_philo = sem_open(sem_name, O_CREAT, 0777, 1);
 		if (info->philo_info[idx].sem_philo == SEM_FAILED)
 			return (FAILURE);
 		idx++;
 	}
+	return (SUCCESS);
+}
+
+static int	init_semaphore(t_info *info)
+{
+	sem_unlink(SEM_FORKS);
+	info->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0777, info->num_of_philos);
+	if (info->sem_forks == SEM_FAILED)
+		return (FAILURE);
+	sem_unlink(SEM_WAITER);
+	info->sem_waiter = sem_open(SEM_WAITER, O_CREAT, 0777, 1);
+	if (info->sem_waiter == SEM_FAILED)
+		return (FAILURE);
+	sem_unlink(SEM_PRINT);
+	info->sem_print = sem_open(SEM_PRINT, O_CREAT, 0777, 1);
+	if (info->sem_print == SEM_FAILED)
+		return (FAILURE);
+	if (init_sem_philos(info) == FAILURE)
+		return (FAILURE);
 	return (SUCCESS);
 }
 
@@ -106,8 +113,6 @@ int	init_info(int argc, char **argv, t_info **info)
 	is_process_success |= init_alloc(info);
 	is_process_success |= init_semaphore(*info);
 	(*info)->is_died = PHILO_ALIVE;
-	(*info)->died_idx = -1;
-	(*info)->is_sim_fin = CONTINUE;
 	if (is_process_success)
 		return (SUCCESS);
 	free_info(info);
