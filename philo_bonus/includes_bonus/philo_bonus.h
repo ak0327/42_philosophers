@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:34:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 20:23:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ struct s_philo_info
 	size_t			eat_cnt;
 	bool			is_satisfied;
 	bool			is_died;
+	bool			is_died_printed;
 
 	char			*sem_name;
 	sem_t			*sem_philo;
@@ -176,7 +177,7 @@ int			print_err_msg_and_free(int err, t_info *info, int ret);
 void		*routine(t_philo_info *philo);
 
 /* check_philo_status.c */
-bool		get_is_died(t_philo_info *philo);
+bool		get_is_died(t_philo_info *philo, bool *is_died_printed);
 size_t		get_eat_cnt(t_philo_info *philo);
 int			check_philo_died(t_philo_info *philo, time_t now_time);
 int			check_continue(t_philo_info *philo);
@@ -199,7 +200,7 @@ int			start_routine(t_info *info);
 /* print_console.c */
 time_t		get_print_time(t_philo_info *philo, t_print_type type);
 int			print_msg(t_print_type type, t_philo_info *philo);
-int			print_msg_if_alive(t_philo_info *philo, t_print_type type);
+int			print_msg_consider_died(t_philo_info *philo, t_print_type type);
 
 /* ------------ */
 /*     libs_bonus     */

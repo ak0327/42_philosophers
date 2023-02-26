@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:08:07 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:43:06 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 22:39:30 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*monitor(t_philo_info *philo)
 	ret_value = CONTINUE;
 	while (true)
 	{
-		usleep(500);
+		usleep(100);
 		now_time = get_unix_time_ms();
 		ret_value = check_philo_died(philo, now_time);
 		if (ret_value == PHILO_DIED)
@@ -29,6 +29,7 @@ void	*monitor(t_philo_info *philo)
 		if (ret_value != CONTINUE)
 			break ;
 	}
+//	printf("(%zu)monitor fin\n", philo->idx+1);
 	if (ret_value == PHILO_DIED)
 		return ((void *)PHILO_DIED);
 	if (ret_value == PROCESS_ERROR)

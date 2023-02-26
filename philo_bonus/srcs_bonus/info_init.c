@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:42:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 20:06:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ static int	init_semaphore(t_info *info)
 int	init_info(int argc, char **argv, t_info **info)
 {
 	int	is_process_success;
+	int	ret_value;
 
 	if (!(5 <= argc && argc <= 6))
 		return (INVALID_ARG_COUNT);
@@ -108,12 +109,15 @@ int	init_info(int argc, char **argv, t_info **info)
 	if (!*info)
 		return (PROCESS_ERROR);
 	memset(*info, 0, sizeof(t_info));
+	ret_value = get_input_args(argv, *info);
+	if (ret_value != SUCCESS)
+		return (ret_value);
 	is_process_success = true;
-	is_process_success |= get_input_args(argv, *info);
 	is_process_success |= init_alloc(info);
 	is_process_success |= init_semaphore(*info);
 	(*info)->is_died = PHILO_ALIVE;
-	if (is_process_success)
+	(*info)->start_time = 0;
+	if (is_process_success == true)
 		return (SUCCESS);
 	free_info(info);
 	return (FAILURE);

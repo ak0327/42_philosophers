@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:06:22 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:36:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 20:25:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	wait_while_philo_alive(t_philo_info *philo)
 {
 	while (true)
 	{
-		if (get_is_died(philo) == true)
+		if (get_is_died(philo, NULL) == true)
 			break ;
 		usleep(500);
 	}
@@ -28,7 +28,7 @@ int	take_forks(t_philo_info *philo)
 		return (PROCESS_ERROR);
 	if (sem_wait(philo->info_ptr->sem_forks) != SUCCESS)
 		return (PROCESS_ERROR);
-	if (print_msg_if_alive(philo, TYPE_FORK) == PHILO_DIED)
+	if (print_msg_consider_died(philo, TYPE_FORK) == PHILO_DIED)
 		return (PHILO_DIED);
 	if (philo->info_ptr->num_of_philos == 1)
 	{
@@ -38,7 +38,7 @@ int	take_forks(t_philo_info *philo)
 	}
 	if (sem_wait(philo->info_ptr->sem_forks) != SUCCESS)
 		return (PROCESS_ERROR);
-	if (print_msg_if_alive(philo, TYPE_FORK) == PHILO_DIED)
+	if (print_msg_consider_died(philo, TYPE_FORK) == PHILO_DIED)
 		return (PHILO_DIED);
 	if (sem_post(philo->info_ptr->sem_waiter) != SUCCESS)
 		return (PROCESS_ERROR);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:37:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 22:41:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static char	*get_print_msg(t_print_type type)
 	return (PRINT_DIED);
 }
 
+/*
 time_t	get_print_time(t_philo_info *philo, t_print_type type)
 {
 	time_t	now_time;
@@ -41,19 +42,17 @@ time_t	get_print_time(t_philo_info *philo, t_print_type type)
 	now_time = start_time + time_to_die;
 	return (now_time);
 }
+ */
 
-int	print_msg_if_alive(t_philo_info *philo, t_print_type type)
+int	print_msg_consider_died(t_philo_info *philo, t_print_type type)
 {
-	t_info	*info;
 	time_t	now_time;
 	int		ret_value;
 
-	info = philo->info_ptr;
 	now_time = get_unix_time_ms();
 	if (check_philo_died(philo, now_time) == PHILO_DIED)
 	{
 		print_msg(TYPE_DIED, philo);
-		sem_post(info->sem_waiter);
 		return (PHILO_DIED);
 	}
 	ret_value = print_msg(type, philo);
@@ -68,12 +67,12 @@ int	print_msg(t_print_type type, t_philo_info *philo)
 
 	if (type != TYPE_DIED)
 	{
-		is_died = get_is_died(philo);
+		is_died = get_is_died(philo, NULL);
 		if (is_died)
 			return (PHILO_DIED);
 	}
 	sem_wait(philo->info_ptr->sem_print);
-	time = get_print_time(philo, type);
+	time = get_unix_time_ms();
 	if (type == TYPE_SIM_START)
 		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else

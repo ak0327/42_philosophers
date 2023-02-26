@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 23:24:43 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:24:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 20:03:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	free_info(t_info **info)
 	if (!info || !*info)
 		return ;
 	idx = 0;
-	while (idx < (*info)->num_of_philos)
+	while ((*info)->philo_info && idx < (*info)->num_of_philos)
 	{
 		free((*info)->philo_info[idx].sem_name);
 		idx++;

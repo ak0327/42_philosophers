@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 16:15:23 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 19:35:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 22:38:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	eating(t_philo_info *philo)
 	t_info	*info;
 
 	info = philo->info_ptr;
-	if (print_msg_if_alive(philo, TYPE_EATING) == PHILO_DIED)
+	if (print_msg_consider_died(philo, TYPE_EATING) == PHILO_DIED)
 		return (PHILO_DIED);
 	if (sem_wait(philo->sem_philo) != SUCCESS)
 		return (PROCESS_ERROR);
@@ -33,10 +33,10 @@ static int	sleeping_and_thinking(t_philo_info *philo)
 	t_info	*info;
 
 	info = philo->info_ptr;
-	if (print_msg_if_alive(philo, TYPE_SLEEPING) == PHILO_DIED)
+	if (print_msg_consider_died(philo, TYPE_SLEEPING) == PHILO_DIED)
 		return (PHILO_DIED);
 	sleep_ms(info->time_to_sleep);
-	if (print_msg_if_alive(philo, TYPE_THINKING) == PHILO_DIED)
+	if (print_msg_consider_died(philo, TYPE_THINKING) == PHILO_DIED)
 		return (PHILO_DIED);
 	return (SUCCESS);
 }
@@ -63,6 +63,7 @@ void	*routine(t_philo_info *philo)
 		if (ret_value != CONTINUE)
 			break ;
 	}
+	printf("(%zu)routine fin\n", philo->idx+1);
 	if (ret_value == PHILO_DIED)
 		return ((void *)PHILO_DIED);
 	if (ret_value == PROCESS_ERROR)

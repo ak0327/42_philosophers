@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/25 10:58:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 20:04:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,19 @@ static int	get_std_args(char **argv, t_info *info)
 	long long	arg_num;
 
 	arg_num = ft_strtoll(argv[NUM_OF_PHILOS_IDX], &is_success);
-	if (!is_success && check_num_validity(arg_num, TYPE_NUM_OF_PHILO))
+	if (!is_success || !check_num_validity(arg_num, TYPE_NUM_OF_PHILO))
 		return (INVALID_NUM_OF_PHILOS);
 	info->num_of_philos = (size_t)arg_num;
 	arg_num = ft_strtoll(argv[TIME_TO_DIE_IDX], &is_success);
-	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_DIE))
+	if (!is_success || !check_num_validity(arg_num, TYPE_TIME_TO_DIE))
 		return (INVALID_TIME_TO_DIE);
 	info->time_to_die = (time_t)arg_num;
 	arg_num = ft_strtoll(argv[TIME_TO_EAT_IDX], &is_success);
-	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_EAT))
+	if (!is_success || !check_num_validity(arg_num, TYPE_TIME_TO_EAT))
 		return (INVALID_TIME_TO_EAT);
 	info->time_to_eat = (time_t)arg_num;
 	arg_num = ft_strtoll(argv[TIME_TO_SLEEP_IDX], &is_success);
-	if (!is_success && check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
+	if (!is_success || !check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
 		return (INVALID_TIME_TO_SLEEP);
 	info->time_to_sleep = (time_t)arg_num;
 	return (SUCCESS);
@@ -58,7 +58,7 @@ static int	get_option_arg(char **argv, t_info *info)
 	if (argv[MUST_EAT_TIMES_IDX])
 	{
 		arg_num = ft_strtoll(argv[MUST_EAT_TIMES_IDX], &is_success);
-		if (!is_success && check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
+		if (!is_success || !check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
 			return (INVALID_MUST_EAT_TIMES);
 		info->must_eat_times = (ssize_t)arg_num;
 	}
