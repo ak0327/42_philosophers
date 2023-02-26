@@ -65,7 +65,7 @@ static void	init_alloc_elem(t_params **params, size_t idx)
 	}
 	(*params)->philo_info[idx].eat_times = 0;
 	(*params)->philo_info[idx].params_ptr = *params;
-	(*params)->philo_info[idx].is_meet_eat_times = false;
+	(*params)->philo_info[idx].is_satisfied = false;
 	(*params)->prev_used_by[idx] = -1;
 }
 

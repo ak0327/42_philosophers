@@ -9,11 +9,12 @@
 !/philo/Makefile
 
 !/philo_bonus/
-!/philo_bonus/libs
-!/philo_bonus/includes
-!/philo_bonus/srcs
+!/philo_bonus/libs_bonus
+!/philo_bonus/includes_bonus
+!/philo_bonus/srcs_bonus
 !/philo_bonus/Makefile
 
 !*.c
 !*.h
 /objs/
+/objs_bonus/

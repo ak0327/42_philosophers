@@ -1,19 +1,7 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/12/30 19:31:34 by takira            #+#    #+#              #
-#    Updated: 2022/12/30 19:31:36 by takira           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME	= philo
 
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP
+CC		= cc
+CFLAGS	= -Wall -Wextra -Werror -MMD -MP
 
 ifdef WITH_SANITIZE
 	CFLAGS	+= -g -fsanitize=undefined -fsanitize=thread
@@ -66,7 +54,7 @@ IFLAGS		= $(addprefix -I, $(INCLUDE_DIR))
 
 
 $(NAME)	: $(OBJS)
-	$(CC) $(CFLAGS) $(DEPS_FLAG) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
@@ -94,6 +82,6 @@ norm	:
 	@norminette -v
 	@norminette $(SRC_DIR) $(LIB_DIR) $(INCLUDE_DIR)
 
-.PHONY	: all clean fclean re bonus sanitize leaks
+.PHONY	: all clean fclean re bonus test leaks norm
 
 -include	$(DEPS)
