@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 21:49:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 10:13:53 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/time.h>
 # include <unistd.h>
 # include <semaphore.h>
+# include <signal.h>
 
 /* return value */
 # define SUCCESS				0
@@ -32,6 +33,11 @@
 
 # define PHILO_ALIVE			0
 # define PHILO_DIED				6
+
+/* semaphore */
+# define SEM_FORKS	"/sem_forks"
+# define SEM_WAITER	"/sem_waiter"
+# define SEM_PHILO	"/sem_philo_"
 
 /* print_err_msg */
 # define INVALID_ARG_COUNT		10
@@ -65,47 +71,7 @@ typedef struct timeval		t_timeval;
 
 typedef enum e_input_type	t_input_type;
 typedef enum e_print_type	t_print_type;
-
-struct s_info
-{
-	size_t			num_of_philos;
-	time_t			time_to_die;
-	time_t			time_to_eat;
-	time_t			time_to_sleep;
-	ssize_t			must_eat_times;
-
-	int				is_died;
-	ssize_t			died_idx;
-	int				is_sim_fin;
-
-	sem_t			*sem_forks;
-	sem_t			*sem_waiter;
-
-
-	t_philo_info	*philo_info;
-	pthread_t		*philo_tid;
-
-	pthread_t		monitor_tid;
-
-	ssize_t			*prev_used_by;
-
-	time_t			start_time;
-};
-
-struct s_philo_info
-{
-	size_t			idx;
-
-	time_t			start_time;
-	size_t			eat_times;
-
-	t_info			*info_ptr;
-
-
-	size_t			first_take;
-	size_t			second_take;
-	bool			is_meet_eat_times;
-};
+typedef enum e_philo_status	t_status;
 
 struct s_stack_elem
 {
@@ -133,6 +99,61 @@ enum e_input_type
 	TYPE_MUST_EAT_TIMES
 };
 
+enum e_philo_status
+{
+	PH_TAKE_FORK,
+	PH_EATING,
+	PH_SLEEPING,
+	PH_THINKING,
+	PH_DIED,
+	PH_SATISFIED
+};
+
+struct s_info
+{
+	size_t			num_of_philos;
+	time_t			time_to_die;
+	time_t			time_to_eat;
+	time_t			time_to_sleep;
+	ssize_t			must_eat_times;
+
+	int				is_died;
+	ssize_t			died_idx;
+	int				is_sim_fin;
+
+	sem_t			*sem_forks;
+	sem_t			*sem_waiter;
+
+	t_philo_info	*philo_info;
+	pthread_t		*philo_tid;
+
+	pthread_t		monitor_tid;
+
+	ssize_t			*prev_used_by;
+
+	time_t			start_time;
+};
+
+struct s_philo_info
+{
+	pthread_t		philo_tid;
+	pthread_t		monitor_tid;
+
+	size_t			idx;
+
+	t_status		status;
+
+	time_t			start_time;
+	pid_t			pid;
+
+	size_t			eat_cnt;
+	bool			is_satisfied;
+
+	char			*sem_name;
+	sem_t			*sem_philo;
+	t_info			*info_ptr;
+};
+
 
 /* ------------ */
 /*     philo    */
@@ -151,6 +172,20 @@ int		get_input_args(char **argv, t_info *info);
 /* exit.c */
 int		print_err_msg_and_free(int err, t_info *info, int ret);
 
+/* routine.c */
+void	*routine(t_philo_info *philo);
+
+void	*monitor(t_philo_info *philo);
+
+/* time.c */
+void	sleep_ms(time_t time_ms);
+time_t	get_delta_time_ms(time_t now_ms, time_t start_ms);
+time_t	get_unix_time_ms(void);
+
+
+time_t	get_print_time(t_philo_info *philo, t_print_type type);
+int		print_msg(size_t idx, t_print_type type, t_info *info);
+
 /* ------------ */
 /*     libs     */
 /* ------------ */
@@ -161,6 +196,9 @@ size_t		ft_strlen_ns(const char *s);
 char		*ft_strchr(const char *s, int c);
 int			ft_isspace(char c);
 long long	ft_strtoll(char *num, bool *is_success);
+size_t		ft_strlcat_ns(char *dst, const char *src, size_t dstsize);
+void		*ft_calloc(size_t count, size_t size);
+char		*ft_itoa(int n);
 
 // stack
 void		add_left(t_stack *elem, t_stack **stk);

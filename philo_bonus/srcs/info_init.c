@@ -6,63 +6,101 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/25 11:01:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 10:29:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	init_alloc_elem(t_info **info, size_t idx)
+static char *get_sem_name(size_t idx)
 {
-	size_t	second_take;
+	char 	*sem_name;
+	char	*itoa;
+	size_t	len;
 
-	(*info)->philo_info[idx].idx = idx;
-	(*info)->philo_info[idx].first_take = idx;
-	second_take = (idx + 1) % (*info)->num_of_philos;
-	(*info)->philo_info[idx].second_take = second_take;
-	if (idx % 2 == 1)
+	if (idx > INT_MAX)
+		return (NULL);
+	itoa = ft_itoa((int)idx);
+	if (!itoa)
+		return (NULL);
+	len = ft_strlen_ns(SEM_PHILO) + ft_strlen_ns(itoa);
+	sem_name = (char *) ft_calloc(sizeof(char), len + 1);
+	if (!sem_name)
 	{
-		(*info)->philo_info[idx].first_take = second_take;
-		(*info)->philo_info[idx].second_take = idx;
+		free(itoa);
+		return (NULL);
 	}
-	(*info)->philo_info[idx].eat_times = 0;
-	(*info)->philo_info[idx].info_ptr = *info;
-	(*info)->philo_info[idx].is_meet_eat_times = false;
-	(*info)->prev_used_by[idx] = -1;
+	ft_strlcat_ns(sem_name, SEM_PHILO, len + 1);
+	ft_strlcat_ns(sem_name, itoa, len + 1);
+	printf("[#DEBUG](%zu) sem_name:%s\n", idx, sem_name);
+	return (sem_name);
 }
 
 static int	init_alloc(t_info **info)
 {
 	size_t	idx;
 
-	(*info)->philo_tid = \
-	(pthread_t *)malloc(sizeof(pthread_t) * (*info)->num_of_philos);
 	(*info)->philo_info = \
-	(t_philo_info *)malloc(sizeof(t_philo_info) * (*info)->num_of_philos);
-	if (!(*info)->philo_tid || !(*info)->philo_info )
+	(t_philo_info *)ft_calloc(sizeof(t_philo_info), (*info)->num_of_philos);
+	if (!(*info)->philo_info )
 		return (FAILURE);
 	idx = 0;
 	while (idx < (*info)->num_of_philos)
 	{
-		init_alloc_elem(info, idx);
+		(*info)->philo_info[idx].idx = idx;
+		(*info)->philo_info[idx].status = PH_THINKING;
+		(*info)->philo_info[idx].start_time = 0;
+		(*info)->philo_info[idx].eat_cnt = 0;
+		(*info)->philo_info[idx].info_ptr = *info;
+		(*info)->philo_info[idx].pid = 0;
+		(*info)->philo_info[idx].is_satisfied = false;
+		(*info)->philo_info[idx].sem_name = get_sem_name(idx);
+		if (!(*info)->philo_info[idx].sem_name)
+			return (FAILURE);
 		idx++;
 	}
 	return (SUCCESS);
 }
 
-int	init_params(int argc, char **argv, t_info **info)
+static int	init_semaphore(t_info *info)
+{
+	size_t	idx;
+	char	*sem_name;
+
+	info->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0777, info->num_of_philos);
+	if (info->sem_forks == SEM_FAILED)
+		return (FAILURE);
+
+	info->sem_waiter = sem_open(SEM_WAITER, O_CREAT, 0777, 1);
+	if (info->sem_waiter == SEM_FAILED)
+		return (FAILURE);
+
+	idx = 0;
+	while (idx < info->num_of_philos)
+	{
+		sem_name = info->philo_info[idx].sem_name;
+		info->philo_info[idx].sem_philo = sem_open(sem_name, O_CREAT, 0777, 1);
+		if (info->philo_info[idx].sem_philo == SEM_FAILED)
+			return (FAILURE);
+		idx++;
+	}
+	return (SUCCESS);
+}
+
+int	init_info(int argc, char **argv, t_info **info)
 {
 	int	is_process_success;
 
 	if (!(5 <= argc && argc <= 6))
 		return (INVALID_ARG_COUNT);
-	*info = (t_info *)malloc(sizeof(t_info));
+	*info = (t_info *)ft_calloc(sizeof(t_info), 1);
 	if (!*info)
 		return (PROCESS_ERROR);
 	memset(*info, 0, sizeof(t_info));
 	is_process_success = true;
 	is_process_success |= get_input_args(argv, *info);
 	is_process_success |= init_alloc(info);
+	is_process_success |= init_semaphore(*info);
 	(*info)->is_died = PHILO_ALIVE;
 	(*info)->died_idx = -1;
 	(*info)->is_sim_fin = CONTINUE;

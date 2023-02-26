@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 23:24:43 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 17:09:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 10:27:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,38 +20,28 @@ static void	free_ret_nullptr(void **ptr)
 	*ptr = NULL;
 }
 
-void	free_params(t_params **params)
-{
-	if (!params)
-		return ;
-	free_ret_nullptr((void **)&(*params)->philo_tid);
-	free_ret_nullptr((void **)&(*params)->philo_info);
-	free_ret_nullptr((void **)&(*params)->prev_used_by);
-	free_ret_nullptr((void **)&(*params)->fork_mutex);
-	free_ret_nullptr((void **)&(*params)->prev_used_mutex);
-	free_ret_nullptr((void **)params);
-}
-
-int	destroy_params(t_params *params)
+void	free_info(t_info **info)
 {
 	size_t	idx;
 
+	if (!info)
+		return ;
 	idx = 0;
-	while (idx < params->num_of_philos)
+	while (idx < (*info)->num_of_philos)
 	{
-		if (pthread_mutex_destroy(&params->fork_mutex[idx]) != SUCCESS)
-			return (PROCESS_ERROR);
-		if (pthread_mutex_destroy(&params->prev_used_mutex[idx]) != SUCCESS)
-			return (PROCESS_ERROR);
-		if (pthread_mutex_destroy(\
-		&params->philo_info[idx].philo_mutex) != SUCCESS)
-			return (PROCESS_ERROR);
+		free((*info)->philo_info[idx].sem_name);
 		idx++;
 	}
-	if (pthread_mutex_destroy(&params->print_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
-	if (pthread_mutex_destroy(&params->died_mutex) != SUCCESS)
-		return (PROCESS_ERROR);
-	free_params(&params);
+	free_ret_nullptr((void **)&(*info)->philo_tid);
+	free_ret_nullptr((void **)&(*info)->philo_info);
+	free_ret_nullptr((void **)&(*info)->prev_used_by);
+	free_ret_nullptr((void **)info);
+}
+
+int	destroy_info(t_info *info)
+{
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_WAITER);
+	free_info(&info);
 	return (SUCCESS);
 }
