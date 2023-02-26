@@ -5,7 +5,7 @@ CC		= cc
 CFLAGS	= -Wall -Wextra -Werror -MMD -MP
 
 ifdef WITH_SANITIZE
-CFLAGS 	+= -g -fsanitize=thread
+	CFLAGS 	+= -g -fsanitize=thread
 endif
 
 ifdef WITH_LEAKS
@@ -14,19 +14,24 @@ endif
 
 VPATH	= $(SRC_DIR) $(LIB_DIR)
 
-SRC_DIR	= ./srcs
+SRC_DIR	= ./srcs_bonus
 SRC		= main.c \
 		  exit.c \
 		  info_init.c \
 		  info_destroy.c \
 		  init_args.c \
+		  print_console.c \
+		  routine.c \
+		  time.c \
 
-SRCS	= $(addprefix $(SRC_DIR), $(SRC))
+SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
-LIB_DIR	= ./libs
+LIB_DIR	= ./libs_bonus
 LIB		= ft_atoi.c \
+		  ft_calloc.c \
 		  ft_isdigit.c \
 		  ft_isspace.c \
+		  ft_itoa.c \
 		  ft_strchr.c \
 		  ft_strlen.c \
 		  ft_strtoll.c \
@@ -34,14 +39,14 @@ LIB		= ft_atoi.c \
 		  ft_stack_operation.c \
 		  ft_math.c \
 
-LIBS	= $(addprefix $(LIB_DIR), $(LIB))
+LIBS	= $(addprefix $(LIB_DIR)/, $(LIB))
 
 DEPS	= $(SRC:%.c:%.d) $(LIB:%.c:%.d)
 
-OBJ_DIR	= ./objs
-OBJS	= $(addprefix $(OBJ_DIR), $(SRC:%.c:%.o)) $(addprefix $(OBJ_DIR), $(LIB:%.c:%.o))
+OBJ_DIR	= ./objs_bonus
+OBJS	= $(addprefix $(OBJ_DIR)/, $(SRC:%.c:%.o)) $(addprefix $(OBJ_DIR)/, $(LIB:%.c:%.o))
 
-INCLUDE_DIR	= ./includes
+INCLUDE_DIR	= ./includes_bonus
 IFLAGS	= $(addprefix -I, $(INCLUDE_DIR))
 
 

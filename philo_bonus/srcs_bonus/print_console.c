@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/25 18:39:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 11:29:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,20 @@ time_t	get_print_time(t_philo_info *philo, t_print_type type)
 	return (now_time);
 }
 
-int	print_msg(size_t idx, t_print_type type, t_info *info)
+int	print_msg(t_print_type type, t_philo_info *philo)
 {
-	time_t	time;
-	int		is_died;
-	ssize_t	died_philo;
+	const size_t	idx = philo->idx;
+	time_t			time;
+	bool			is_died;
 
-//	is_died = get_is_died(info, &died_philo, SUCCESS);
-//	if (is_died == PHILO_DIED && type != TYPE_DIED)
-//	{
-//		pthread_mutex_unlock(&info->print_mutex);
-//		return (PHILO_DIED);
-//	}
-	time = get_print_time(&info->philo_info[idx], type);
+	if (type != TYPE_DIED)
+	{
+		is_died = get_is_died(philo);
+		if (is_died)
+			return (PHILO_DIED);
+	}
+
+	time = get_print_time(philo, type);
 	if (type == TYPE_SIM_START)
 		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else

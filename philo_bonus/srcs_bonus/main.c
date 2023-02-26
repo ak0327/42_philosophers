@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:51:38 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 10:06:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 10:54:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,15 @@ int	wait_and_terminate_process(t_info *info)
 //			terminate_child_process(info);
 			break ;
 		}
+		if (ret_value == PROCESS_ERROR)
+		{
+			kill(0, SIGINT);
+//			terminate_child_process(info);
+			break ;
+		}
 		idx++;
 	}
-	return (SUCCESS);
+	return (ret_value);
 }
 
 int	start_routine(t_info *info)
@@ -100,7 +106,9 @@ int	main(int argc, char **argv)
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, info, EXIT_FAILURE));
 
-	wait_and_terminate_process(info);
+	ret_value = wait_and_terminate_process(info);
+	if (ret_value == PROCESS_ERROR)
+		return (print_err_msg_and_free(ret_value, info, EXIT_FAILURE));
 
 	ret_value = destroy_info(info);
 	if (ret_value != SUCCESS)

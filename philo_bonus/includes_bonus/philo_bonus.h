@@ -148,6 +148,7 @@ struct s_philo_info
 
 	size_t			eat_cnt;
 	bool			is_satisfied;
+	bool			is_died;
 
 	char			*sem_name;
 	sem_t			*sem_philo;
@@ -184,10 +185,13 @@ time_t	get_unix_time_ms(void);
 
 
 time_t	get_print_time(t_philo_info *philo, t_print_type type);
-int		print_msg(size_t idx, t_print_type type, t_info *info);
+int		print_msg(t_print_type type, t_philo_info *philo);
+
+bool	get_is_died(t_philo_info *philo);
+
 
 /* ------------ */
-/*     libs     */
+/*     libs_bonus     */
 /* ------------ */
 // libft
 int			ft_atoi(const char *str, bool *is_success);
