@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:40:19 by takira            #+#    #+#             */
-/*   Updated: 2023/02/25 10:56:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 12:57:19 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,4 @@ int	print_err_msg_and_free(int err, t_info *info, int ret)
 		printf("[Error] Process abort\n");
 	free_info(&info);
 	return (ret);
-}
-
-void	print_msg_when_terminate_philo(int ret_value, t_philo_info *philo)
-{
-	ssize_t	died_philo;
-
-	if (ret_value == PROCESS_ERROR)
-		printf("[Error] Process abort\n");
-	get_is_died(philo->info_ptr, &died_philo, SUCCESS);
-	if (ret_value == PHILO_DIED && died_philo == (ssize_t)philo->idx)
-		print_msg(philo->idx, TYPE_DIED, philo->info_ptr);
 }

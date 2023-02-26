@@ -1,4 +1,3 @@
-
 NAME	= philo_bonus
 
 CC		= cc
@@ -23,6 +22,9 @@ SRC		= main.c \
 		  print_console.c \
 		  routine.c \
 		  time.c \
+		  handle_forks.c \
+		  monitor.c \
+		  check_philo_status.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
@@ -38,13 +40,14 @@ LIB		= ft_atoi.c \
 		  ft_stack.c \
 		  ft_stack_operation.c \
 		  ft_math.c \
+		  ft_strlcat.c \
 
 LIBS	= $(addprefix $(LIB_DIR)/, $(LIB))
 
-DEPS	= $(SRC:%.c:%.d) $(LIB:%.c:%.d)
+OBJ_DIR	= ./objs
+OBJS	= $(addprefix $(OBJ_DIR)/, $(SRC:%.c=%.o)) $(addprefix $(OBJ_DIR)/, $(LIB:%.c=%.o))
 
-OBJ_DIR	= ./objs_bonus
-OBJS	= $(addprefix $(OBJ_DIR)/, $(SRC:%.c:%.o)) $(addprefix $(OBJ_DIR)/, $(LIB:%.c:%.o))
+DEPS	= $(SRC:%.c:%.d) $(LIB:%.c:%.d)
 
 INCLUDE_DIR	= ./includes_bonus
 IFLAGS	= $(addprefix -I, $(INCLUDE_DIR))
@@ -53,20 +56,20 @@ IFLAGS	= $(addprefix -I, $(INCLUDE_DIR))
 $(NAME)	: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-$(OBJ_DIR)/%.o	:%.c
+$(OBJ_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
 	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
 
 all		: $(NAME)
 
-claen	:
+clean	:
 	rm -rf $(OBJ_DIR)
 
 
 fclean	: clean
 	rm -f $(NAME)
 
-re		: fclaen all
+re		: fclean all
 
 test:
 	make re WITH_SANITIZE=1

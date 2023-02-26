@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 10:13:53 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 16:10:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,18 +176,36 @@ int		print_err_msg_and_free(int err, t_info *info, int ret);
 /* routine.c */
 void	*routine(t_philo_info *philo);
 
-void	*monitor(t_philo_info *philo);
+
+/* check_philo_status.c */
+bool	get_is_died(t_philo_info *philo);
+size_t	get_eat_cnt(t_philo_info *philo);
+int		check_philo_died(t_philo_info *philo, time_t now_time);
+int		check_continue(t_philo_info *philo);
+
+
 
 /* time.c */
 void	sleep_ms(time_t time_ms);
 time_t	get_delta_time_ms(time_t now_ms, time_t start_ms);
 time_t	get_unix_time_ms(void);
 
+/* handle_forks.c */
+int		take_forks(t_philo_info *philo);
+int		put_forks_and_update_eat_times(t_philo_info *philo);
+
+/* monitor.c */
+void	*monitor(t_philo_info *philo);
+
+
 
 time_t	get_print_time(t_philo_info *philo, t_print_type type);
 int		print_msg(t_print_type type, t_philo_info *philo);
 
 bool	get_is_died(t_philo_info *philo);
+
+int		check_philo_died(t_philo_info *philo, time_t now_time);
+
 
 
 /* ------------ */

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 11:29:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/26 16:17:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	print_msg(t_print_type type, t_philo_info *philo)
 		if (is_died)
 			return (PHILO_DIED);
 	}
-
 	time = get_print_time(philo, type);
 	if (type == TYPE_SIM_START)
 		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
