@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:09:17 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:24:29 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:18:54 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,6 @@ bool	get_is_died(t_philo_info *philo, bool *is_died_printed)
 	if (sem_post(philo->sem_philo) != SUCCESS)
 		return (PROCESS_ERROR);
 	return (is_died);
-}
-
-size_t	get_eat_cnt(t_philo_info *philo)
-{
-	size_t	eat_cnt;
-
-	if (sem_wait(philo->sem_philo) != SUCCESS)
-		return (PROCESS_ERROR);
-	eat_cnt = philo->eat_cnt;
-	if (sem_post(philo->sem_philo) != SUCCESS)
-		return (PROCESS_ERROR);
-	return (eat_cnt);
 }
 
 int	check_philo_died(t_philo_info *philo, time_t now_time)

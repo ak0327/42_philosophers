@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:06:27 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 10:55:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,12 @@ int	init_info(int argc, char **argv, t_info **info)
 	ret_value = get_input_args(argv, *info);
 	if (ret_value != SUCCESS)
 		return (ret_value);
-	is_process_success = true;
-	is_process_success |= init_alloc(info);
-	is_process_success |= init_semaphore(*info);
 	(*info)->is_died = PHILO_ALIVE;
 	(*info)->start_time = 0;
-	if (is_process_success == true)
+	is_process_success = SUCCESS;
+	is_process_success += init_alloc(info);
+	is_process_success += init_semaphore(*info);
+	if (is_process_success == SUCCESS)
 		return (SUCCESS);
 	free_info(info);
 	return (FAILURE);

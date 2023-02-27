@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 19:22:16 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 22:39:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:23:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,22 @@
 
 static int	run_pthread(t_philo_info *philo)
 {
-	void	*status;
-	int		ret_value;
+	int	ret_value;
+	int	pthread_ret;
 
-//	printf("[#run](%zu)-1\n", philo->idx);
 	if (pthread_create(\
 	&philo->philo_tid, NULL, (void *)routine, (void *)philo) != SUCCESS)
 		return (PROCESS_ERROR);
-//	printf("[#run](%zu)-2\n", philo->idx);
 	if (pthread_create(\
 	&philo->monitor_tid, NULL, (void *)monitor, (void *)philo) != SUCCESS)
 		return (PROCESS_ERROR);
-//	printf("[#run](%zu)-3\n", philo->idx);
-//	printf("[#run](%zu)-4\n", philo->idx);
-	if (pthread_join(philo->monitor_tid, &status) != SUCCESS)
+	ret_value = monitor(philo);
+	if (ret_value == PHILO_DIED)
+		pthread_ret = pthread_detach(philo->philo_tid);
+	else
+		pthread_ret = pthread_join(philo->philo_tid, NULL);
+	if (pthread_ret != SUCCESS)
 		return (PROCESS_ERROR);
-	if (pthread_detach(philo->philo_tid) != SUCCESS)
-		return (PROCESS_ERROR);
-	ret_value = (int)(long)status;
-//	printf("[#run](%zu)-5, s1:%ld, s2:%ld\n", philo->idx, (long)s1, (long)s2);
 	return (ret_value);
 }
 
@@ -70,7 +67,6 @@ int	start_routine(t_info *info)
 	idx = 0;
 	now_time = get_unix_time_ms();
 	print_msg(TYPE_SIM_START, &info->philo_info[idx]);
-//	printf("%ld%03ld %s\n", now_time / 1000, now_time % 1000, PRINT_SIM_START);
 	while (idx < info->num_of_philos)
 	{
 		info->philo_info[idx].start_time = now_time;

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:43:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:23:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:13:06 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@
 # define PRINT_SLEEPING		"is sleeping"
 # define PRINT_THINKING		"is thinking"
 # define PRINT_DIED			"died"
-# define PRINT_SIM_START	"simulation start"
+# define PRINT_SIM_START	"<SIMULATION START>"
 
 typedef struct s_info		t_info;
 typedef struct s_philo_info	t_philo_info;
@@ -192,7 +192,8 @@ int			take_forks(t_philo_info *philo);
 int			put_forks_and_update_eat_times(t_philo_info *philo);
 
 /* monitor.c */
-void		*monitor(t_philo_info *philo);
+//void		*monitor(t_philo_info *philo);
+int			monitor(t_philo_info *philo);
 
 /* start_routine.c */
 int			start_routine(t_info *info);

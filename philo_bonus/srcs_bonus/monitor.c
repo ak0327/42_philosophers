@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 16:08:07 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 22:39:30 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:18:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	*monitor(t_philo_info *philo)
+int	monitor(t_philo_info *philo)
 {
 	int		ret_value;
 	time_t	now_time;
@@ -29,10 +29,7 @@ void	*monitor(t_philo_info *philo)
 		if (ret_value != CONTINUE)
 			break ;
 	}
-//	printf("(%zu)monitor fin\n", philo->idx+1);
-	if (ret_value == PHILO_DIED)
-		return ((void *)PHILO_DIED);
-	if (ret_value == PROCESS_ERROR)
-		return ((void *)PROCESS_ERROR);
-	return ((void *)SUCCESS);
+	if (ret_value == BREAK)
+		ret_value = SUCCESS;
+	return (ret_value);
 }

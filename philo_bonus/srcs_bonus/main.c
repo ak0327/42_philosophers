@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:51:38 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:09:32 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:18:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,12 @@ int	main(int argc, char **argv)
 	int		ret_value;
 
 	info = NULL;
-//	printf("main-1\n");
 	ret_value = init_info(argc, argv, &info);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, info, EXIT_FAILURE));
-//	printf("main-2\n");
 	ret_value = start_routine(info);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, info, EXIT_FAILURE));
-//	printf("main-3\n");
 	ret_value = destroy_info(info);
 	if (ret_value != SUCCESS)
 		return (print_err_msg_and_free(ret_value, info, EXIT_FAILURE));
