@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 16:08:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 10:06:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@
 # define PRINT_SLEEPING		"is sleeping"
 # define PRINT_THINKING		"is thinking"
 # define PRINT_DIED			"died"
-# define PRINT_SIM_START	"simulation start"
+# define PRINT_SIM_START	"<SIMULATION START>"
 
 /* philo state */
 # define STATE_THINKING		0

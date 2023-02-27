@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 22:17:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:48:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,10 @@ int	print_msg(size_t idx, t_print_type type, t_params *params)
 
 	is_died = get_is_died(params, &died_philo, SUCCESS);
 	if (is_died == PHILO_DIED && type != TYPE_DIED)
-	{
-		pthread_mutex_unlock(&params->print_mutex);
 		return (PHILO_DIED);
-	}
-	time = get_print_time(&params->philo_info[idx], type);
+	time = get_unix_time_ms();
 	if (type == TYPE_SIM_START)
-		printf("%ld%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
+		printf("%ld:%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else
 		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
 		idx % 255, time / 1000, time % 1000, idx + 1, get_print_msg(type));

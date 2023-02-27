@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:27:11 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:04:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:31:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	get_std_args(char **argv, t_params *params)
 		return (INVALID_TIME_TO_EAT);
 	params->time_to_eat = (time_t)arg_num;
 	arg_num = ft_strtoll(argv[TIME_TO_SLEEP_IDX], &is_success);
-	if (!is_success || |check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
+	if (!is_success || !check_num_validity(arg_num, TYPE_TIME_TO_SLEEP))
 		return (INVALID_TIME_TO_SLEEP);
 	params->time_to_sleep = (time_t)arg_num;
 	return (SUCCESS);
@@ -58,7 +58,7 @@ static int	get_option_arg(char **argv, t_params *params)
 	if (argv[MUST_EAT_TIMES_IDX])
 	{
 		arg_num = ft_strtoll(argv[MUST_EAT_TIMES_IDX], &is_success);
-		if (!is_success && check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
+		if (!is_success || !check_num_validity(arg_num, TYPE_MUST_EAT_TIMES))
 			return (INVALID_MUST_EAT_TIMES);
 		params->must_eat_times = (ssize_t)arg_num;
 	}
