@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/24 11:10:27 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 14:34:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ static int	init_alloc(t_params **params)
 int	init_params(int argc, char **argv, t_params **params)
 {
 	int	is_process_success;
+	int	ret;
 
 	if (!(5 <= argc && argc <= 6))
 		return (INVALID_ARG_COUNT);
@@ -102,14 +103,16 @@ int	init_params(int argc, char **argv, t_params **params)
 	if (!*params)
 		return (PROCESS_ERROR);
 	memset(*params, 0, sizeof(t_params));
-	is_process_success = true;
-	is_process_success |= get_input_args(argv, *params);
-	is_process_success |= init_alloc(params);
-	is_process_success |= init_mutex(*params);
+	ret = get_input_args(argv, *params);
+	if (ret != SUCCESS)
+		return (ret);
 	(*params)->is_died = PHILO_ALIVE;
 	(*params)->died_idx = -1;
 	(*params)->is_monitor_end = false;
-	if (is_process_success)
+	is_process_success = SUCCESS;
+	is_process_success += init_alloc(params);
+	is_process_success += init_mutex(*params);
+	if (is_process_success == SUCCESS)
 		return (SUCCESS);
 	free_params(params);
 	return (FAILURE);
