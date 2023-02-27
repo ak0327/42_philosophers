@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 19:32:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/27 10:06:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:08:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@
 # define PRINT_SLEEPING		"is sleeping"
 # define PRINT_THINKING		"is thinking"
 # define PRINT_DIED			"died"
-# define PRINT_SIM_START	"<SIMULATION START>"
+# define PRINT_SIM_START	"simulation start"
 
 /* philo state */
 # define STATE_THINKING		0
@@ -116,7 +116,7 @@ struct s_philo_info
 	time_t			start_time;
 	size_t			eat_times;
 	pthread_mutex_t	philo_mutex;
-	bool			is_satisfied;
+	bool			is_meet_eat_times;
 	t_params		*params_ptr;
 };
 
@@ -205,7 +205,7 @@ void		print_msg_when_terminate_philo(int ret_value, t_philo_info *philo);
 void		print_eat_times(t_params *params);
 
 /* ------------ */
-/*     libs_bonus     */
+/*     libs     */
 /* ------------ */
 // libft
 int			ft_atoi(const char *str, bool *is_success);

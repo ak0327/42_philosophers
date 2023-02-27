@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:11:10 by takira            #+#    #+#             */
-/*   Updated: 2023/02/27 11:50:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:54:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*monitor(void *v_params)
 	params = (t_params *)v_params;
 	while (ret_value == SUCCESS || ret_value == CONTINUE)
 	{
-		usleep(50);
+		usleep(500);
 		ret_value = is_some_philo_died(params);
 		ret_value = is_meet_must_eat_times(params, ret_value);
 	}

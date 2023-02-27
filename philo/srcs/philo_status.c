@@ -28,7 +28,7 @@ bool	get_is_meet_eat_times(t_philo_info *philo)
 	bool	is_meet_eat_times;
 
 	pthread_mutex_lock(&philo->philo_mutex);
-	is_meet_eat_times = philo->is_satisfied;
+	is_meet_eat_times = philo->is_meet_eat_times;
 	pthread_mutex_unlock(&philo->philo_mutex);
 	return (is_meet_eat_times);
 }
@@ -56,7 +56,7 @@ bool	get_is_meet_must_eat_times(t_philo_info *philo)
 	bool	must_eat_times;
 
 	pthread_mutex_lock(&philo->philo_mutex);
-	must_eat_times = philo->is_satisfied;
+	must_eat_times = philo->is_meet_eat_times;
 	pthread_mutex_unlock(&philo->philo_mutex);
 	return (must_eat_times);
 }
@@ -79,7 +79,7 @@ int	is_each_philo_meet_eat_times(t_philo_info *philo, int prev_ret_val)
 	if ((size_t)philo_eat_times < arg_must_eat_times)
 		return (CONTINUE);
 	pthread_mutex_lock(&philo->philo_mutex);
-	philo->is_satisfied = true;
+	philo->is_meet_eat_times = true;
 	pthread_mutex_unlock(&philo->philo_mutex);
 	return (BREAK);
 }

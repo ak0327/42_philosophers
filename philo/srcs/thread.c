@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:50:32 by takira            #+#    #+#             */
-/*   Updated: 2023/02/27 11:47:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 15:49:32 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ static int	create_philo_threads(t_params *params)
 			return (PROCESS_ERROR);
 		idx += 2;
 	}
-	usleep(10);
 	idx = 0;
 	while (idx < params->num_of_philos)
 	{

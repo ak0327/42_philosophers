@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:00:01 by takira            #+#    #+#             */
-/*   Updated: 2023/02/26 20:06:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/24 11:10:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	init_alloc_elem(t_params **params, size_t idx)
 	}
 	(*params)->philo_info[idx].eat_times = 0;
 	(*params)->philo_info[idx].params_ptr = *params;
-	(*params)->philo_info[idx].is_satisfied = false;
+	(*params)->philo_info[idx].is_meet_eat_times = false;
 	(*params)->prev_used_by[idx] = -1;
 }
 
@@ -95,7 +95,6 @@ static int	init_alloc(t_params **params)
 int	init_params(int argc, char **argv, t_params **params)
 {
 	int	is_process_success;
-	int	ret_value;
 
 	if (!(5 <= argc && argc <= 6))
 		return (INVALID_ARG_COUNT);
@@ -103,10 +102,8 @@ int	init_params(int argc, char **argv, t_params **params)
 	if (!*params)
 		return (PROCESS_ERROR);
 	memset(*params, 0, sizeof(t_params));
-	ret_value = get_input_args(argv, *params);
-	if (ret_value != SUCCESS)
-		return (ret_value);
 	is_process_success = true;
+	is_process_success |= get_input_args(argv, *params);
 	is_process_success |= init_alloc(params);
 	is_process_success |= init_mutex(*params);
 	(*params)->is_died = PHILO_ALIVE;
