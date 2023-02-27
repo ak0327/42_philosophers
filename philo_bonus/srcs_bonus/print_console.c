@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 09:58:51 by takira            #+#    #+#             */
-/*   Updated: 2023/02/27 11:26:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/02/27 11:57:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	print_msg(t_print_type type, t_philo_info *philo)
 	if (type == TYPE_SIM_START)
 		printf("%ld:%03ld %s\n", time / 1000, time % 1000, get_print_msg(type));
 	else
-		printf("\x1b[48;5;%03zum%ld%03ld %zu %s\x1b[0m\n", \
+		printf("\x1b[48;5;%03zum%ld:%03ld %zu %s\x1b[0m\n", \
 		idx % 255, time / 1000, time % 1000, idx + 1, get_print_msg(type));
 	if (type == TYPE_DIED)
 		return (SUCCESS);
